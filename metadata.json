@@ -1,0 +1,6 @@
+{
+  "name": "Coatline Architectural Maintenance",
+  "description": "Aplicación premium de Coatline con detección electrónica de filtraciones, portafolio de casos reales y contacto de ingeniería de mantenimiento arquitectónico.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
