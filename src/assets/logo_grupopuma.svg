@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Especialistas en el mundo de la construcción | Grupo Puma</title>
+    <meta name="description" content="Grupo Puma somos un conjunto de empresas especializadas en la construcción. Más de 25 años de experiencia. Amplia gama de productos de alta calidad.">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.grupopuma.com/assets/public/css/bootstrap.min.css">        
+    <link rel="stylesheet" href="https://www.grupopuma.com/assets/public/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://www.grupopuma.com/assets/public/css/main.css">
+    <link rel="shortcut icon" href="https://www.grupopuma.com/assets/public/favicon.ico">
+    <script src="https://www.grupopuma.com/assets/public/js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"></script>
+</head>
+<body class="select-destination">
+
+<div class="welcome-topbar">
+    <nav class="navbar navbar-default navbar-welcome">
+      <div class="container-fluid">
+        <div class="logo-wrapper text-center">
+          <a href="https://www.grupopuma.com/welcome/select_country">
+                <img src="https://www.grupopuma.com/assets/public/img/logo.png" alt="Grupo Puma">
+            </a> 
+        </div>
+      </div>
+    </nav>
+           
+</div>
+
+<div class="container">
+
+	<div class="text-center">
+        <h1>Welcome to Grupo Puma</h1>
+        <h2>Find your country in the list </h2>  
+        <hr>
+        <small>(click in the continent first)</small>
+    </div>
+    
+    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+        
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="headingOne">
+                <h4 class="panel-title">
+                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapsePanelAfrica" aria-expanded="false" aria-controls="collapsePanelAfrica">
+                  Africa
+                </a>
+                </h4>
+            </div>
+            <div id="collapsePanelAfrica" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                <div class="panel-body">
+                    
+                    <div class="container-fluid quick-search-wrapper">
+    <div class="row">
+        <div class="col-md-6 pull-right">
+            <label>Quick search by country name</label>
+            <input type="text" class="form-control quick-search" placeholder="Search by country name&hellip;">                                
+        </div>
+    </div>
+</div>
+                    <div class="list-group">                          
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/fr-DZ">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/dz.png">
+                          Algeria <span class="endonym">(الجزائر)</span></a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/pt-AO">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/ao.png">
+                          Angola</a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/fr-BJ">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/bj.png">
+                          Benin <span class="endonym">(Bénin)</span></a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-BW">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/bw.png">
+                          Botswana</a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/fr-BF">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/bf.png">
+                          Burkina <span class="endonym">(Burkina Faso)</span></a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/fr-BI">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/bi.png">
+                          Burundi <span class="endonym">(Uburundi, Burundi)</span></a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/fr-CM">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/cm.png">
+                          Cameroon <span class="endonym">(Cameroun, Cameroon)</span></a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/pt-CV">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/cv.png">
+                          Cape Verde <span class="endonym">(Cabo Verde)</span></a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/fr-CF">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/cf.png">
+                          Central African Republic</a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/fr-TD">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/td.png">
+                          Chad <span class="endonym">(Tchad, تشاد)</span></a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/fr-KM">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/km.png">
+                          Comoros <span class="endonym">(Comores, القمر)</span></a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/fr-CG">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/cg.png">
+                          Congo <span class="endonym">(République du Congo)</span></a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/fr-CD">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/cd.png">
+                          Congo, Democratic Republic of <span class="endonym">(République Démocratique du Congo)</span></a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/fr-DJ">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/dj.png">
+                          Djibouti <span class="endonym">(جيبوتي)</span></a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-EG">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/eg.png">
+                          Egypt <span class="endonym">(مصر)</span></a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/es-GQ">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/gq.png">
+                          Equatorial Guinea <span class="endonym">(Guinea Ecuatorial, Guinée Équatoriale)</span></a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-ER">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/er.png">
+                          Eritrea <span class="endonym">(ኤርትራ, إريتريا)</span></a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-ET">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/et.png">
+                          Ethiopia <span class="endonym">(ኢትዮጵያ)</span></a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/fr-GA">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/ga.png">
+                          Gabon <span class="endonym">(Le Gabon)</span></a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-GM">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/gm.png">
+                          Gambia <span class="endonym">(The Gambia)</span></a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/fr-GH">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/gh.png">
+                          Ghana</a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/fr-GN">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/gn.png">
+                          Guinea <span class="endonym">(Guinée)</span></a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/fr-GW">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/gw.png">
+                          Guinea-Bissau <span class="endonym">(Guiné-Bissau)</span></a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/fr-CI">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/ci.png">
+                          Ivory Coast</a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-KE">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/ke.png">
+                          Kenya</a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-LS">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/ls.png">
+                          Lesotho</a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-LR">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/lr.png">
+                          Liberia</a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-LY">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/ly.png">
+                          Libya <span class="endonym">(ليبيا)</span></a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/fr-MG">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/mg.png">
+                          Madagascar <span class="endonym">(Madagasikara)</span></a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/fr-MW">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/mw.png">
+                          Malawi <span class="endonym">(Malaŵi)</span></a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/fr-ML">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/ml.png">
+                          Mali</a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/fr-MR">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/mr.png">
+                          Mauritania <span class="endonym">(موريتانيا)</span></a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/fr-MU">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/mu.png">
+                          Mauritius <span class="endonym">(Maurice)</span></a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/fr-MA">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/ma.png">
+                          Maroc <span class="endonym">(المغرب)</span></a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/pt-MZ">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/mz.png">
+                          Mozambique <span class="endonym">(Moçambique)</span></a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-NA">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/na.png">
+                          Namibia</a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/fr-NE">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/ne.png">
+                          Niger</a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-NG">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/ng.png">
+                          Nigeria</a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-RW">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/rw.png">
+                          Rwanda</a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/pt-ST">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/st.png">
+                          Sao Tome and Principe <span class="endonym">(São Tomé e Príncipe)</span></a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/fr-SN">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/sn.png">
+                          Senegal <span class="endonym">(Sénégal, Sounougal)</span></a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-SC">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/sc.png">
+                          Seychelles <span class="endonym">(Sesel)</span></a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-SL">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/sl.png">
+                          Sierra Leone</a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-SO">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/so.png">
+                          Somalia <span class="endonym">(Soomaaliya)</span></a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-ZA">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/za.png">
+                          South Africa <span class="endonym">(Republiek van Suid-Afrika)</span></a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-SS">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/ss.png">
+                          South Sudan</a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-SD">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/sd.png">
+                          Sudan <span class="endonym">(السودان)</span></a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-SZ">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/sz.png">
+                          Swaziland</a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-TZ">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/tz.png">
+                          Tanzania</a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/fr-TG">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/tg.png">
+                          Togo</a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/fr-TN">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/tn.png">
+                          Tunisia <span class="endonym">(تونس)</span></a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-UG">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/ug.png">
+                          Uganda</a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-ZM">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/zm.png">
+                          Zambia</a>
+                        <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-ZW">
+                          <img src="https://www.grupopuma.com/assets/public/img/flags/zw.png">
+                          Zimbabw</a>            
+                    </div>
+                </div>
+            </div>
+        </div><!-- Africa -->
+
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="groupAmerica">
+                <h4 class="panel-title">
+                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapsePanelAmeria" aria-expanded="false" aria-controls="collapsePanelAmeria">
+                  America &amp; Oceania
+                </a>
+                </h4>
+            </div>
+            <div id="collapsePanelAmeria" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="groupAmerica">
+                <div class="panel-body">
+                    
+                    <div class="container-fluid quick-search-wrapper">
+    <div class="row">
+        <div class="col-md-6 pull-right">
+            <label>Quick search by country name</label>
+            <input type="text" class="form-control quick-search" placeholder="Search by country name&hellip;">                                
+        </div>
+    </div>
+</div>
+                   <div class="list-group">
+                       <h3>North &amp; Central America</h3>
+                       
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-AG">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/ag.png">
+                        Antigua and Barbuda</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-BS">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/bs.png">
+                        Bahamas</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-BB">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/bb.png">
+                        Barbados</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-BZ">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/bz.png">
+                        Belize</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-CA">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/ca.png">
+                        Canada <span class="endonym">(ᑲᓇᑕ)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/es-CR">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/cr.png">
+                        Costa Rica</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/es-CU">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/cu.png">
+                        Cuba</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/es-DM">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/dm.png">
+                        Dominica</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/es-DO">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/do.png">
+                        Dominican Republic</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/es-SV">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/sv.png">
+                        El Salvador</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-GD">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/gd.png">
+                        Grenada</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/es-GT">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/gt.png">
+                        Guatemala</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/fr-HT">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/ht.png">
+                        Haiti <span class="endonym">(Haïti)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/es-HN">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/hn.png">
+                        Honduras</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-JM">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/jm.png">
+                        Jamaica</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/es-MX">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/mx.png">
+                        Mexico <span class="endonym">(México)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/es-NI">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/ni.png">
+                        Nicaragua</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/es-PA">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/pa.png">
+                        Panama</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-KN">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/kn.png">
+                        Saint Kitts and Nevis</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-LC">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/lc.png">
+                        Saint Lucia</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-VC">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/vc.png">
+                        Saint Vincent and the Grenadines</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-TT">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/tt.png">
+                        Trinidad and Tobago</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-US">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/us.png">
+                        United States</a>
+                       
+                       <h3>South America</h3>
+                       
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/es-AR">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/ar.png">
+                        Argentina</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/es-BO">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/bo.png">
+                        Bolivia</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/pt-BR">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/br.png">
+                        Brazil</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/es-CL">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/cl.png">
+                        Chile</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/es-CO">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/co.png">
+                        Colombia</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/es-EC">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/ec.png">
+                        Ecuador</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-GY">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/gy.png">
+                        Guyana <span class="endonym">(Georgetown)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/es-PY">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/py.png">
+                        Paraguay</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/es-PE">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/pe.png">
+                        Peru</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-SR">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/sr.png">
+                        Suriname <span class="endonym">(Paramaribo)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/es-UY">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/uy.png">
+                        Uruguay</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/es-VE">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/ve.png">
+                        Venezuela</a>
+                       
+                       <h3>Oceanía</h3>
+                       
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-AU">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/au.png">
+                        Australia</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-FJ">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/fj.png">
+                        Fiji <span class="endonym">(Viti)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-KI">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/ki.png">
+                        Kiribati</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-MH">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/mh.png">
+                        Marshall Islands <span class="endonym">(Aelōn̄ in M̧ajeļ)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-FM">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/fm.png">
+                        Micronesia</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-NR">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/nr.png">
+                        Nauru <span class="endonym">(Naoero)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-NZ">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/nz.png">
+                        New Zealand <span class="endonym">(Aotearoa)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-PW">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/pw.png">
+                        Palau <span class="endonym">(Belau)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-PG">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/pg.png">
+                        Papua New Guinea <span class="endonym">(Papua Niugini)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-WS">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/ws.png">
+                        Samoa</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-SB">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/sb.png">
+                        Solomon Islands</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-TO">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/to.png">
+                        Tonga</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-TV">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/tv.png">
+                        Tuvalu</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-VU">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/vu.png">
+                        Vanuatu</a>
+                               
+                   </div>
+                </div>
+            </div>
+        </div><!-- America -->
+
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="groupAsia">
+                <h4 class="panel-title">
+                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapsePanelAsia" aria-expanded="false" aria-controls="collapsePanelAsia">
+                  Asia
+                </a>
+                </h4>
+            </div>
+            <div id="collapsePanelAsia" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="groupAsia">
+                <div class="panel-body">
+                    
+                    <div class="container-fluid quick-search-wrapper">
+    <div class="row">
+        <div class="col-md-6 pull-right">
+            <label>Quick search by country name</label>
+            <input type="text" class="form-control quick-search" placeholder="Search by country name&hellip;">                                
+        </div>
+    </div>
+</div>
+                   <div class="list-group">
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-AF">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/af.png">
+                        Afghanistan <span class="endonym">(افغانستان)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-BH">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/bh.png">
+                        Bahrain <span class="endonym">(البحرين)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-BD">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/bd.png">
+                        Bangladesh <span class="endonym">(বাংলাদেশ)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-BT">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/bt.png">
+                        Bhutan <span class="endonym">(འབྲུག་ཡུལ)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-BN">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/bn.png">
+                        Brunei <span class="endonym">(بروني)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-MM">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/mm.png">
+                        Burma (<i>Myanmar</i>) <span class="endonym">(မြန်မာ)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-KH">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/kh.png">
+                        Cambodia <span class="endonym">(កម្ពុជា)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-CN">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/cn.png">
+                        China <span class="endonym">(中國 (中華人民共和國))</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-TL">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/tl.png">
+                        East Timor <span class="endonym">(Timor Lorosa'e, Timor-Leste)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-IN">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/in.png">
+                        India <span class="endonym">(ভাৰত)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-ID">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/id.png">
+                        Indonesia</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-IR">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/ir.png">
+                        Iran <span class="endonym">(Īrān, ایران)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-IQ">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/iq.png">
+                        Iraq <span class="endonym">(Al-'Iraq, العراق)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-IL">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/il.png">
+                        Israel <span class="endonym">(yisrael, ישראל)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-JP">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/jp.png">
+                        Japan <span class="endonym">(Nihon, Nippon, 日本)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-JO">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/jo.png">
+                        Jordan <span class="endonym">(Al-’Urdun, الأردن)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-KZ">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/kz.png">
+                        Kazakhstan <span class="endonym">(Қазақстан, قازاقستان)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-KP">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/kp.png">
+                        Korea, North <span class="endonym">(조선 / 朝鮮)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-KR">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/kr.png">
+                        Korea, South <span class="endonym">(한국 / 韓國)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-KW">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/kw.png">
+                        Kuwait <span class="endonym">(Dawlat Al-Kuwayt, دولة الكويت)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-KG">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/kg.png">
+                        Kyrgyzstan <span class="endonym">(Kyrgyzstan, Кыргызстан)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-LA">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/la.png">
+                        Laos <span class="endonym">(Lao, ປະເທດລາວ)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-LB">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/lb.png">
+                        Lebanon <span class="endonym">(Lubnān, لبنان)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-MY">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/my.png">
+                        Malaysia</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-MV">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/mv.png">
+                        Maldives <span class="endonym">(Dhivehi Raajje, ދިވެހިރާއްޖެ)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-MN">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/mn.png">
+                        Mongolia <span class="endonym">(Mongol Uls, Монгол Улс)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-NP">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/np.png">
+                        Nepal <span class="endonym">(Nepāl, नेपाल)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-OM">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/om.png">
+                        Oman <span class="endonym">(‘Umān, عُمان)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-PK">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/pk.png">
+                        Pakistan <span class="endonym">(Pākistān, پاکستان)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-PH">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/ph.png">
+                        Philippines <span class="endonym">(Pilipinas)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-QA">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/qa.png">
+                        Qatar <span class="endonym">(قطر)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-RU">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/ru.png">
+                        Russian Federation <span class="endonym">(Россия1</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-SA">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/sa.png">
+                        Saudi Arabia <span class="endonym">(Sa‘ūdiyyah, المملكة العربية السعودية)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-SG">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/sg.png">
+                        Singapore <span class="endonym">(Singapura)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-LK">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/lk.png">
+                        Sri Lanka <span class="endonym">(ශ්‍රී ලංකාව)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-SY">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/sy.png">
+                        Syria <span class="endonym">(Suriyah, سورية)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-TJ">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/tj.png">
+                        Tajikistan <span class="endonym">(Tojikistan, Тоҷикистон)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-TH">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/th.png">
+                        Thailand <span class="endonym">(เมืองไทย, ประเทศไทย, ราชอาณาจักรไทย)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-TR">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/tr.png">
+                        Turkey <span class="endonym">(Türkiye)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-TM">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/tm.png">
+                        Turkmenistan <span class="endonym">(Türkmenistan)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-AE">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/ae.png">
+                        United Arab Emirates <span class="endonym">(Al-’Imārat Al-‘Arabiyyah Al-Muttaḥidah, الإمارات العربيّة المتّحدة)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-UZ">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/uz.png">
+                        Uzbekistan <span class="endonym">(O‘zbekiston, Ўзбекистон)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-VN">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/vn.png">
+                        Vietnam <span class="endonym">(Việt Nam)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-YE">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/ye.png">
+                        Yemen</a> <span class="endonym">(Al-Yaman, اليمن)</span>    
+                   </div>
+                </div>
+            </div>
+        </div><!-- Asia -->
+
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="groupEurope">
+                <h4 class="panel-title">
+                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapsePanelEurope" aria-expanded="false" aria-controls="collapsePanelEurope">
+                  Europe
+                </a>
+                </h4>
+            </div>
+            <div id="collapsePanelEurope" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="groupEurope">
+                <div class="panel-body">
+                    
+                    <div class="container-fluid quick-search-wrapper">
+    <div class="row">
+        <div class="col-md-6 pull-right">
+            <label>Quick search by country name</label>
+            <input type="text" class="form-control quick-search" placeholder="Search by country name&hellip;">                                
+        </div>
+    </div>
+</div>
+                   <div class="list-group">
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-AL">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/al.png">
+                        Albania <span class="endonym">(Shqipëria)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/es-AD">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/ad.png">
+                        Andorra</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-AM">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/am.png">
+                        Armenia</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-AT">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/at.png">
+                        Austria <span class="endonym">(Österreich)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-AZ">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/az.png">
+                        Azerbaijan <span class="endonym">(Azərbaycan, Азәрбајҹан)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-BY">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/by.png">
+                        Belarus <span class="endonym">(Biełaruś, Беларусь)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-BE">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/be.png">
+                        Belgium <span class="endonym">(België)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-BA">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/ba.png">
+                        Bosnia and Herzegovina <span class="endonym">(Bosna i Hercegovina, Босна и Херцеговина)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-BG">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/bg.png">
+                        Bulgaria <span class="endonym">(България, Bŭlgarija)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-HR">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/hr.png">
+                        Croatia <span class="endonym">(Hrvatska)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-CY">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/cy.png">
+                        Cyprus <span class="endonym">(Κύπρος)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-CZ">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/cz.png">
+                        Czech Republic <span class="endonym">(Česko)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-DK">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/dk.png">
+                        Denmark <span class="endonym">(Danmark)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-EE">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/ee.png">
+                        Estonia <span class="endonym">(Eesti)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-FI">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/fi.png">
+                        Finland <span class="endonym">(Suomi)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/fr-FR">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/fr.png">
+                       France <span class="endonym">(France)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-GE">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/ge.png">
+                        Georgia</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-DE">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/de.png">
+                        Germany <span class="endonym">(Deutschland)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-GR">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/gr.png">
+                        Greece <span class="endonym">(Ελλάδα / Έλλας)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-HU">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/hu.png">
+                        Hungary <span class="endonym">(Magyarország)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-IS">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/is.png">
+                        Iceland <span class="endonym">(Ísland)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-IE">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/ie.png">
+                        Ireland <span class="endonym">(Éire)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-IT">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/it.png">
+                        Italy <span class="endonym">(Italia)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-LV">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/lv.png">
+                        Latvia <span class="endonym">(Latvija)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-LI">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/li.png">
+                        Liechtenstein</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-LT">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/lt.png">
+                        Lithuania <span class="endonym">(Lietuva)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-LU">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/lu.png">
+                        Luxembourg <span class="endonym">(Lëtzebuerg)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-MK">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/mk.png">
+                        Macedonia <span class="endonym">(Македонија)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-MT">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/mt.png">
+                        Malta</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-MD">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/md.png">
+                        Moldova <span class="endonym">(Молдова)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/fr-MC">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/mc.png">
+                        Monaco</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-ME">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/me.png">
+                        Montenegro <span class="endonym">(Црна Гора)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-NL">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/nl.png">
+                        Netherlands <span class="endonym">(Nederland)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-NO">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/no.png">
+                        Norway <span class="endonym">(Norge )</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-PL">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/pl.png">
+                        Poland <span class="endonym">(Polska)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/pt-PT">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/pt.png">
+                        Portugal</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-RO">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/ro.png">
+                        Romania <span class="endonym">(România)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-SM">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/sm.png">
+                        San Marino <span class="endonym">(San Marino)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-RS">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/rs.png">
+                        Serbia <span class="endonym">(Србија )</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-SK">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/sk.png">
+                        Slovakia <span class="endonym">(Slovensko)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-SI">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/si.png">
+                        Slovenia <span class="endonym">(Slovenija)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/es-ES">
+                       <img src="https://www.grupopuma.com/assets/public/img/flags/es.png">
+                       Spain <span class="endonym">(España)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-SE">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/se.png">
+                        Sweden <span class="endonym">(Sverige)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/fr-CH">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/ch.png">
+                        Switzerland <span class="endonym">(die Schweiz)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-UA">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/ua.png">
+                        Ukraine <span class="endonym">(Україна)</span></a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-UK">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/uk.png">
+                        United Kingdom</a>
+                       <a class="list-group-item country-item" href="https://www.grupopuma.com/welcome/select_country/en-VA">
+                        <img src="https://www.grupopuma.com/assets/public/img/flags/va.png">
+                        Vatican City <span class="endonym">(Vaticanum)</span></a>
+                   </div>
+                </div>
+            </div>
+        </div><!-- Europe -->
+
+        <!-- www.grupopuma.com -->
+
+        
+
+    </div><!-- panel-group-->
+</div>
+<style type="text/css">
+    .panel-group { max-width: 800px; margin: 0 auto;}
+    .panel-title {
+        font-weight: bold;
+    }
+    .panel-title a {
+        display: block;
+    }
+    .quick-search-wrapper {
+        margin-bottom: 1em;
+    }
+    .endonym { font-style: italic; color:#888;}
+</style>
+<script>window.jQuery || document.write('<script src="https://www.grupopuma.com/assets/public/js/vendor/jquery-1.11.1.min.js"><\/script>')</script>
+<script src="https://www.grupopuma.com/assets/public/js/vendor/bootstrap.min.js"></script>
+<script type="text/javascript">    
+$(".quick-search").keyup(function () {
+    var filter = $(this).val(), count = 0;
+    $(".country-item", $(this).closest('.panel-body')).each(function () {
+        if ($(this).text().search(new RegExp(filter, "i")) < 0) {
+            $(this).hide();
+        } else {
+            $(this).show();
+            count++;
+        }
+    });    
+});
+$('.collapse').collapse()
+</script>
+</body>
+</html>

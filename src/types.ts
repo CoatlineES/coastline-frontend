@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export type ScreenId = 'home' | 'detection' | 'cases' | 'contact';
+export type ScreenId = 'home' | 'detection' | 'cases' | 'contact' | 'login' | 'legal' | 'privacy' | 'cookies';
 
 export interface LeakIntervention {
   id: string;
