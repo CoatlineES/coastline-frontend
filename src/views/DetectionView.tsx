@@ -14,7 +14,8 @@ import {
   AlertCircle,
   ShieldCheck,
   ArrowRight,
-  X
+  X,
+  ChevronsLeftRight
 } from 'lucide-react';
 import { ScreenId } from '../types';
 import CssDetectorCart from '../components/animations/CssDetectorCart';
@@ -26,6 +27,172 @@ interface DetectionViewProps {
 
 export default function DetectionView({ onNavigate }: DetectionViewProps) {
   const [selectedCard, setSelectedCard] = useState<any>(null);
+
+  const CaseViewer = ({ c, onClose, onNext, onPrev }: { c: any, onClose: () => void, onNext: () => void, onPrev: () => void }) => {
+    const [sliderPos, setSliderPos] = useState(50);
+    const [isDragging, setIsDragging] = useState(false);
+    
+    const handleMove = (clientX: number, rect: DOMRect) => {
+      const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
+      const percent = Math.max(0, Math.min((x / rect.width) * 100, 100));
+      setSliderPos(percent);
+    };
+
+    const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+      if (!isDragging) return;
+      handleMove(e.clientX, e.currentTarget.getBoundingClientRect());
+    };
+
+    const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+      setIsDragging(true);
+      handleMove(e.clientX, e.currentTarget.getBoundingClientRect());
+      (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    };
+
+    const onPointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+      setIsDragging(false);
+      (e.target as HTMLElement).releasePointerCapture(e.pointerId);
+    };
+
+    return (
+      <div className="w-full flex flex-col">
+        {/* Navigation Bar */}
+        <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
+          <button 
+            onClick={onClose}
+            className="flex items-center gap-2 text-blue-200 hover:text-white transition-colors font-sans text-sm uppercase tracking-widest font-bold"
+          >
+            <ArrowRight className="rotate-180" size={16} /> Volver a Casos
+          </button>
+          
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={onPrev}
+              className="p-2 bg-white/5 hover:bg-white/10 rounded-full text-white transition-colors border border-white/10"
+              title="Caso Anterior"
+            >
+              <ArrowRight className="rotate-180" size={16} />
+            </button>
+            <button 
+              onClick={onNext}
+              className="p-2 bg-white/5 hover:bg-white/10 rounded-full text-white transition-colors border border-white/10"
+              title="Caso Siguiente"
+            >
+              <ArrowRight size={16} />
+            </button>
+          </div>
+        </div>
+
+        <AnimatePresence mode="wait">
+          <motion.div 
+            key={c.id}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="w-full bg-white rounded-2xl overflow-hidden shadow-2xl flex flex-col lg:flex-row h-auto lg:h-[75vh] lg:max-h-[800px] lg:min-h-[500px]"
+          >
+            {/* Slider Section */}
+            <div className="w-full lg:w-3/5 h-[40vh] lg:h-full relative bg-slate-900 select-none touch-none">
+              <div 
+                className="relative w-full h-full cursor-ew-resize overflow-hidden flex items-center justify-center"
+                onPointerDown={onPointerDown}
+                onPointerMove={onPointerMove}
+                onPointerUp={onPointerUp}
+                onPointerCancel={onPointerUp}
+              >
+                {/* Image 2 (After / Fugas) - Background */}
+                <img 
+                  src={c.after.img} 
+                  alt="Fugas detectadas" 
+                  className="absolute inset-0 w-full h-full object-contain pointer-events-none"
+                />
+                
+                {/* Image 1 (Before / Área) - Clipped */}
+                <img 
+                  src={c.before.img} 
+                  alt="Área inspeccionada" 
+                  className="absolute inset-0 w-full h-full object-contain pointer-events-none"
+                  style={{ clipPath: `inset(0 ${100 - sliderPos}% 0 0)` }}
+                />
+
+                {/* Slider Handle */}
+                <div 
+                  className="absolute inset-y-0 flex items-center justify-center"
+                  style={{ left: `${sliderPos}%`, marginLeft: '-1px' }}
+                >
+                  <div className="w-[3px] h-full bg-white shadow-[0_0_10px_rgba(0,0,0,0.5)]" />
+                  <div className="absolute w-12 h-12 bg-white rounded-full shadow-2xl flex items-center justify-center border-2 border-primary/20 text-primary pointer-events-none group-hover:scale-110 transition-transform">
+                    <ChevronsLeftRight size={24} />
+                  </div>
+                </div>
+                
+                {/* Labels overlay */}
+                <div className="absolute top-4 left-4 lg:top-6 lg:left-6 pointer-events-none">
+                  <div className="px-3 py-1.5 lg:px-4 lg:py-2 bg-black/60 backdrop-blur text-white text-xs lg:text-sm font-bold rounded shadow-lg uppercase tracking-widest">
+                    Espacio a Supervisar
+                  </div>
+                </div>
+                <div className="absolute top-4 right-4 lg:top-6 lg:right-6 pointer-events-none">
+                  <div className="px-3 py-1.5 lg:px-4 lg:py-2 bg-secondary/90 backdrop-blur text-white text-xs lg:text-sm font-bold rounded shadow-lg uppercase tracking-widest flex items-center gap-2">
+                    <Zap size={12} className="fill-white lg:w-[14px] lg:h-[14px]" />
+                    Filtraciones
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Info Section */}
+            <div className="w-full lg:w-2/5 p-6 lg:p-10 flex flex-col bg-slate-50 text-slate-900 overflow-y-auto">
+              <div className="mb-8 flex flex-col">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 border border-blue-100 rounded text-primary mb-4 w-max shadow-sm">
+                  <Radar size={12} className="text-secondary" />
+                  <span className="font-sans font-bold text-[9px] uppercase tracking-wider">Caso de Estudio</span>
+                </div>
+                <h3 className="font-display font-bold text-3xl lg:text-4xl mb-3 text-slate-800 leading-tight">
+                  {c.system}
+                </h3>
+                <p className="font-sans text-sm md:text-base font-medium text-slate-600 border-l-4 border-slate-300 pl-4 mt-2 leading-relaxed">
+                  {c.systemDesc}
+                </p>
+              </div>
+              
+              <div className="space-y-6 flex-grow">
+                {/* Before Details */}
+                <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm transition-all hover:shadow-md">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-2.5 h-2.5 rounded-full bg-primary" />
+                    <h4 className="font-display font-bold text-xl text-primary">{c.before.title}</h4>
+                  </div>
+                  <p className="font-sans text-xs uppercase tracking-wider font-bold text-slate-500 mb-3">
+                    {c.before.subtitle}
+                  </p>
+                  <p className="font-sans text-sm md:text-base text-slate-600 leading-relaxed">
+                    {c.before.desc}
+                  </p>
+                </div>
+
+                {/* After Details */}
+                <div className="bg-white p-6 rounded-xl border border-secondary/20 shadow-md relative overflow-hidden transition-all hover:shadow-lg">
+                  <div className="absolute top-0 left-0 w-1.5 h-full bg-secondary" />
+                  <div className="flex items-center gap-2 mb-3">
+                    <Zap size={20} className="text-secondary fill-secondary/20" />
+                    <h4 className="font-display font-bold text-xl text-secondary">{c.after.title}</h4>
+                  </div>
+                  <p className="font-sans text-xs uppercase tracking-wider font-bold text-red-600 mb-3">
+                    {c.after.subtitle}
+                  </p>
+                  <p className="font-sans text-sm md:text-base text-slate-700 leading-relaxed font-medium">
+                    {c.after.desc}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+    );
+  };
 
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -60,77 +227,74 @@ export default function DetectionView({ onNavigate }: DetectionViewProps) {
   const evadeRotateZ = useSpring(useTransform(mouseX, [-300, 300], [-10, 10]), springConfig);
   const evadeRotateX = useSpring(useTransform(mouseY, [-300, 300], [-10, 10]), springConfig);
 
-  const cards = [
-    // PAR 1: CUBIERTA CON GRAVA
+  const cases = [
     {
-      img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBpJ4wDqvwX3eBAtMFUAc-5c6rIfSTPLHA5N_0PIKC1JwtF-Y_Uwiv_kw2bpKwcNO3lPSq5A2otIX9yi2PQCBgSU7o8Q9_rGYAon10HMRphVa4tdLpXDuNJal92BWP-znyeE7dQ97Nw2Ng-4XYPJs3gM_0zPM8NONMWREgryZOOXVrXYIZ2H_T_nujsge52ijOMlBjvEq0m61Vq5A2kBl0reXc9cFeCS44uG-8zWYmPgT6BjyNfmfGTLyFRNdIEkvCICm3c0bmA_Z2a',
-      title: 'Área inspeccionada',
-      subtitle: 'Delimitación en verde',
-      desc: 'Sistema: cubierta protegida con grava, doble capa de XPS y membrana de PVC.',
-      status: 'verified',
-      extendedDesc: 'Inspección certificada con delimitación en verde. El escáner dieléctrico verificó el 100% de la superficie sin detectar anomalías. La membrana de PVC subyacente se encuentra en perfecto estado de estanqueidad bajo la doble capa de XPS y la protección de grava pesada.'
+      id: 'case-1',
+      system: 'Cubierta con grava',
+      systemDesc: 'Sistema: cubierta protegida con grava, doble capa de XPS y membrana de PVC.',
+      before: {
+        img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBpJ4wDqvwX3eBAtMFUAc-5c6rIfSTPLHA5N_0PIKC1JwtF-Y_Uwiv_kw2bpKwcNO3lPSq5A2otIX9yi2PQCBgSU7o8Q9_rGYAon10HMRphVa4tdLpXDuNJal92BWP-znyeE7dQ97Nw2Ng-4XYPJs3gM_0zPM8NONMWREgryZOOXVrXYIZ2H_T_nujsge52ijOMlBjvEq0m61Vq5A2kBl0reXc9cFeCS44uG-8zWYmPgT6BjyNfmfGTLyFRNdIEkvCICm3c0bmA_Z2a',
+        title: 'Espacio a Supervisar',
+        subtitle: 'Delimitación en verde',
+        desc: 'Inspección certificada con delimitación en verde. El escáner dieléctrico mapeó el 100% de la superficie sin detectar anomalías preliminares. La membrana de PVC subyacente requiere análisis bajo la doble capa de XPS y la protección de grava pesada.'
+      },
+      after: {
+        img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAg98vAOTFz0TBPaa945PYFp-2YEr7SYgypJz_aznLKyfRi5B0Ra5Ee00O4zz9b1XsmjEZMzACSUrYvzNNMetkwSb7j3J3nqFdZ_rUWdBpxpku5V1m8I004Tx7cdppgb_uAlGPvsRetPrY03sS6l8mCd3n7lV4PAc5kOsodRZ8pmDE13VjD4Lfb_j5e67jtQ580z9BEGzkOpq4mjs_UDyr88KFmbEWJngqT8K-9GRcKFR13Zv_jcyRYA6-ayBa6Zz7Ik8GSno3si5vO',
+        title: 'Filtraciones Encontradas',
+        subtitle: 'Clasificación COAT-DDP. Discontinuidades en membrana.',
+        desc: 'Se localizaron discontinuidades milimétricas bajo Clasificación COAT-DDP. El rastreo de inducción permitió marcar exactamente el punto de falla en la membrana de PVC, evitando la retirada masiva de la cubierta de grava para su reparación y garantizando un ahorro masivo en costes estructurales.'
+      }
     },
     {
-      img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAg98vAOTFz0TBPaa945PYFp-2YEr7SYgypJz_aznLKyfRi5B0Ra5Ee00O4zz9b1XsmjEZMzACSUrYvzNNMetkwSb7j3J3nqFdZ_rUWdBpxpku5V1m8I004Tx7cdppgb_uAlGPvsRetPrY03sS6l8mCd3n7lV4PAc5kOsodRZ8pmDE13VjD4Lfb_j5e67jtQ580z9BEGzkOpq4mjs_UDyr88KFmbEWJngqT8K-9GRcKFR13Zv_jcyRYA6-ayBa6Zz7Ik8GSno3si5vO',
-      title: 'Fugas detectadas',
-      subtitle: 'Clasificación COAT-DDP. Discontinuidades en membrana.',
-      desc: 'Sistema: cubierta protegida con grava, doble capa de XPS y membrana de PVC.',
-      status: 'error',
-      extendedDesc: 'Se localizaron discontinuidades milimétricas bajo Clasificación COAT-DDP. El rastreo de inducción permitió marcar exactamente el punto de falla en la membrana de PVC, evitando la retirada masiva de la cubierta de grava para su reparación.'
-    },
-    
-    // PAR 2: BALDOSA SOBRE MORTERO
-    {
-      img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCuRumt8LX_MmOPq9XESv8VyTWuGQUjYt5bMPT3gng98CzrScvmqOU0AD92_HE3GdeSalBtb5RWLzRcuxg1fPwcPyrCn9PFMMY2jOItJUFa92Lczlmu8lj_kap3KY7-LuSqnGgFpaKo3jywrDxm6nuuMAz6n6KROd0jmQDnTYWpMpckS4k0A_Oqv9T4ZdNDKc6x4csdqVhFZTxSmEFmcThzmnb5fTfz1l_P0XLsZDzdf_7j--9Zni7_9vAt79WQrdWSLTm9CUwI2B7-',
-      title: 'Área inspeccionada',
-      subtitle: 'Delimitación en verde',
-      desc: 'Sistema: protección de pavimento de baldosa sobre recrecido de mortero, geotextil y membrana de tela asfáltica.',
-      status: 'verified',
-      extendedDesc: 'La delimitación en verde confirma el estado óptimo de toda la superficie analizada. La membrana de tela asfáltica se mantiene completamente estanca por debajo de las capas de geotextil, el mortero de agarre y el pavimento de baldosa exterior.'
-    },
-    {
-      img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBzRdlf6f-RaYu5cPJlj9fleKVCmIjL--UF13Jk4G-aRixadhw4Hh1JTUWqMY4iDgaoVWNYzjHO9qki5qiLpSzM_-CqMYUuGJPAHlM_Fh9Yzr25BuY794q-Pv0qS7TooOAUC4wJjXPtWrRe4Nn0aBzHoDcEzeWvKbgnrRJFmrL_SL9HuLHNTM9383XftQqzcFGM6BlrLo9A_JF1IhbGaj4LTfuYuI3AEk2WJVRMBUS0wbb6DB0QAn660k-MN1r57SmWUOjy0s-pa3Jk',
-      title: 'Fugas detectadas',
-      subtitle: 'Clasificación COAT-DDP. Discontinuidades en membrana.',
-      desc: 'Sistema: protección de pavimento de baldosa sobre recrecido de mortero, geotextil y membrana de tela asfáltica.',
-      status: 'error',
-      extendedDesc: 'Bajo clasificación COAT-DDP, se detectaron discontinuidades y pérdida de estanqueidad en la tela asfáltica debajo del recrecido de mortero. El diagnóstico preciso permitió una intervención quirúrgica directa sobre la baldosa afectada, ahorrando grandes demoliciones.'
-    },
-
-    // PAR 3: BALDOSA SOBRE GEOTEXTIL
-    {
-      img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDoRTjZfxsy9MADBtVn0tfLMTmsZt6NQKwIsQt7qSIlB4DyDZe2g1h4ya5IHxM9paCNMJ0sHTaIe-Sblzr8xA5t93K_dRQ75VJ8GjpJnga44mAvQBWoc4QD7_QLh6lCYhamovQEoIpGxDSZ9AMyoCsejnWlR6dCsmGV04mT4oJVCqbEQ6Fj36Gpm1UdZenTq-vJ-jZHLa8oj3MJpv9sRRsI7sL0hDjZnkaNIAivXaSdyrfUndr5rw9eJ7i60Z-IQ44RSkqCsPDBj-yB',
-      title: 'Área inspeccionada',
-      subtitle: 'Delimitación en verde',
-      desc: 'Sistema: protección de pavimento de baldosa sobre geotextil y membrana de tela asfáltica.',
-      status: 'verified',
-      extendedDesc: 'Barrido electrónico completado con delimitación en verde exitosa. El sistema de impermeabilización asfáltico, situado inmediatamente debajo del geotextil y el pavimento directo, se encuentra sin fallos de continuidad en toda su extensión.'
+      id: 'case-2',
+      system: 'Baldosa sobre mortero',
+      systemDesc: 'Sistema: protección de pavimento de baldosa sobre recrecido de mortero, geotextil y membrana de tela asfáltica.',
+      before: {
+        img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCuRumt8LX_MmOPq9XESv8VyTWuGQUjYt5bMPT3gng98CzrScvmqOU0AD92_HE3GdeSalBtb5RWLzRcuxg1fPwcPyrCn9PFMMY2jOItJUFa92Lczlmu8lj_kap3KY7-LuSqnGgFpaKo3jywrDxm6nuuMAz6n6KROd0jmQDnTYWpMpckS4k0A_Oqv9T4ZdNDKc6x4csdqVhFZTxSmEFmcThzmnb5fTfz1l_P0XLsZDzdf_7j--9Zni7_9vAt79WQrdWSLTm9CUwI2B7-',
+        title: 'Espacio a Supervisar',
+        subtitle: 'Delimitación en verde',
+        desc: 'La delimitación en verde establece el perímetro de la superficie analizada. La membrana de tela asfáltica se evalúa por debajo de las capas de geotextil, el mortero de agarre y el pavimento de baldosa exterior.'
+      },
+      after: {
+        img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBzRdlf6f-RaYu5cPJlj9fleKVCmIjL--UF13Jk4G-aRixadhw4Hh1JTUWqMY4iDgaoVWNYzjHO9qki5qiLpSzM_-CqMYUuGJPAHlM_Fh9Yzr25BuY794q-Pv0qS7TooOAUC4wJjXPtWrRe4Nn0aBzHoDcEzeWvKbgnrRJFmrL_SL9HuLHNTM9383XftQqzcFGM6BlrLo9A_JF1IhbGaj4LTfuYuI3AEk2WJVRMBUS0wbb6DB0QAn660k-MN1r57SmWUOjy0s-pa3Jk',
+        title: 'Filtraciones Encontradas',
+        subtitle: 'Clasificación COAT-DDP. Discontinuidades en membrana.',
+        desc: 'Bajo clasificación COAT-DDP, se detectaron discontinuidades y pérdida de estanqueidad en la tela asfáltica oculta bajo el recrecido de mortero. El diagnóstico preciso permitió una intervención quirúrgica directa sobre la baldosa afectada, ahorrando grandes y costosas demoliciones.'
+      }
     },
     {
-      img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA6gsPaTM3XJBKauIBgTGAhW93OxtkWnHZ0eNlAIHgErL5LCmblIcxenxTT5eahr_OTGYRTIqpPZ1EEYVPKjhm1MVVHVqW5E0dumdb01SMMLWGykaP9QFYIzeS2skr6597HKvYfWubG4AKGsRtJxxlRNJWdEXMlxFErB-yk6zq0DHQgvtzrlrAFZu66p2nyqLzjGMti3v4gqcR2PxVaV0mlQm0I5LUdx8ZFoWFTF2RLjPo-6HJoXoPJ89arnbXYGVXg4cP1jS7DapoI',
-      title: 'Fugas detectadas',
-      subtitle: 'Clasificación COAT-DDP. Discontinuidades en membrana.',
-      desc: 'Sistema: protección de pavimento de baldosa sobre geotextil y membrana de tela asfáltica.',
-      status: 'error',
-      extendedDesc: 'El informe COAT-DDP reveló discontinuidades críticas en los solapes de la tela asfáltica oculta bajo el geotextil. Gracias a la detección dieléctrica, la fuga fue mapeada en la superficie de la baldosa, posibilitando reparaciones localizadas y de bajo coste.'
+      id: 'case-3',
+      system: 'Baldosa sobre geotextil',
+      systemDesc: 'Sistema: protección de pavimento de baldosa sobre geotextil y membrana de tela asfáltica.',
+      before: {
+        img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDoRTjZfxsy9MADBtVn0tfLMTmsZt6NQKwIsQt7qSIlB4DyDZe2g1h4ya5IHxM9paCNMJ0sHTaIe-Sblzr8xA5t93K_dRQ75VJ8GjpJnga44mAvQBWoc4QD7_QLh6lCYhamovQEoIpGxDSZ9AMyoCsejnWlR6dCsmGV04mT4oJVCqbEQ6Fj36Gpm1UdZenTq-vJ-jZHLa8oj3MJpv9sRRsI7sL0hDjZnkaNIAivXaSdyrfUndr5rw9eJ7i60Z-IQ44RSkqCsPDBj-yB',
+        title: 'Espacio a Supervisar',
+        subtitle: 'Delimitación en verde',
+        desc: 'Barrido electrónico completado con delimitación en verde de la zona de estudio. Se procede a evaluar el sistema de impermeabilización asfáltico situado inmediatamente debajo del geotextil y el pavimento.'
+      },
+      after: {
+        img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA6gsPaTM3XJBKauIBgTGAhW93OxtkWnHZ0eNlAIHgErL5LCmblIcxenxTT5eahr_OTGYRTIqpPZ1EEYVPKjhm1MVVHVqW5E0dumdb01SMMLWGykaP9QFYIzeS2skr6597HKvYfWubG4AKGsRtJxxlRNJWdEXMlxFErB-yk6zq0DHQgvtzrlrAFZu66p2nyqLzjGMti3v4gqcR2PxVaV0mlQm0I5LUdx8ZFoWFTF2RLjPo-6HJoXoPJ89arnbXYGVXg4cP1jS7DapoI',
+        title: 'Filtraciones Encontradas',
+        subtitle: 'Clasificación COAT-DDP. Discontinuidades en membrana.',
+        desc: 'El informe COAT-DDP reveló discontinuidades críticas en los solapes de la tela asfáltica oculta bajo el geotextil. Gracias a la detección dieléctrica, la fuga fue mapeada en la superficie de la baldosa, posibilitando reparaciones ultra localizadas y de bajísimo coste comparado a una sustitución total.'
+      }
     },
-
-    // PAR 4: CAPA VEGETAL
     {
-      img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBFj649NQ6BiOF_qAeUp3lvmwYR5QLkfk4nfunFI2DVLsLnFPVehgBdCOoRVdojizQtggDtfvLHCziMgPN72iVC0GH7qfpOmxHV9Sjb7x7uAWDhARPT7RYceiZU8qBUvSSMfz3mnh8D5z12P4lJB6T1mJLOVqheOyLOWsYgELhjWaRyycyep4Yq0J_gVtcrpL_b_tBy-2mL5OeQoxYR6jlCpac-3yzVe7JNCeAOxjYTIkvoWwKcMN8Fl20JrFIg9ZjskztPSBERIkPQ',
-      title: 'Área inspeccionada',
-      subtitle: 'Delimitación en verde',
-      desc: 'Sistema: protección de pavimento de capa vegetal en ajardinamiento, geotextil y membrana de PVC.',
-      status: 'verified',
-      extendedDesc: 'Certificación de área verde. El flujo electromagnético penetró el espesor de la capa vegetal del ajardinamiento confirmando la ausencia total de capilaridades, perforaciones por raíces o rupturas en la membrana de PVC que sella la estructura.'
-    },
-    {
-      img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAMCZxZNgJDfBCEO9lqsiwwiFQb9Ntzd0taJfnXxZZ1nfos-bIM5fMhZrhrfNb_HflvGsl0n-i3OqKU1FIeCnQrDCR5NUZKTpOFU1gQytRswbO1G-hlrEDhwGnGXESwxOVc7MFRyEQ8LHr9CuJS1RPWm6rsSpXn_hU-t3Htb05C45aqYkGrFF6uPQMql41cvDGhwc3zLPrpYLs5TOT50PdpHXWuHp5Arq5dzcqNDlnwoHEp8t8fA3AadQCFcTVLfMIm_QwoSef2-QeJ',
-      title: 'Fugas detectadas',
-      subtitle: 'Clasificación COAT-DDP. Discontinuidades en membrana.',
-      desc: 'Sistema: protección de pavimento de capa vegetal en ajardinamiento, geotextil y membrana de PVC.',
-      status: 'error',
-      extendedDesc: 'Identificación positiva (COAT-DDP) de discontinuidades en la membrana de PVC, ocasionadas posiblemente por estrés radicular o tensiones del sustrato. La fuga fue triangulada con éxito sin necesidad de levantar o destruir la totalidad del paisajismo ajardinado.'
+      id: 'case-4',
+      system: 'Capa vegetal',
+      systemDesc: 'Sistema: protección de pavimento de capa vegetal en ajardinamiento, geotextil y membrana de PVC.',
+      before: {
+        img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBFj649NQ6BiOF_qAeUp3lvmwYR5QLkfk4nfunFI2DVLsLnFPVehgBdCOoRVdojizQtggDtfvLHCziMgPN72iVC0GH7qfpOmxHV9Sjb7x7uAWDhARPT7RYceiZU8qBUvSSMfz3mnh8D5z12P4lJB6T1mJLOVqheOyLOWsYgELhjWaRyycyep4Yq0J_gVtcrpL_b_tBy-2mL5OeQoxYR6jlCpac-3yzVe7JNCeAOxjYTIkvoWwKcMN8Fl20JrFIg9ZjskztPSBERIkPQ',
+        title: 'Espacio a Supervisar',
+        subtitle: 'Delimitación en verde',
+        desc: 'Preparación de área verde. El flujo electromagnético penetrará el espesor de la capa vegetal del ajardinamiento para evaluar capilaridades, perforaciones por raíces o rupturas invisibles desde la superficie en la membrana de PVC.'
+      },
+      after: {
+        img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAMCZxZNgJDfBCEO9lqsiwwiFQb9Ntzd0taJfnXxZZ1nfos-bIM5fMhZrhrfNb_HflvGsl0n-i3OqKU1FIeCnQrDCR5NUZKTpOFU1gQytRswbO1G-hlrEDhwGnGXESwxOVc7MFRyEQ8LHr9CuJS1RPWm6rsSpXn_hU-t3Htb05C45aqYkGrFF6uPQMql41cvDGhwc3zLPrpYLs5TOT50PdpHXWuHp5Arq5dzcqNDlnwoHEp8t8fA3AadQCFcTVLfMIm_QwoSef2-QeJ',
+        title: 'Filtraciones Encontradas',
+        subtitle: 'Clasificación COAT-DDP. Discontinuidades en membrana.',
+        desc: 'Identificación positiva (COAT-DDP) de discontinuidades en la membrana de PVC, ocasionadas por estrés radicular. La filtración fue triangulada con éxito milimétrico sin necesidad de levantar o destruir la totalidad del costoso paisajismo ajardinado.'
+      }
     }
   ];
 
@@ -532,147 +696,89 @@ export default function DetectionView({ onNavigate }: DetectionViewProps) {
           
           <div className="relative z-10 max-w-7xl mx-auto">
             <div className="text-center mb-16 max-w-3xl mx-auto">
-              <h2 className="font-display font-bold text-3xl md:text-4xl text-pure-white mb-6">
+              <span className="inline-flex items-center justify-center gap-2 px-3 py-1 bg-secondary/20 border border-secondary/30 rounded-full font-sans font-bold text-[10px] text-blue-100 uppercase tracking-widest mb-6">
+                <Target size={12} className="text-secondary" /> Demostración de Detección
+              </span>
+              <h2 className="font-display font-bold text-4xl md:text-5xl text-white mb-6 tracking-tight">
                 Intervenciones Reales en Obra
               </h2>
-              <p className="font-sans text-base text-blue-100 leading-relaxed">
-                Resultados tangibles en el terreno. Nuestra tecnología garantiza una fiabilidad absoluta, permitiendo inspeccionar hasta 2000 m²/día con precisión milimétrica y sin ningún consumo de agua.
+              <p className="font-sans text-lg md:text-xl text-blue-100/90 leading-relaxed max-w-2xl mx-auto font-light">
+                Resultados tangibles en el terreno. Descubra cómo nuestra tecnología de <strong className="text-white font-bold">precisión quirúrgica</strong> evita demoliciones masivas, permitiendo inspeccionar hasta 2000 m²/día sin recurrir a costosas pruebas de inundación.
               </p>
             </div>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {cards.map((card, idx) => (
-                <div 
-                  key={idx} 
-                  onClick={() => setSelectedCard(card)}
-                  className="bg-white rounded-xl overflow-hidden flex flex-col hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer group"
+            <AnimatePresence mode="wait">
+              {!selectedCard ? (
+                <motion.div 
+                  key="grid"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.3 }}
+                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
                 >
-                  <div className="aspect-video overflow-hidden relative">
-                    <img 
-                      alt="Área inspeccionada" 
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
-                      src={card.img} 
-                    />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                      <div className="bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 text-primary text-xs font-bold flex items-center gap-2">
-                        Ver Detalles <ArrowRight size={14} />
+                  {cases.map((c) => (
+                    <div 
+                      key={c.id} 
+                      onClick={() => setSelectedCard(c)}
+                      className="bg-white rounded-xl overflow-hidden flex flex-col hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 cursor-pointer group border border-transparent hover:border-blue-100"
+                    >
+                      <div className="aspect-video overflow-hidden relative">
+                        <img 
+                          alt={c.system} 
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" 
+                          src={c.before.img} 
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="bg-white/95 backdrop-blur-md px-5 py-2.5 rounded-full transform translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 text-primary text-xs font-bold flex items-center gap-2 shadow-xl border border-primary/10">
+                            Ver Filtraciones <ArrowRight size={14} className="text-secondary" />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="p-6 flex flex-col flex-grow text-left relative">
+                        <div className="absolute -top-4 right-6 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center border border-slate-100 group-hover:scale-110 transition-transform">
+                          <Eye size={14} className="text-secondary" />
+                        </div>
+                        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-50 rounded text-primary mb-3 w-max">
+                           <Radar size={10} className="text-secondary" />
+                           <span className="font-sans font-bold text-[8px] uppercase tracking-wider">Caso de Estudio</span>
+                        </div>
+                        <h3 className="font-display font-bold text-lg mb-2 text-slate-800 leading-tight">
+                          {c.system}
+                        </h3>
+                        <p className="font-sans text-xs md:text-sm text-slate-500 flex-grow leading-relaxed line-clamp-3">
+                          {c.systemDesc}
+                        </p>
                       </div>
                     </div>
-                  </div>
-                  <div className="p-6 flex flex-col flex-grow text-left">
-                    <h3 className={`font-display font-bold text-lg mb-1 ${card.status === 'verified' ? 'text-primary' : 'text-secondary'}`}>
-                      {card.title}
-                    </h3>
-                    <p className={`font-sans text-[10px] uppercase tracking-wider font-bold mb-3 ${card.status === 'verified' ? 'text-green-600' : 'text-red-600'}`}>
-                      {card.subtitle}
-                    </p>
-                    <p className="font-sans text-xs md:text-sm text-slate-600 mb-6 flex-grow leading-relaxed">
-                      {card.desc}
-                    </p>
-                    <div className="mt-auto pt-4 border-t border-slate-100">
-                      {card.status === 'verified' ? (
-                        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-50 rounded text-green-700">
-                          <CheckCircle size={14} className="fill-green-100" />
-                          <span className="font-sans font-bold text-[9px] uppercase tracking-wider mt-0.5">INSPECCIÓN VERIFICADA</span>
-                        </div>
-                      ) : (
-                        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-50 rounded text-secondary">
-                          <AlertCircle size={14} className="fill-red-100" />
-                          <span className="font-sans font-bold text-[9px] uppercase tracking-wider mt-0.5">FUGAS DETECTADAS</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+                  ))}
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="viewer"
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  <CaseViewer 
+                    c={selectedCard} 
+                    onClose={() => setSelectedCard(null)} 
+                    onNext={() => {
+                      const currentIndex = cases.findIndex(c => c.id === selectedCard.id);
+                      setSelectedCard(cases[(currentIndex + 1) % cases.length]);
+                    }}
+                    onPrev={() => {
+                      const currentIndex = cases.findIndex(c => c.id === selectedCard.id);
+                      setSelectedCard(cases[(currentIndex - 1 + cases.length) % cases.length]);
+                    }}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
           </motion.div>
-
-          {/* Detailed Modal Component */}
-          <AnimatePresence>
-            {selectedCard && (
-              <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-12 text-slate-900">
-                <motion.div 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-                  onClick={() => setSelectedCard(null)}
-                />
-                
-                <motion.div 
-                  initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                  className="relative w-full max-w-3xl bg-white rounded-2xl overflow-hidden shadow-2xl flex flex-col md:flex-row max-h-[90vh]"
-                >
-                  <button 
-                    onClick={() => setSelectedCard(null)}
-                    className="absolute top-4 right-4 z-10 p-2 bg-black/20 hover:bg-black/40 text-white rounded-full transition-colors backdrop-blur-md"
-                  >
-                    <X size={20} />
-                  </button>
-
-                  <div className="w-full md:w-2/5 h-64 md:h-auto relative">
-                    <img 
-                      src={selectedCard.img} 
-                      alt="Intervención detallada" 
-                      className="absolute inset-0 w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent md:bg-gradient-to-r" />
-                    
-                    <div className="absolute bottom-4 left-4 md:bottom-6 md:left-6">
-                      {selectedCard.status === 'verified' ? (
-                        <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-green-500/90 backdrop-blur rounded text-white shadow-lg">
-                          <CheckCircle size={16} />
-                          <span className="font-sans font-bold text-[10px] uppercase tracking-wider">VERIFICADA</span>
-                        </div>
-                      ) : (
-                        <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-secondary/90 backdrop-blur rounded text-white shadow-lg">
-                          <AlertCircle size={16} />
-                          <span className="font-sans font-bold text-[10px] uppercase tracking-wider">DETECTADA</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="w-full md:w-3/5 p-6 md:p-10 flex flex-col bg-slate-50 overflow-y-auto">
-                    <div className="mb-2 flex flex-col">
-                      <h3 className={`font-display font-bold text-2xl mb-1 ${selectedCard.status === 'verified' ? 'text-primary' : 'text-secondary'}`}>
-                        {selectedCard.title}
-                      </h3>
-                      <p className={`font-sans text-xs uppercase tracking-wider font-bold ${selectedCard.status === 'verified' ? 'text-green-600' : 'text-red-600'}`}>
-                        {selectedCard.subtitle}
-                      </p>
-                    </div>
-                    
-                    <div className="mt-4 mb-6 p-4 bg-white rounded-lg border border-slate-200 shadow-sm border-l-4" style={{ borderLeftColor: selectedCard.status === 'verified' ? '#22c55e' : '#ef4444' }}>
-                      <p className="font-sans text-sm font-medium text-slate-700">
-                        {selectedCard.desc}
-                      </p>
-                    </div>
-
-                    <div className="prose prose-slate prose-sm max-w-none">
-                      <p className="font-sans text-slate-600 leading-relaxed text-[15px]">
-                        {selectedCard.extendedDesc}
-                      </p>
-                    </div>
-
-                    <div className="mt-8 pt-6 border-t border-slate-200 flex justify-end">
-                      <button 
-                        onClick={() => setSelectedCard(null)}
-                        className="px-6 py-2.5 bg-primary text-white font-sans font-bold text-xs uppercase tracking-wider rounded hover:bg-[#001c3a] transition-colors"
-                      >
-                        Cerrar Detalles
-                      </button>
-                    </div>
-                  </div>
-                </motion.div>
-              </div>
-            )}
-          </AnimatePresence>
-
         </section>
 
         {/* Final CTA Section */}

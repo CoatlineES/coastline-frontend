@@ -1,0 +1,808 @@
+Created At: 2026-07-27T06:38:11Z
+Completed At: 2026-07-27T06:38:13Z
+File Path: `file:///c:/Users/whilmis/Documents/GitHub/coastline-/src/views/employee/projects/tabs/GanttGrid.tsx`
+Total Lines: 809
+Total Bytes: 38213
+Showing lines 1 to 800
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: import React, { useMemo, useState, useEffect, useRef } from 'react';
+2: import { ProjectPlan, ProjectTask, projectPlanningService } from '../../../../services/project-planning.service';
+3: import { CheckCircle2, AlertTriangle, HardHat, Tractor, Package } from 'lucide-react';
+4: import { HolidayCalendar } from '../../../../services/holiday-calendars.service';
+5: import { WorkerAssignmentModal } from './WorkerAssignmentModal';
+6: import { ResourceAssignmentModal } from './ResourceAssignmentModal';
+7: import { Project } from '../../../../services/types';
+8: 
+9: export interface GanttGridProps {
+10:   plan: ProjectPlan;
+11:   project?: Project;
+12:   expandedNodes: Set<string>;
+13:   onUpdate: () => void;
+14:   viewMode: 'days' | 'hours';
+15:   baseDate: Date;
+16:   calendars?: HolidayCalendar[];
+17:   selectedCalendarId?: string;
+18:   scrollRef?: React.RefObject<HTMLDivElement>;
+19:   onScroll?: (e: React.UIEvent<HTMLDivElement>) => void;
+20:   showBaseline?: boolean;
+21:   assignmentViewMode?: 'MANO_OBRA' | 'MAQUINARIA' | 'MATERIALES';
+22:   plansMap?: Map<string, ProjectPlan>;
+23: }
+24: 
+25: export function GanttGrid({ plan, project, expandedNodes, onUpdate, viewMode, baseDate, showBaseline, assignmentViewMode = 'MANO_OBRA', calendars, selectedCalendarId, scrollRef, onScroll, plansMap }: GanttGridProps) {
+26:   const [selectedTaskComponent, setSelectedTaskComponent] = useState<{taskId: string, component: any} | null>(null);
+27: 
+28:   // Update selected component when plan changes so modal gets fresh data
+29:   useEffect(() => {
+30:     if (selectedTaskComponent) {
+31:       let foundTask: any = null;
+32:       const searchTask = (tasks: any[]) => {
+33:         for (const t of tasks) {
+34:           if (t.id === selectedTaskComponent.taskId) {
+35:             foundTask = t;
+36:             return;
+37:           }
+38:           if (t.children) searchTask(t.children);
+39:         }
+40:       };
+41:       if (plan.tasks) searchTask(plan.tasks);
+42: 
+43:       const comp = foundTask?.components?.find((c: any) => c.id === selectedTaskComponent.component.id);
+44:       if (comp) {
+45:         setSelectedTaskComponent({ taskId: foundTask.id, component: comp });
+46:       } else {
+47:         setSelectedTaskComponent(null);
+48:       }
+49:     }
+50:   }, [plan]);
+51: 
+52:   // Scroll to the selected baseDate when it changes
+53:   useEffect(() => {
+54:     if (scrollRef && scrollRef.current) {
+55:       // Small timeout ensures the DOM has updated the columns if month changed
+56:       setTimeout(() => {
+57:         if (!scrollRef.current) return;
+58:         if (viewMode === 'days') {
+59:           const offsetDays = baseDate.getDate() - 1;
+60:           const cellWidth = 48; // cellWidth in 'days' mode
+61:           scrollRef.current.scrollTo({ left: offsetDays * cellWidth, behavior: 'smooth' });
+62:         } else {
+63:           const offsetHours = baseDate.getHours();
+64:           const cellWidth = 32; // cellWidth in 'hours' mode
+65:           scrollRef.current.scrollTo({ left: offsetHours * cellWidth, behavior: 'smooth' });
+66:         }
+67:       }, 50);
+68:     }
+69:   }, [baseDate, viewMode, scrollRef]);
+70: 
+71:   const holidayDates = useMemo(() => {
+72:     if (!selectedCalendarId || !calendars) return new Set<string>();
+73:     const cal = calendars.find(c => c.id === selectedCalendarId);
+74:     if (!cal) return new Set<string>();
+75:     return new Set(cal.holidays.map(h => h.date.split('T')[0]));
+76:   }, [selectedCalendarId, calendars]);
+77: 
+78:   const isHolidayOrWeekend = (d: Date) => {
+79:     const tzOffset = d.getTimezoneOffset() * 60000;
+80:     const localISOTime = (new Date(d.getTime() - tzOffset)).toISOString().split('T')[0];
+81:     
+82:     if (project?.customNonWorkingDays?.includes(localISOTime)) return true;
+83:     if (project?.customWorkingDays?.includes(localISOTime)) return false;
+84:     
+85:     const day = d.getDay();
+86:     if (day === 0) return true; // Sunday
+87:     if (day === 6 && !project?.workSaturdays) return true; // Saturday
+88:     return holidayDates.has(localISOTime);
+89:   };
+90: 
+91:   // Helper to calculate working minutes
+92:   const calculateWorkingMinutes = (start: Date, end: Date): number => {
+93:     let minutes = 0;
+94:     const current = new Date(start);
+95:     while (current < end) {
+96:       if (isHolidayOrWeekend(current)) {
+97:         current.setDate(current.getDate() + 1);
+98:         current.setHours(8, 0, 0, 0);
+99:         continue;
+100:       }
+101: 
+102:       if (current.getHours() >= 8 && current.getHours() < 17) {
+103:         const nextHour = new Date(current);
+104:         nextHour.setHours(current.getHours() + 1, 0, 0, 0);
+105:         const step = Math.min(end.getTime(), nextHour.getTime()) - current.getTime();
+106:         minutes += step / 60000;
+107:         current.setTime(nextHour.getTime());
+108:       } else {
+109:         if (current.getHours() < 8) {
+110:           current.setHours(8, 0, 0, 0);
+111:         } else {
+112:           current.setDate(current.getDate() + 1);
+113:           current.setHours(8, 0, 0, 0);
+114:         }
+115:       }
+116:     }
+117:     return Math.round(minutes);
+118:   };
+119: 
+120:   // Helper to split a task into daily segments (avoiding night spans visually)
+121:   const splitTaskIntoSegments = (start: Date, end: Date, mode: 'days' | 'hours') => {
+122:     const segments = [];
+123:     let current = new Date(start);
+124:     
+125:     // Safety check against infinite loops
+126:     let safety = 0;
+127:     while (current < end && safety < 1000) {
+128:       safety++;
+129:       
+130:       const dayOfWeek = current.getDay();
+131: 
+132:       if (mode === 'hours') {
+133:         // En modo 'hours', ajustamos a las 8 AM si comienza a medianoche o antes de las 8
+134:         if (current.getHours() < 8) {
+135:           current.setHours(8, 0, 0, 0);
+136:         }
+137: 
+138:         // También saltamos si caemos en un día no laborable
+139:         if (isHolidayOrWeekend(current)) {
+140:           current.setDate(current.getDate() + 1);
+141:           current.setHours(8, 0, 0, 0);
+142:           continue;
+143:         }
+144: 
+145:         const endOfDay = new Date(current);
+146:         endOfDay.setHours(17, 0, 0, 0);
+147:         
+148:         if (end <= endOfDay) {
+149:           segments.push({ start: new Date(current), end: new Date(end) });
+150:           break;
+151:         } else {
+152:           segments.push({ start: new Date(current), end: new Date(endOfDay) });
+153:           current = new Date(current);
+154:           current.setDate(current.getDate() + 1);
+155:           current.setHours(8, 0, 0, 0);
+156:         }
+157:       } else {
+158:         if (isHolidayOrWeekend(current)) {
+159:           current.setDate(current.getDate() + 1);
+160:           current.setHours(8, 0, 0, 0);
+161:           continue;
+162:         }
+163: 
+164:         // Buscar el siguiente día no laborable o fin de semana
+165:         const nextBreak = new Date(current);
+166:         while (!isHolidayOrWeekend(nextBreak)) {
+167:           nextBreak.setDate(nextBreak.getDate() + 1);
+168:         }
+169:         
+170:         // Acercamos el final de este segmento continuo al final del día anterior
+171:         const endOfSegment = new Date(nextBreak);
+172:         endOfSegment.setDate(endOfSegment.getDate() - 1);
+173:         endOfSegment.setHours(23, 59, 59, 999);
+174:         
+175:         if (end <= endOfSegment) {
+176:           segments.push({ start: new Date(current), end: new Date(end) });
+177:           break;
+178:         } else {
+179:           segments.push({ start: new Date(current), end: new Date(endOfSegment) });
+180:           current = new Date(nextBreak);
+181:           current.setHours(8, 0, 0, 0);
+182:         }
+183:       }
+184:     }
+185:     return segments;
+186:   };
+187: 
+188:   // Configuración de la cuadrícula
+189:   const cellWidth = viewMode === 'days' ? 48 : 32; // Ancho de cada día u hora en píxeles
+190:   const gridBg = viewMode === 'days' 
+191:     ? "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='64'%3E%3Cpath d='M48 0L0 0 0 64' fill='none' stroke='%23f1f5f9' stroke-width='1'/%3E%3C/svg%3E\")"
+192:     : "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='64'%3E%3Cpath d='M32 0L0 0 0 64' fill='none' stroke='%23f1f5f9' stroke-width='1'/%3E%3C/svg%3E\")";
+193:   
+194:   const headers = useMemo(() => {
+195:     const startDate = new Date(baseDate);
+196:     if (viewMode === 'days') {
+197:       startDate.setDate(1); // Primer día del mes seleccionado
+198:     }
+199:     startDate.setHours(0, 0, 0, 0); // Medianoche
+200:     
+201:     const dates = [];
+202:     const current = new Date(startDate);
+203:     
+204:     // Find the maximum end date among all tasks
+205:     let maxEndDate = new Date(startDate);
+206:     const checkMaxDate = (task: ProjectTask) => {
+207:       if (task.endDate) {
+208:         const d = new Date(task.endDate);
+209:         if (d > maxEndDate) maxEndDate = d;
+210:       }
+211:       if (task.children) {
+212:         task.children.forEach(checkMaxDate);
+213:       }
+214:     };
+215:     plan.tasks?.forEach(checkMaxDate);
+216: 
+217:     let calculatedUnitCount = 0;
+218:     if (viewMode === 'days') {
+219:       maxEndDate.setDate(maxEndDate.getDate() + 60); // 60 days margin
+220:       calculatedUnitCount = Math.ceil((maxEndDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+221:     } else {
+222:       maxEndDate.setHours(maxEndDate.getHours() + (7 * 24)); // 7 days margin
+223:       calculatedUnitCount = Math.ceil((maxEndDate.getTime() - startDate.getTime()) / (1000 * 60 * 60));
+224:     }
+225:     
+226:     const minUnitCount = viewMode === 'days' ? 365 : (14 * 24); // Mínimo 1 año en días, o 14 días en horas
+227:     const unitCount = Math.max(minUnitCount, calculatedUnitCount);
+228:     
+229:     for (let i = 0; i < unitCount; i++) {
+230:       dates.push(new Date(current));
+231:       if (viewMode === 'days') {
+232:         current.setDate(current.getDate() + 1);
+233:       } else {
+234:         current.setHours(current.getHours() + 1);
+235:       }
+236:     }
+237: 
+238:     // Agrupar
+239:     const groups: { name: string; colspan: number }[] = [];
+240:     if (viewMode === 'days') {
+241:       let groupStartDate = dates[0];
+242:       let currentCount = 0;
+243:       dates.forEach(d => {
+244:         if (d.getMonth() === groupStartDate.getMonth()) {
+245:           currentCount++;
+246:         } else {
+247:           groups.push({ name: groupStartDate.toLocaleString('es-ES', { month: 'long', year: 'numeric' }), colspan: currentCount });
+248:           groupStartDate = d;
+249:           currentCount = 1;
+250:         }
+251:       });
+252:       groups.push({ name: groupStartDate.toLocaleString('es-ES', { month: 'long', year: 'numeric' }), colspan: currentCount });
+253:     } else {
+254:       let groupStartDate = dates[0];
+255:       let currentCount = 0;
+256:       dates.forEach(d => {
+257:         if (d.getDate() === groupStartDate.getDate() && d.getMonth() === groupStartDate.getMonth()) {
+258:           currentCount++;
+259:         } else {
+260:           groups.push({ name: groupStartDate.toLocaleString('es-ES', { day: 'numeric', month: 'short' }), colspan: currentCount });
+261:           groupStartDate = d;
+262:           currentCount = 1;
+263:         }
+264:       });
+265:       groups.push({ name: groupStartDate.toLocaleString('es-ES', { day: 'numeric', month: 'short' }), colspan: currentCount });
+266:     }
+267: 
+268:     return { dates, groups };
+269:   }, [viewMode, baseDate, plan]);
+270: 
+271:   // Aplanar las tareas que están visibles para pintar las filas correspondientes
+272:   const visibleTasks = useMemo(() => {
+273:     const list: ProjectTask[] = [];
+274:     
+275:     const flatten = (task: ProjectTask) => {
+276:       list.push(task);
+277:       if (expandedNodes.has(task.id) && task.children) {
+278:         task.children.forEach(flatten);
+279:       }
+280:     };
+281:     
+282:     plan.tasks?.forEach(flatten);
+283:     return list;
+284:   }, [plan, expandedNodes]);
+285: 
+286:   const dragRef = useRef<{
+287:     taskId: string;
+288:     startX: number;
+289:     initialLeft: number;
+290:     initialWidth: number;
+291:     currentLeft: number;
+292:     currentWidth: number;
+293:     mode: 'move' | 'resize' | null;
+294:   } | null>(null);
+295: 
+296:   const [dragTick, setDragTick] = useState(0);
+297: 
+298:   useEffect(() => {
+299:     const handleMouseMove = (e: MouseEvent) => {
+300:       if (!dragRef.current?.mode) return;
+301:       const deltaX = e.clientX - dragRef.current.startX;
+302:       
+303:       if (dragRef.current.mode === 'move') {
+304:         const rawLeft = dragRef.current.initialLeft + deltaX;
+305:         if (dragRef.current.currentLeft !== rawLeft) {
+306:           dragRef.current.currentLeft = rawLeft;
+307:           setDragTick(t => t + 1);
+308:         }
+309:       } else if (dragRef.current.mode === 'resize') {
+310:         const rawWidth = Math.max(cellWidth / 2, dragRef.current.initialWidth + deltaX);
+311:         if (dragRef.current.currentWidth !== rawWidth) {
+312:           dragRef.current.currentWidth = rawWidth;
+313:           setDragTick(t => t + 1);
+314:         }
+315:       }
+316:     };
+317: 
+318:     const handleMouseUp = async () => {
+319:       if (!dragRef.current?.mode) return;
+320:       
+321:       const { mode, currentLeft, currentWidth, taskId } = dragRef.current;
+322:       dragRef.current.mode = mode === 'move' ? 'saving-move' as any : 'saving-resize' as any;
+323:       setDragTick(t => t + 1);
+324:       
+325:       try {
+326:         if (mode === 'move') {
+327:           const task = visibleTasks.find(t => t.id === taskId);
+328:           const diffUnits = Math.round(currentLeft / cellWidth);
+329:           const newStartDate = new Date(headers.dates[0]);
+330:           
+331:           if (viewMode === 'days') {
+332:             newStartDate.setDate(newStartDate.getDate() + diffUnits);
+333:             // Preserve original task time
+334:             if (task && task.startDate) {
+335:               const originalStart = new Date(task.startDate);
+336:               newStartDate.setHours(originalStart.getHours(), originalStart.getMinutes(), 0, 0);
+337:             }
+338:           } else {
+339:             newStartDate.setHours(newStartDate.getHours() + diffUnits);
+340:           }
+341:           
+342:           // Validar hora laboral y días
+343:           if (newStartDate.getHours() < 8) newStartDate.setHours(8, 0, 0, 0);
+344:           if (newStartDate.getHours() >= 17) {
+345:             newStartDate.setDate(newStartDate.getDate() + 1);
+346:             newStartDate.setHours(8, 0, 0, 0);
+347:           }
+348:           
+349:           // Validar fin de semana, festivo o día bloqueado
+350:           while (isHolidayOrWeekend(newStartDate)) {
+351:             newStartDate.setDate(newStartDate.getDate() + 1);
+352:             // Preserve the time instead of resetting to 8am if it was specifically set
+353:             if (viewMode !== 'days' || !task?.startDate) {
+354:                newStartDate.setHours(8, 0, 0, 0);
+355:             }
+356:           }
+357:           
+358:           if (task && (task.type === 'ZONE' || task.type === 'SUBZONE')) {
+359:             await projectPlanningService.shiftZoneDates(taskId, newStartDate);
+360:           } else {
+361:             await projectPlanningService.updateTask(taskId, { startDate: newStartDate.toISOString() });
+362:           }
+363:           await onUpdate();
+364:         } else if (mode === 'resize') {
+365:           const task = visibleTasks.find(t => t.id === taskId);
+366:           if (!task || !task.startDate || !task.endDate) return;
+367:           
+368:           const start = new Date(task.startDate);
+369:           const segments = splitTaskIntoSegments(start, new Date(task.endDate), viewMode);
+370:           if (segments.length === 0) return;
+371:           const lastSegment = segments[segments.length - 1];
+372: 
+373:           const diffUnits = Math.round(currentWidth / cellWidth);
+374:           const newEndDate = new Date(lastSegment.start);
+375:           if (viewMode === 'days') {
+376:             newEndDate.setDate(newEndDate.getDate() + diffUnits);
+377:           } else {
+378:             newEndDate.setHours(newEndDate.getHours() + diffUnits);
+379:           }
+380:           
+381:           const workingMins = calculateWorkingMinutes(start, newEndDate);
+382:           
+383:           if (viewMode === 'days') {
+384:             const days = Math.max(0.5, Math.round((workingMins / 540) * 2) / 2);
+385:             await projectPlanningService.updateTask(taskId, { durationDays: days, durationMinutes: null });
+386:           } else {
+387:             // Round to nearest 15 minutes instead of full hours
+388:             const minutes = Math.max(15, Math.round(workingMins / 15) * 15);
+389:             await projectPlanningService.updateTask(taskId, { durationMinutes: minutes, durationDays: null });
+390:           }
+391:           await onUpdate();
+392:         }
+393:       } catch (e) {
+394:         console.error(e);
+395:       } finally {
+396:         if (dragRef.current?.taskId === taskId) {
+397:           dragRef.current.mode = null;
+398:           setDragTick(t => t + 1);
+399:         }
+400:       }
+401:     };
+402: 
+403:     window.addEventListener('mousemove', handleMouseMove);
+404:     window.addEventListener('mouseup', handleMouseUp);
+405:     return () => {
+406:       window.removeEventListener('mousemove', handleMouseMove);
+407:       window.removeEventListener('mouseup', handleMouseUp);
+408:     };
+409:   }, [cellWidth, headers, onUpdate, visibleTasks, viewMode]);
+410: 
+411:   const handleMouseDown = (e: React.MouseEvent, taskId: string, initialLeft: number, initialWidth: number) => {
+412:     e.preventDefault();
+413:     dragRef.current = {
+414:       taskId,
+415:       startX: e.clientX,
+416:       initialLeft,
+417:       initialWidth,
+418:       currentLeft: initialLeft,
+419:       currentWidth: initialWidth,
+420:       mode: 'move'
+421:     };
+422:     setDragTick(t => t + 1);
+423:   };
+424: 
+425:   const handleResizeMouseDown = (e: React.MouseEvent, taskId: string, initialLeft: number, initialWidth: number) => {
+426:     e.preventDefault();
+427:     e.stopPropagation(); // Evitar que dispare handleMouseDown
+428:     dragRef.current = {
+429:       taskId,
+430:       startX: e.clientX,
+431:       initialLeft,
+432:       initialWidth,
+433:       currentLeft: initialLeft,
+434:       currentWidth: initialWidth,
+435:       mode: 'resize'
+436:     };
+437:     setDragTick(t => t + 1);
+438:   };
+439: 
+440:   return (
+441:     <div 
+442:       className="w-full h-full overflow-auto custom-scrollbar"
+443:       ref={scrollRef}
+444:       onScroll={onScroll}
+445:     >
+446:       <div className="min-w-max relative">
+447:         {/* Cabecera (Grupos) */}
+448:         <div className="flex border-b border-slate-300 bg-slate-100 h-7 shrink-0 sticky top-0 z-40">
+449:           {headers.groups.map((g, i) => (
+450:             <div key={i} 
+451:                  className="p-1 text-center text-[10px] font-bold text-slate-500 uppercase border-r border-slate-300 shrink-0 truncate"
+452:                  style={{ width: g.colspan * cellWidth, minWidth: g.colspan * cellWidth, maxWidth: g.colspan * cellWidth }}
+453:             >
+454:               {g.name}
+455:             </div>
+456:           ))}
+457:         </div>
+458:         
+459:         {/* Cabecera (Unidades) */}
+460:         <div className="flex border-b-2 border-slate-300 bg-slate-50 sticky top-7 z-30 h-7 shrink-0">
+461:           {headers.dates.map((d, i) => {
+462:             const isNonWorking = isHolidayOrWeekend(d);
+463:             const label = viewMode === 'days' ? d.getDate() : d.getHours();
+464:             const holidayTooltip = isHolidayOrWeekend(d) ? 'Festivo/Día Libre' : undefined;
+465:             return (
+466:               <div key={i} 
+467:                    title={holidayTooltip}
+468:                    className={`text-center text-[10px] font-medium border-r border-slate-200 flex items-center justify-center shrink-0 ${isNonWorking && viewMode === 'days' ? 'bg-slate-200/80 text-slate-400' : 'text-slate-600'}`}
+469:                    style={{ width: cellWidth, minWidth: cellWidth, maxWidth: cellWidth }}
+470:               >
+471:                 {label}{viewMode === 'hours' && <span className="text-[8px] text-slate-400 ml-0.5">h</span>}
+472:               </div>
+473:             );
+474:           })}
+475:         </div>
+476: 
+477:         {/* Filas del Gantt */}
+478:         <div className="relative flex-1" style={{ backgroundImage: gridBg }}>
+479:           {/* Columnas de días no laborables / bloqueados */}
+480:           {headers.dates.map((d, i) => {
+481:             const isNonWorking = isHolidayOrWeekend(d);
+482:             if (isNonWorking && viewMode === 'days') {
+483:               return (
+484:                 <div 
+485:                   key={`bg-${i}`} 
+486:                   className="absolute top-0 bottom-0 bg-slate-200/50 pointer-events-none z-0"
+487:                   style={{ left: i * cellWidth, width: cellWidth }}
+488:                 />
+489:               );
+490:             }
+491:             return null;
+492:           })}
+493: 
+494:           {visibleTasks.map((task, index) => {
+495:             // Calcular posición y ancho de la barra (Mock logic for now)
+496:             // Asumimos que startDate y durationDays están bien formados si existen
+497:             let left = -1;
+498:             let width = 0;
+499: 
+500:             if (task.startDate && task.endDate) {
+501:               const start = new Date(task.startDate);
+502:               const end = new Date(task.endDate);
+503:               const segments = splitTaskIntoSegments(start, end, viewMode);
+504:               
+505:               const baselineSegments = (showBaseline && task.baselineStartDate && task.baselineEndDate) 
+506:                 ? splitTaskIntoSegments(new Date(task.baselineStartDate), new Date(task.baselineEndDate), viewMode) 
+507:                 : [];
+508:               
+509:               const isMoving = dragRef.current?.taskId === task.id && (dragRef.current?.mode === 'move' || dragRef.current?.mode === 'saving-move');
+510:               const isResizing = dragRef.current?.taskId === task.id && (dragRef.current?.mode === 'resize' || dragRef.current?.mode === 'saving-resize');
+511: 
+512:               const getSegmentGeometry = (seg: {start: Date, end: Date}) => {
+513:                 let diffUnits = 0;
+514:                 let durationUnits = 0;
+515: 
+516:                 if (viewMode === 'days') {
+517:                   const normStart = new Date(seg.start);
+518:                   normStart.setHours(0, 0, 0, 0);
+519:                   const fullDaysOffset = Math.round((normStart.getTime() - headers.dates[0].getTime()) / 86400000);
+520:                   
+521:                   let fractionalOffset = 0;
+522:                   if (seg.start.getHours() >= 8 && seg.start.getHours() < 17) {
+523:                     const minsSince8AM = (seg.start.getHours() - 8) * 60 + seg.start.getMinutes();
+524:                     fractionalOffset = minsSince8AM / 540;
+525:                   } else if (seg.start.getHours() >= 17) {
+526:                     fractionalOffset = 1;
+527:                   }
+528:                   
+529:                   diffUnits = fullDaysOffset + fractionalOffset;
+530:                   
+531:                   const wMinsDuration = calculateWorkingMinutes(seg.start, seg.end);
+532:                   durationUnits = wMinsDuration === 0 ? 0.1 : wMinsDuration / 540;
+533:                 } else {
+534:                   const diffTimeStart = seg.start.getTime() - headers.dates[0].getTime();
+535:                   const diffTimeEnd = seg.end.getTime() - seg.start.getTime();
+536:                   diffUnits = diffTimeStart / (1000 * 60 * 60);
+537:                   durationUnits = diffTimeEnd / (1000 * 60 * 60);
+538:                 }
+539:                 
+540:                 return {
+541:                   left: diffUnits >= 0 ? diffUnits * cellWidth : -1,
+542:                   width: diffUnits >= 0 ? durationUnits * cellWidth : 0
+543:                 };
+544:               };
+545: 
+546:               return (
+547:                 <div key={task.id} className="h-16 border-b border-transparent relative flex items-center group hover:bg-slate-50/50">
+548:                   {/* Baseline Segments */}
+549:                   {baselineSegments.map((seg, segIndex) => {
+550:                     const geom = getSegmentGeometry(seg);
+551:                     if (geom.left < 0 || geom.width <= 0) return null;
+552:                     return (
+553:                       <div 
+554:                         key={`base-${segIndex}`}
+555:                         className="absolute h-7 rounded z-0 opacity-40 mix-blend-multiply bg-slate-300 border-b-2 border-slate-400 pointer-events-none"
+556:                         style={{ 
+557:                           left: `${geom.left}px`, 
+558:                           width: `${Math.max(4, geom.width)}px`,
+559:                           top: '1.25rem'
+560:                         }}
+561:                       />
+562:                     );
+563:                   })}
+564:                   
+565:                   {/* Main Segments */}
+566:                   {segments.map((seg, segIndex) => {
+567:                     const geom = getSegmentGeometry(seg);
+568:                     const left = geom.left;
+569:                     const width = geom.width;
+570:                     
+571:                     const isFirst = segIndex === 0;
+572:                     const isLast = segIndex === segments.length - 1;
+573: 
+574:                     // Si movemos la tarea, todos los segmentos se desplazan en la misma proporción
+575:                     const deltaLeft = isMoving ? (dragRef.current!.currentLeft - dragRef.current!.initialLeft) : 0;
+576:                     const currentLeft = left + deltaLeft;
+577: 
+578:                     // Si redimensionamos, SOLO el último segmento cambia su ancho
+579:                     const deltaWidth = isResizing ? (dragRef.current!.currentWidth - dragRef.current!.initialWidth) : 0;
+580:                     const currentWidth = (isLast && isResizing) ? (width + deltaWidth) : width;
+581: 
+582:                     if (currentLeft < 0 || currentWidth <= 0) return null;
+583: 
+584:                     return (
+585:                       <React.Fragment key={segIndex}>
+586:                         <div 
+587:                           onMouseDown={(e) => isFirst ? handleMouseDown(e, task.id, left, width) : undefined}
+588:                           className={`absolute h-7 rounded shadow-sm z-10 flex items-center overflow-hidden ${isMoving || (isResizing && isLast) ? 'opacity-80 ring-2 ring-blue-500 scale-[1.02]' : 'transition-all hover:brightness-110'}`}
+589:                           style={{ 
+590:                             left: `${currentLeft}px`, 
+591:                             width: `${Math.max(4, currentWidth)}px`,
+592:                             backgroundColor: task.type === 'PROJECT' ? '#e11d48' : (task.type === 'PHASE' || task.type === 'ZONE') ? '#002D5A' : task.type === 'SUBZONE' ? '#0ea5e9' : '#38bdf8',
+593:                             cursor: isMoving ? 'grabbing' : (isFirst ? 'grab' : 'default')
+594:                           }}
+595:                         >
+596:                           {isFirst && task.progress > 0 && (
+597:                             <div 
+598:                               className="absolute top-0 left-0 h-full rounded-md bg-white/30"
+599:                               style={{ width: `${task.progress}%` }}
+600:                             />
+601:                           )}
+602:                           
+603:                           {isFirst && (
+604:                             <span className="text-[10px] font-bold text-white px-2 truncate relative z-20 mix-blend-screen drop-shadow-md pointer-events-none">
+605:                               {task.name}
+606:                             </span>
+607:                           )}
+608: 
+609:                           {isLast && (
+610:                             <div
+611:                               className="absolute right-0 top-0 bottom-0 w-2 cursor-col-resize hover:bg-white/30 z-30 rounded-r-md"
+612:                               onMouseDown={(e) => handleResizeMouseDown(e, task.id, left, width)}
+613:                             />
+614:                           )}
+615:                         </div>
+616:                           
+617:                         {/* Component pop-up tags - Moved OUTSIDE overflow-hidden div */}
+618:                         {isFirst && task.components && task.components.length > 0 && (
+619:                           <div 
+620:                             className="absolute flex gap-1 pointer-events-auto whitespace-nowrap z-20"
+621:                             style={{
+622:                               left: `${currentLeft}px`,
+623:                               top: '2.25rem' // h-7 (1.75rem) + some gap
+624:                             }}
+625:                           >
+626:                             {task.components
+627:                               .filter(c => {
+628:                                 if (assignmentViewMode === 'MANO_OBRA') {
+629:                                   return c.resourceType === 'MANO_OBRA' || c.resourceType === 'MANO_DE_OBRA';
+630:                                 } else if (assignmentViewMode === 'MAQUINARIA') {
+631:                                   return c.resourceType === 'MAQUINARIA' || c.resourceType === 'EQUIPO';
+632:                                 } else {
+633:                                   return c.resourceType === 'MATERIALES' || c.resourceType === 'MATERIAL' || c.resourceType === 'RECURSO';
+634:                                 }
+635:                               })
+636:                               .map(c => {
+637:                                 const assignedCount = c.plannedWorkers?.length || 0;
+638:                                 const isFulfilled = c.quantity > 0 && assignedCount >= c.quantity;
+639:                                 
+640:                                 // Comparison logic (mostly for mano de obra, but can be kept)
+641:                                 const executedWorkers = c.dailyLogTaskWorkers || [];
+642:                                 const executedCount = executedWorkers.length;
+643:                                 
+644:                                 let executionStatus = 'none'; // 'none', 'match', 'mismatch', 'partial'
+645:                                 let executedQuantity = 0;
+646: 
+647:                                 if (assignmentViewMode === 'MANO_OBRA') {
+648:                                     const plannedIds = new Set(c.plannedWorkers?.map((pw: any) => pw.userId) || []);
+649:                                     const executedWorkers = c.dailyLogTaskWorkers || [];
+650:                                     const anyPlannedExecuted = executedWorkers.some((ew: any) => plannedIds.has(ew.dailyLogWorker?.userId));
+651:                                     executionStatus = anyPlannedExecuted ? 'match' : 'mismatch';
+652:                                   } else if (assignmentViewMode) {
+653:                                     const actualPlan = plansMap ? (plansMap.get(task.planId) || plan) : plan;
+654:                                     const requests = [...(task.inventoryRequests || [])];
+655:                                     if (actualPlan?.project?.inventoryRequests) {
+656:                                       for (const req of actualPlan.project.inventoryRequests) {
+657:                                       if (!req.projectTaskId || req.projectTaskId === task.id) {
+658:                                         let isDateMatch = true;
+659:                                         if (!req.projectTaskId && task.startDate) {
+660:                                           const reqDate = new Date(req.dateReviewed || req.dateRequested);
+661:                                           const tStart = new Date(task.startDate);
+662:                                           tStart.setDate(tStart.getDate() - 2); 
+663:                                           const tEnd = task.endDate ? new Date(task.endDate) : new Date(task.startDate);
+664:                                           tEnd.setDate(tEnd.getDate() + 2); 
+665:                                           
+666:                                           if (reqDate < tStart || reqDate > tEnd) {
+667:                                             isDateMatch = false;
+668:                                           }
+669:                                         }
+670: 
+671:                                         if (isDateMatch && !requests.some(r => r.id === req.id)) {
+672:                                           requests.push(req);
+673:                                         }
+674:                                       }
+675:                                     }
+676:                                   }
+677:                                   for (const req of requests) {
+678:                                     if (req.status === 'APPROVED' || req.status === 'approved') {
+679:                                       const items = req.items || [];
+680:                                       for (const reqItem of items) {
+681:                                         if (reqItem.item?.resourceId === c.resourceId) {
+682:                                           executedQuantity += reqItem.qtyApproved || reqItem.quantity;
+683:                                         }
+684:                                       }
+685:                                     }
+686:                                   }
+687: 
+688:                                   if (executedQuantity === 0) {
+689:                                     executionStatus = 'none';
+690:                                   } else if (executedQuantity >= c.quantity) {
+691:                                     executionStatus = 'match';
+692:                                   } else {
+693:                                     executionStatus = 'partial';
+694:                                   }
+695:                                 }
+696: 
+697:                                 let containerClasses = `flex items-center gap-1 border shadow-sm rounded px-1.5 py-0.5 text-[9px] cursor-pointer transition-colors `;
+698:                                 
+699:                                 if (assignmentViewMode === 'MANO_OBRA') {
+700:                                   if (executionStatus === 'mismatch') {
+701:                                     containerClasses += `bg-orange-50 border-orange-400 text-orange-700`;
+702:                                   } else if (executionStatus === 'match') {
+703:                                     containerClasses += `bg-emerald-100 border-emerald-500 text-emerald-800`;
+704:                                   } else {
+705:                                     containerClasses += isFulfilled ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 
+706:                                       assignedCount > 0 ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-white border-slate-200 text-slate-600 hover:border-blue-300';
+707:                                   }
+708:                                 } else if (assignmentViewMode === 'MAQUINARIA') {
+709:                                   if (executionStatus === 'match') {
+710:                                     containerClasses += `bg-emerald-50 border-emerald-400 text-emerald-800 hover:bg-emerald-100`;
+711:                                   } else if (executionStatus === 'partial') {
+712:                                     containerClasses += `bg-orange-50 border-orange-400 text-orange-800 hover:bg-orange-100`;
+713:                                   } else {
+714:                                     containerClasses += `bg-yellow-50 border-yellow-300 text-yellow-800 hover:bg-yellow-100`;
+715:                                   }
+716:                                 } else {
+717:                                   if (executionStatus === 'match') {
+718:                                     containerClasses += `bg-emerald-50 border-emerald-400 text-emerald-800 hover:bg-emerald-100`;
+719:                                   } else if (executionStatus === 'partial') {
+720:                                     containerClasses += `bg-orange-50 border-orange-400 text-orange-800 hover:bg-orange-100`;
+721:                                   } else {
+722:                                     containerClasses += `bg-purple-50 border-purple-300 text-purple-800 hover:bg-purple-100`;
+723:                                   }
+724:                                 }
+725: 
+726:                                 return (
+727:                                   <div 
+728:                                     key={c.id} 
+729:                                     onClick={(e) => { e.stopPropagation(); setSelectedTaskComponent({ taskId: task.id, component: c }); }}
+730:                                     className={containerClasses}
+731:                                     title={`Ver asignaciones de ${c.concept}`}
+732:                                   >
+733:                                     {assignmentViewMode === 'MANO_OBRA' && <HardHat size={10} />}
+734:                                     {assignmentViewMode === 'MAQUINARIA' && <Tractor size={10} />}
+735:                                     {assignmentViewMode === 'MATERIALES' && <Package size={10} />}
+736:                                     
+737:                                     {executionStatus === 'match' && <CheckCircle2 size={12} className="text-emerald-600" />}
+738:                                     {(executionStatus === 'mismatch' || executionStatus === 'partial') && <AlertTriangle size={12} className="text-orange-600" />}
+739:                                     
+740:                                     <span className={executionStatus !== 'none' ? 'font-bold' : 'font-semibold'}>
+741:                                       {c.concept}
+742:                                     </span>
+743:                                     
+744:                                     {assignmentViewMode === 'MANO_OBRA' && (
+745:                                       <span className="opacity-80 flex items-center">
+746:                                         {(() => {
+747:                                           let names = '';
+748:                                           if (executedCount > 0) {
+749:                                             names = executedWorkers.map((ew: any) => ew.dailyLogWorker?.user?.name || ew.dailyLogWorker?.externalName || 'Ext').join(', ');
+750:                                           } else if (c.plannedWorkers && c.plannedWorkers.length > 0) {
+751:                                             names = c.plannedWorkers.map((pw: any) => pw.user?.name || 'Usr').join(', ');
+752:                                           }
+753:                                           if (names) {
+754:                                             return <span className="ml-1 italic truncate max-w-[120px]" title={names}>- {names}</span>;
+755:                                           }
+756:                                           return <span>({assignedCount}{c.quantity > 0 ? `/${c.quantity}` : ''})</span>;
+757:                                         })()}
+758:                                       </span>
+759:                                     )}
+760:                                     {assignmentViewMode !== 'MANO_OBRA' && (
+761:                                       <span className="opacity-80 ml-0.5">
+762:                                         ({executedQuantity > 0 ? `${executedQuantity}/` : ''}{c.quantity})
+763:                                       </span>
+764:                                     )}
+765:                                   </div>
+766:                                 );
+767:                               })}
+768:                           </div>
+769:                         )}
+770:                       </React.Fragment>
+771:                     );
+772:                   })}
+773:                 </div>
+774:               );
+775:             }
+776:             return <div key={task.id} className="h-16 border-b border-transparent relative flex items-center group hover:bg-slate-50/50" />;
+777:           })}
+778:         </div>
+779:       </div>
+780: 
+781:       {selectedTaskComponent?.component?.resourceType === 'MANO_OBRA' ? (
+782:         <WorkerAssignmentModal 
+783:           isOpen={!!selectedTaskComponent}
+784:           onClose={() => setSelectedTaskComponent(null)}
+785:           taskId={selectedTaskComponent?.taskId || ''}
+786:           component={selectedTaskComponent?.component || null}
+787:           task={visibleTasks.find(t => t.id === selectedTaskComponent?.taskId) || null}
+788:           plan={plansMap ? (plansMap.get(visibleTasks.find(t => t.id === selectedTaskComponent?.taskId)?.planId || '') || plan) : plan}
+789:           onUpdate={() => {
+790:             onUpdate();
+791:           }}
+792:         />
+793:       ) : (
+794:         <ResourceAssignmentModal 
+795:           isOpen={!!selectedTaskComponent}
+796:           onClose={() => setSelectedTaskComponent(null)}
+797:           taskId={selectedTaskComponent?.taskId || ''}
+798:           component={selectedTaskComponent?.component || null}
+799:           task={visibleTasks.find(t => t.id === selectedTaskComponent?.taskId) || null}
+800:           plan={plansMap ? (plansMap.get(visibleTasks.find(t => t.id === selectedTaskComponent?.taskId)?.planId || '') || plan) : plan}
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

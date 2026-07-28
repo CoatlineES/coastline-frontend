@@ -1,0 +1,28 @@
+Created At: 2026-07-27T06:42:12Z
+Completed At: 2026-07-27T06:42:14Z
+File Path: `file:///c:/Users/whilmis/Documents/GitHub/coastline-/src/views/employee/projects/tabs/GanttGrid.tsx`
+Total Lines: 809
+Total Bytes: 38213
+Showing lines 1 to 20
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: import React, { useMemo, useState, useEffect, useRef } from 'react';
+2: import { ProjectPlan, ProjectTask, projectPlanningService } from '../../../../services/project-planning.service';
+3: import { CheckCircle2, AlertTriangle, HardHat, Tractor, Package } from 'lucide-react';
+4: import { HolidayCalendar } from '../../../../services/holiday-calendars.service';
+5: import { WorkerAssignmentModal } from './WorkerAssignmentModal';
+6: import { ResourceAssignmentModal } from './ResourceAssignmentModal';
+7: import { Project } from '../../../../services/types';
+8: 
+9: export interface GanttGridProps {
+10:   plan: ProjectPlan;
+11:   project?: Project;
+12:   expandedNodes: Set<string>;
+13:   onUpdate: () => void;
+14:   viewMode: 'days' | 'hours';
+15:   baseDate: Date;
+16:   calendars?: HolidayCalendar[];
+17:   selectedCalendarId?: string;
+18:   scrollRef?: React.RefObject<HTMLDivElement>;
+19:   onScroll?: (e: React.UIEvent<HTMLDivElement>) => void;
+20:   showBaseline?: boolean;
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

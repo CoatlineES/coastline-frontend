@@ -7,7 +7,7 @@
   --font-headline: 'Montserrat', sans-serif;
   
   --color-primary: #003b70;
-  --color-secondary: #b70f36;
+  --color-secondary: #e63257;
   --color-secondary-container: #da304c;
   --color-background: #fcf9f8;
   --color-surface: #ffffff;
@@ -28,6 +28,15 @@
 @layer base {
   body {
     @apply bg-background text-on-surface font-sans antialiased;
+  }
+}
+
+@layer utilities {
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .pt-safe {
+    padding-top: env(safe-area-inset-top);
   }
 }
 
@@ -82,4 +91,50 @@
   0% { transform: scale(3) rotate(-12deg); opacity: 0; }
   50% { transform: scale(1) rotate(-12deg); opacity: 1; }
   100% { transform: scale(1) rotate(-12deg); opacity: 1; }
+}
+
+@media print {
+  @page {
+    margin: 1.5cm;
+    size: A4;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+  
+  #pdf-preview-content, #pdf-preview-content * {
+    visibility: visible;
+  }
+
+  /* Reset all potential scrollable/fixed parents up to the body */
+  html, body, #root,
+  .fixed, .absolute,
+  .overflow-hidden, .overflow-y-auto, .overflow-auto,
+  .max-h-\[90vh\], .h-screen, .h-full {
+    position: static !important;
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+    transform: none !important;
+  }
+
+  #pdf-preview-content {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  .break-before-page {
+    break-before: page;
+  }
+  
+  .break-inside-avoid {
+    break-inside: avoid;
+  }
 }

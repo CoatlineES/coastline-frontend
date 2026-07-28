@@ -69,7 +69,7 @@ function LeakPoint({ top, left, delay, status }: { top: string, left: string, de
       <div className="absolute w-12 h-12 rounded-full border border-red-400/60 animate-[ping_2s_cubic-bezier(0,0,0.2,1)_infinite]" style={{ animationDelay: `${delay + 0.3}s` }} />
       
       {/* Core Red Dot */}
-      <div className="relative w-3 h-3 bg-red-500 rounded-full shadow-[0_0_15px_#ef4444]">
+      <div className="relative w-3 h-3 bg-red-500 rounded-full shadow-[0_0_15px_#e63257]">
         <div className="absolute inset-0 bg-white rounded-full animate-pulse opacity-80" />
       </div>
 

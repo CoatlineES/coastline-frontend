@@ -46,16 +46,16 @@ export default function CssDrone() {
         {/* --- ROTORS & PROPELLERS --- */}
         {/* Helper function to render rotors to avoid duplication */}
         {[
-          { top: '15%', left: '15%', delay: '0s', color: 'bg-[#b70f36]', shadow: 'rgba(183,15,54,1)', dir: 'normal' },
-          { top: '15%', left: '85%', delay: '0.2s', color: 'bg-[#b70f36]', shadow: 'rgba(183,15,54,1)', dir: 'reverse' },
-          { top: '85%', left: '15%', delay: '0.4s', color: 'bg-[#b70f36]', shadow: 'rgba(183,15,54,1)', dir: 'reverse' },
-          { top: '85%', left: '85%', delay: '0.1s', color: 'bg-[#b70f36]', shadow: 'rgba(183,15,54,1)', dir: 'normal' },
+          { top: '15%', left: '15%', delay: '0s', color: 'bg-[#e63257]', shadow: 'rgba(230,50,87,1)', dir: 'normal' },
+          { top: '15%', left: '85%', delay: '0.2s', color: 'bg-[#e63257]', shadow: 'rgba(230,50,87,1)', dir: 'reverse' },
+          { top: '85%', left: '15%', delay: '0.4s', color: 'bg-[#e63257]', shadow: 'rgba(230,50,87,1)', dir: 'reverse' },
+          { top: '85%', left: '85%', delay: '0.1s', color: 'bg-[#e63257]', shadow: 'rgba(230,50,87,1)', dir: 'normal' },
         ].map((rotor, idx) => (
           <div key={idx} className="absolute -translate-x-1/2 -translate-y-1/2 flex items-center justify-center z-10" style={{ top: rotor.top, left: rotor.left }}>
             
             {/* Rotor Motor Base (Photorealistic Sprite with Coatline Tint) */}
             <div 
-               className="w-16 h-16 rounded-full flex items-center justify-center relative shadow-[0_10px_20px_rgba(0,0,0,0.6)] overflow-hidden border-2 border-[#b70f36]/40"
+               className="w-16 h-16 rounded-full flex items-center justify-center relative shadow-[0_10px_20px_rgba(0,0,0,0.6)] overflow-hidden border-2 border-[#e63257]/40"
                style={{
                  backgroundImage: `url(${droneMotorSprite})`,
                  backgroundSize: '110%',

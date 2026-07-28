@@ -1,0 +1,23 @@
+Created At: 2026-07-27T11:05:01Z
+Completed At: 2026-07-27T11:05:05Z
+File Path: `file:///c:/Users/whilmis/Documents/GitHub/coastline-/src/views/employee/projects/tabs/GanttGrid.tsx`
+Total Lines: 1345
+Total Bytes: 70089
+Showing lines 990 to 1004
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+990:                         )}
+991:                       </React.Fragment>
+992:                     );
+993:                   })}
+994:                 </React.Fragment>
+995:               );
+996:             }
+997:             return <React.Fragment key={task.id}></React.Fragment>;
+998:           })}
+999: 
+1000:           {visibleTasksGroups.listUnplanned.length > 0 && <div className="h-1" />}
+1001: 
+1002:           {/* RENDER PLANNED TASKS */}
+1003:           {visibleTasksGroups.listPlanned.map((task, index) => {
+1004:             let left = -1;
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

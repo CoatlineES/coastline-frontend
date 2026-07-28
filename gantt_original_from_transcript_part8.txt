@@ -1,0 +1,59 @@
+Created At: 2026-07-27T11:04:47Z
+Completed At: 2026-07-27T11:04:49Z
+File Path: `file:///c:/Users/whilmis/Documents/GitHub/coastline-/src/views/employee/projects/tabs/GanttGrid.tsx`
+Total Lines: 1345
+Total Bytes: 70089
+Showing lines 990 to 1040
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+990:                         )}
+991:                       </React.Fragment>
+992:                     );
+993:                   })}
+994:                 </React.Fragment>
+995:               );
+996:             }
+997:             return <React.Fragment key={task.id}></React.Fragment>;
+998:           })}
+999: 
+1000:           {visibleTasksGroups.listUnplanned.length > 0 && <div className="h-1" />}
+1001: 
+1002:           {/* RENDER PLANNED TASKS */}
+1003:           {visibleTasksGroups.listPlanned.map((task, index) => {
+1004:             let left = -1;
+1005:             let width = 0;
+1006: 
+1007:             if (task.startDate && task.endDate) {
+1008:               const start = new Date(task.startDate);
+1009:               const end = new Date(task.endDate);
+1010:               const segments = splitTaskIntoSegments(start, end, viewMode);
+1011:               
+1012:               const baselineSegments = (showBaseline && task.baselineStartDate && task.baselineEndDate) 
+1013:                 ? splitTaskIntoSegments(new Date(task.baselineStartDate), new Date(task.baselineEndDate), viewMode) 
+1014:                 : [];
+1015:               
+1016:               const isMoving = dragRef.current?.taskId === task.id && (dragRef.current?.mode === 'move' || dragRef.current?.mode === 'saving-move');
+1017:               const isResizing = dragRef.current?.taskId === task.id && (dragRef.current?.mode === 'resize' || dragRef.current?.mode === 'saving-resize');
+1018: 
+1019:               const getSegmentGeometry = (seg: {start: Date, end: Date}) => {
+1020:                 let diffUnits = 0;
+1021:                 let durationUnits = 0;
+1022: 
+1023:                 if (viewMode === 'days') {
+1024:                   const normStart = new Date(seg.start);
+1025:                   normStart.setHours(0, 0, 0, 0);
+1026:                   const fullDaysOffset = Math.round((normStart.getTime() - headers.dates[0].getTime()) / 86400000);
+1027:                   
+1028:                   let fractionalOffset = 0;
+1029:                   if (seg.start.getHours() >= 8 && seg.start.getHours() < 17) {
+1030:                     const minsSince8AM = (seg.start.getHours() - 8) * 60 + seg.start.getMinutes();
+1031:                     fractionalOffset = minsSince8AM / 540;
+1032:                   } else if (seg.start.getHours() >= 17) {
+1033:                     fractionalOffset = 1;
+1034:                   }
+1035:                   
+1036:                   diffUnits = fullDaysOffset + fractionalOffset;
+1037:                   
+1038:                   const wMinsDuration = calculateWorkingMinutes(seg.start, seg.end);
+1039:                   durationUnits = wMinsDuration === 0 ? 0.1 : wMinsDuration / 540;
+1040:                 } else {
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

@@ -1,0 +1,59 @@
+Created At: 2026-07-27T07:29:33Z
+Completed At: 2026-07-27T07:29:35Z
+File Path: `file:///c:/Users/whilmis/Documents/GitHub/coastline-/src/views/employee/projects/tabs/GanttGrid.tsx`
+Total Lines: 869
+Total Bytes: 41091
+Showing lines 650 to 700
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+650:                             className="absolute flex gap-1 pointer-events-auto whitespace-nowrap z-20"
+651:                             style={{
+652:                               left: `${currentLeft}px`,
+653:                               top: '2.25rem' // h-7 (1.75rem) + some gap
+654:                             }}
+655:                           >
+656:                             {task.components
+657:                               .filter(c => {
+658:                                 if (assignmentViewMode === 'MANO_OBRA') {
+659:                                   return c.resourceType === 'MANO_OBRA' || c.resourceType === 'MANO_DE_OBRA';
+660:                                 } else if (assignmentViewMode === 'MAQUINARIA') {
+661:                                   return c.resourceType === 'MAQUINARIA' || c.resourceType === 'EQUIPO';
+662:                                 } else {
+663:                                   return c.resourceType === 'MATERIALES' || c.resourceType === 'MATERIAL' || c.resourceType === 'RECURSO';
+664:                                 }
+665:                               })
+666:                               .map(c => {
+667:                                 const assignedCount = c.plannedWorkers?.length || 0;
+668:                                 const isFulfilled = c.quantity > 0 && assignedCount >= c.quantity;
+669:                                 
+670:                                 // Comparison logic (mostly for mano de obra, but can be kept)
+671:                                 const executedWorkers = c.dailyLogTaskWorkers || [];
+672:                                 const executedCount = executedWorkers.length;
+673:                                 
+674:                                 let executionStatus = 'none'; // 'none', 'match', 'mismatch', 'partial'
+675:                                 let executedQuantity = 0;
+676: 
+677:                                 if (assignmentViewMode === 'MANO_OBRA') {
+678:                                     const plannedIds = new Set(c.plannedWorkers?.map((pw: any) => pw.userId) || []);
+679:                                     const executedWorkers = c.dailyLogTaskWorkers || [];
+680:                                     const anyPlannedExecuted = executedWorkers.some((ew: any) => plannedIds.has(ew.dailyLogWorker?.userId));
+681:                                     executionStatus = anyPlannedExecuted ? 'match' : 'mismatch';
+682:                                   } else if (assignmentViewMode) {
+683:                                     const actualPlan = plansMap ? (plansMap.get(task.planId) || plan) : plan;
+684:                                     const requests = [...(task.inventoryRequests || [])];
+685:                                     if (actualPlan?.project?.inventoryRequests) {
+686:                                       for (const req of actualPlan.project.inventoryRequests) {
+687:                                       if (!req.projectTaskId || req.projectTaskId === task.id) {
+688:                                         let isDateMatch = true;
+689:                                         if (!req.projectTaskId && task.startDate) {
+690:                                           const reqDate = new Date(req.dateReviewed || req.dateRequested);
+691:                                           const tStart = new Date(task.startDate);
+692:                                           tStart.setDate(tStart.getDate() - 2); 
+693:                                           const tEnd = task.endDate ? new Date(task.endDate) : new Date(task.startDate);
+694:                                           tEnd.setDate(tEnd.getDate() + 2); 
+695:                                           
+696:                                           if (reqDate < tStart || reqDate > tEnd) {
+697:                                             isDateMatch = false;
+698:                                           }
+699:                                         }
+700: 
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

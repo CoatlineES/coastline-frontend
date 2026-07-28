@@ -1,21 +1,27 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { ArrowLeft, User, Lock, ArrowRight } from 'lucide-react';
+import { ArrowLeft, User, Lock, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import { ScreenId } from '../types';
 import logoUrl from '../assets/logo.png';
+import { useAuth } from '../contexts/AuthContext';
+import { authService } from '../services/auth.service';
 
 interface LoginViewProps {
   onNavigate: (screen: ScreenId, transition: 'none' | 'push') => void;
 }
 
 export default function LoginView({ onNavigate }: LoginViewProps) {
+  const navigate = useNavigate();
+  const { login } = useAuth();
+  
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [role, setRole] = useState<'cliente' | 'empleado'>('cliente');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg('');
     if (!email || !password) {
@@ -23,12 +29,32 @@ export default function LoginView({ onNavigate }: LoginViewProps) {
       return;
     }
     
-    // Simulate API call
     setIsSubmitting(true);
-    setTimeout(() => {
+    
+    try {
+      const data = await authService.login(email, password);
+
+      if (!data.success || !data.data) {
+        setErrorMsg(data.message || 'Error al iniciar sesión');
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Login exitoso
+      login(data.data.user, data.data.token);
+      
+      // Dependiendo del rol del usuario navegamos a un portal u otro
+      if (data.data.user.role === 'CLIENT') {
+        navigate('/app/cliente');
+      } else {
+        navigate('/app/empleado');
+      }
+      
+    } catch (error: any) {
+      console.error("Error connecting to backend:", error);
+      setErrorMsg(error.response?.data?.message || 'Error de conexión con el servidor.');
       setIsSubmitting(false);
-      setErrorMsg('Credenciales incorrectas o usuario no registrado.');
-    }, 1500);
+    }
   };
 
   return (
@@ -50,28 +76,8 @@ export default function LoginView({ onNavigate }: LoginViewProps) {
           <h1 className="font-display font-black text-4xl text-primary uppercase tracking-widest mb-6">
             Acceso
           </h1>
-          
-          <div className="flex bg-slate-100 p-1.5 rounded-lg max-w-[260px] mx-auto mb-6">
-            <button
-              type="button"
-              onClick={() => setRole('cliente')}
-              className={`flex-1 py-2 text-sm font-sans font-bold rounded-md transition-all ${role === 'cliente' ? 'bg-white text-primary shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
-            >
-              Cliente
-            </button>
-            <button
-              type="button"
-              onClick={() => setRole('empleado')}
-              className={`flex-1 py-2 text-sm font-sans font-bold rounded-md transition-all ${role === 'empleado' ? 'bg-white text-primary shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
-            >
-              Empleado
-            </button>
-          </div>
-
           <p className="font-sans text-sm text-slate-500">
-            {role === 'cliente' 
-              ? 'Inicia sesión para acceder al portal de seguimiento y facturación.'
-              : 'Acceso exclusivo para el personal y técnicos operativos.'}
+            Ingresa tus credenciales corporativas para continuar.
           </p>
         </div>
 
@@ -114,12 +120,19 @@ export default function LoginView({ onNavigate }: LoginViewProps) {
                 <Lock size={18} />
               </div>
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-sans focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all"
+                className="w-full pl-10 pr-10 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-sans focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all"
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-secondary transition-colors"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
           </div>
 

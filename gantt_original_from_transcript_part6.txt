@@ -1,0 +1,29 @@
+Created At: 2026-07-27T09:29:02Z
+Completed At: 2026-07-27T09:29:04Z
+File Path: `file:///c:/Users/whilmis/Documents/GitHub/coastline-/src/views/employee/projects/tabs/GanttGrid.tsx`
+Total Lines: 1333
+Total Bytes: 70103
+Showing lines 780 to 800
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+780:                                 onMouseDown={(e) => handleResizeMouseDown(e, task.id, left, width)}
+781:                               />
+782:                             )}
+783:                           </div>
+784:                         </div>
+785:                           
+786:                         {/* Component pop-up tags - Moved OUTSIDE overflow-hidden div */}
+787:                         {isFirst && task.components && task.components.length > 0 && (
+788:                           <div 
+789:                             className="absolute flex gap-1 pointer-events-auto whitespace-nowrap z-20"
+790:                             style={{
+791:                               left: `${currentLeft}px`,
+792:                               top: `${microLaneOffset + 1.2}rem`
+793:                             }}
+794:                           >
+795:                             {task.components
+796:                               .filter(c => {
+797:                                 if (assignmentViewMode === 'MANO_OBRA') {
+798:                                   return c.resourceType === 'MANO_OBRA' || c.resourceType === 'MANO_DE_OBRA';
+799:                                 } else if (assignmentViewMode === 'MAQUINARIA') {
+800:                                   return c.resourceType === 'MAQUINARIA' || c.resourceType === 'EQUIPO';
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

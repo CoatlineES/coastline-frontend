@@ -1,0 +1,229 @@
+Created At: 2026-07-27T08:08:55Z
+Completed At: 2026-07-27T08:08:59Z
+File Path: `file:///c:/Users/whilmis/Documents/GitHub/coastline-/src/views/employee/projects/tabs/GanttGrid.tsx`
+Total Lines: 874
+Total Bytes: 41615
+Showing lines 650 to 870
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+650:                             className="absolute flex gap-1 pointer-events-auto whitespace-nowrap z-20"
+651:                             style={{
+652:                               left: `${currentLeft}px`,
+653:                               top: '2.25rem' // h-7 (1.75rem) + some gap
+654:                             }}
+655:                           >
+656:                             {task.components
+657:                               .filter(c => {
+658:                                 if (assignmentViewMode === 'MANO_OBRA') {
+659:                                   return c.resourceType === 'MANO_OBRA' || c.resourceType === 'MANO_DE_OBRA';
+660:                                 } else if (assignmentViewMode === 'MAQUINARIA') {
+661:                                   return c.resourceType === 'MAQUINARIA' || c.resourceType === 'EQUIPO';
+662:                                 } else {
+663:                                   return c.resourceType === 'MATERIALES' || c.resourceType === 'MATERIAL' || c.resourceType === 'RECURSO';
+664:                                 }
+665:                               })
+666:                               .map(c => {
+667:                                 const assignedCount = c.plannedWorkers?.length || 0;
+668:                                 const isFulfilled = c.quantity > 0 && assignedCount >= c.quantity;
+669:                                 
+670:                                 // Comparison logic (mostly for mano de obra, but can be kept)
+671:                                 const executedWorkers = c.dailyLogTaskWorkers || [];
+672:                                 const executedCount = executedWorkers.length;
+673:                                 
+674:                                 let executionStatus = 'none'; // 'none', 'match', 'mismatch', 'partial'
+675:                                 let executedQuantity = 0;
+676: 
+677:                                 if (assignmentViewMode === 'MANO_OBRA') {
+678:                                     const plannedIds = new Set(c.plannedWorkers?.map((pw: any) => pw.userId) || []);
+679:                                     const executedWorkers = c.dailyLogTaskWorkers || [];
+680:                                     const anyPlannedExecuted = executedWorkers.some((ew: any) => plannedIds.has(ew.dailyLogWorker?.userId));
+681:                                     executionStatus = anyPlannedExecuted ? 'match' : 'mismatch';
+682:                                   } else if (assignmentViewMode) {
+683:                                     const actualPlan = plansMap ? (plansMap.get(task.planId) || plan) : plan;
+684:                                     const requests = [...(task.inventoryRequests || [])];
+685:                                     if (actualPlan?.project?.inventoryRequests) {
+686:                                       for (const req of actualPlan.project.inventoryRequests) {
+687:                                       if (!req.projectTaskId || req.projectTaskId === task.id) {
+688:                                         let isDateMatch = true;
+689:                                         if (!req.projectTaskId && task.startDate) {
+690:                                           const reqDate = new Date(req.dateReviewed || req.dateRequested);
+691:                                           const tStart = new Date(task.startDate);
+692:                                           tStart.setDate(tStart.getDate() - 2); 
+693:                                           const tEnd = task.endDate ? new Date(task.endDate) : new Date(task.startDate);
+694:                                           tEnd.setDate(tEnd.getDate() + 2); 
+695:                                           
+696:                                           if (reqDate < tStart || reqDate > tEnd) {
+697:                                             isDateMatch = false;
+698:                                           }
+699:                                         }
+700: 
+701:                                         if (isDateMatch && !requests.some(r => r.id === req.id)) {
+702:                                           requests.push(req);
+703:                                         }
+704:                                       }
+705:                                     }
+706:                                   }
+707:                                   for (const req of requests) {
+708:                                     if (req.status === 'APPROVED' || req.status === 'approved') {
+709:                                       const items = req.items || [];
+710:                                       for (const reqItem of items) {
+711:                                         if (reqItem.item?.resourceId === c.resourceId) {
+712:                                           executedQuantity += reqItem.qtyApproved || reqItem.quantity;
+713:                                         }
+714:                                       }
+715:                                     }
+716:                                   }
+717: 
+718:                                   if (executedQuantity === 0) {
+719:                                     executionStatus = 'none';
+720:                                   } else if (executedQuantity >= c.quantity) {
+721:                                     executionStatus = 'match';
+722:                                   } else {
+723:                                     executionStatus = 'partial';
+724:                                   }
+725:                                 }
+726: 
+727:                                 let containerClasses = `flex items-center gap-1 border shadow-sm rounded px-1.5 py-0.5 text-[9px] cursor-pointer transition-colors `;
+728:                                 
+729:                                 if (assignmentViewMode === 'MANO_OBRA') {
+730:                                   if (executionStatus === 'mismatch') {
+731:                                     containerClasses += `bg-orange-50 border-orange-400 text-orange-700`;
+732:                                   } else if (executionStatus === 'match') {
+733:                                     containerClasses += `bg-emerald-100 border-emerald-500 text-emerald-800`;
+734:                                   } else {
+735:                                     containerClasses += isFulfilled ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 
+736:                                       assignedCount > 0 ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-white border-slate-200 text-slate-600 hover:border-blue-300';
+737:                                   }
+738:                                 } else if (assignmentViewMode === 'MAQUINARIA') {
+739:                                   if (executionStatus === 'match') {
+740:                                     containerClasses += `bg-emerald-50 border-emerald-400 text-emerald-800 hover:bg-emerald-100`;
+741:                                   } else if (executionStatus === 'partial') {
+742:                                     containerClasses += `bg-orange-50 border-orange-400 text-orange-800 hover:bg-orange-100`;
+743:                                   } else {
+744:                                     containerClasses += `bg-yellow-50 border-yellow-300 text-yellow-800 hover:bg-yellow-100`;
+745:                                   }
+746:                                 } else {
+747:                                   if (executionStatus === 'match') {
+748:                                     containerClasses += `bg-emerald-50 border-emerald-400 text-emerald-800 hover:bg-emerald-100`;
+749:                                   } else if (executionStatus === 'partial') {
+750:                                     containerClasses += `bg-orange-50 border-orange-400 text-orange-800 hover:bg-orange-100`;
+751:                                   } else {
+752:                                     containerClasses += `bg-purple-50 border-purple-300 text-purple-800 hover:bg-purple-100`;
+753:                                   }
+754:                                 }
+755: 
+756:                                 if (dragOverComponentId === c.id) {
+757:                                   containerClasses += ' ring-2 ring-blue-500 scale-105';
+758:                                 }
+759: 
+760:                                 return (
+761:                                   <div 
+762:                                     key={c.id} 
+763:                                     onClick={(e) => { e.stopPropagation(); setSelectedTaskComponent({ taskId: task.id, component: c }); }}
+764:                                     onDragOver={(e) => {
+765:                                       e.preventDefault();
+766:                                       setDragOverComponentId(c.id);
+767:                                     }}
+768:                                     onDragLeave={() => setDragOverComponentId(null)}
+769:                                     onDrop={async (e) => {
+770:                                       e.preventDefault();
+771:                                       setDragOverComponentId(null);
+772:                                       
+773:                                       try {
+774:                                         const payloadStr = e.dataTransfer.getData('application/json');
+775:                                         if (!payloadStr) return;
+776:                                         
+777:                                         const payload = JSON.parse(payloadStr);
+778:                                         if (payload.type === 'worker') {
+779:                                           await projectPlanningService.assignWorkerToComponent(task.id, c.id, {
+780:                                             userId: payload.userId,
+781:                                             contractorWorkerId: payload.contractorWorkerId
+782:                                           });
+783:                                           toast.success('Operario asignado');
+784:                                           onUpdate();
+785:                                         }
+786:                                       } catch (err: any) {
+787:                                         toast.error('Error asignando operario: ' + (err.response?.data?.error || err.message));
+788:                                       }
+789:                                     }}
+790:                                     className={containerClasses}
+791:                                     title={`Ver asignaciones de ${c.concept}`}
+792:                                   >
+793:                                     {assignmentViewMode === 'MANO_OBRA' && <HardHat size={10} />}
+794:                                     {assignmentViewMode === 'MAQUINARIA' && <Tractor size={10} />}
+795:                                     {assignmentViewMode === 'MATERIALES' && <Package size={10} />}
+796:                                     
+797:                                     {executionStatus === 'match' && <CheckCircle2 size={12} className="text-emerald-600" />}
+798:                                     {(executionStatus === 'mismatch' || executionStatus === 'partial') && <AlertTriangle size={12} className="text-orange-600" />}
+799:                                     
+800:                                     <span className={executionStatus !== 'none' ? 'font-bold' : 'font-semibold'}>
+801:                                       {c.concept}
+802:                                     </span>
+803:                                     
+804:                                     {assignmentViewMode === 'MANO_OBRA' && (
+805:                                       <span className="opacity-80 flex items-center">
+806:                                         {(() => {
+807:                                           let names = '';
+808:                                           if (executedCount > 0) {
+809:                                             names = executedWorkers.map((ew: any) => ew.dailyLogWorker?.user?.name || ew.dailyLogWorker?.externalName || 'Ext').join(', ');
+810:                                           } else if (c.plannedWorkers && c.plannedWorkers.length > 0) {
+811:                                             names = c.plannedWorkers.map((pw: any) => pw.user?.name || 'Usr').join(', ');
+812:                                           }
+813:                                           if (names) {
+814:                                             return <span className="ml-1 italic truncate max-w-[120px]" title={names}>- {names}</span>;
+815:                                           }
+816:                                           return <span>({assignedCount}{c.quantity > 0 ? `/${c.quantity}` : ''})</span>;
+817:                                         })()}
+818:                                       </span>
+819:                                     )}
+820:                                     {assignmentViewMode !== 'MANO_OBRA' && (
+821:                                       <span className="opacity-80 ml-0.5 flex items-center gap-1">
+822:                                         <span>({executedQuantity > 0 ? `${executedQuantity}/` : ''}{c.quantity})</span>
+823:                                         {c.plannedWorkers && c.plannedWorkers.length > 0 && (
+824:                                           <span className="italic truncate max-w-[120px]" title={c.plannedWorkers.map((pw: any) => pw.user?.name || 'Usr').join(', ')}>
+825:                                             - {c.plannedWorkers.map((pw: any) => pw.user?.name?.split(' ')[0] || 'Usr').join(', ')}
+826:                                           </span>
+827:                                         )}
+828:                                       </span>
+829:                                     )}
+830:                                   </div>
+831:                                 );
+832:                               })}
+833:                           </div>
+834:                         )}
+835:                       </React.Fragment>
+836:                     );
+837:                   })}
+838:                 </div>
+839:               );
+840:             }
+841:             return <div key={task.id} className="h-16 border-b border-transparent relative flex items-center group hover:bg-slate-50/50" />;
+842:           })}
+843:         </div>
+844:       </div>
+845: 
+846:       {selectedTaskComponent?.component?.resourceType === 'MANO_OBRA' ? (
+847:         <WorkerAssignmentModal 
+848:           isOpen={!!selectedTaskComponent}
+849:           onClose={() => setSelectedTaskComponent(null)}
+850:           taskId={selectedTaskComponent?.taskId || ''}
+851:           component={selectedTaskComponent?.component || null}
+852:           task={visibleTasks.find(t => t.id === selectedTaskComponent?.taskId) || null}
+853:           plan={plansMap ? (plansMap.get(visibleTasks.find(t => t.id === selectedTaskComponent?.taskId)?.planId || '') || plan) : plan}
+854:           onUpdate={() => {
+855:             onUpdate();
+856:           }}
+857:         />
+858:       ) : (
+859:         <ResourceAssignmentModal 
+860:           isOpen={!!selectedTaskComponent}
+861:           onClose={() => setSelectedTaskComponent(null)}
+862:           taskId={selectedTaskComponent?.taskId || ''}
+863:           component={selectedTaskComponent?.component || null}
+864:           task={visibleTasks.find(t => t.id === selectedTaskComponent?.taskId) || null}
+865:           plan={plansMap ? (plansMap.get(visibleTasks.find(t => t.id === selectedTaskComponent?.taskId)?.planId || '') || plan) : plan}
+866:           onUpdate={() => {
+867:             onUpdate();
+868:           }}
+869:         />
+870:       )}
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

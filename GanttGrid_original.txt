@@ -1,0 +1,19 @@
+Created At: 2026-07-27T11:29:10Z
+Completed At: 2026-07-27T11:29:15Z
+The following changes were made by the replace_file_content tool to: c:\Users\whilmis\Documents\GitHub\coastline-\src\views\employee\projects\tabs\GanttGrid.tsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -991,10 +991,7 @@
+             return <React.Fragment key={task.id}></React.Fragment>;
+           })}
+ 
+-          {visibleTasksGroups.listUnplanned.length > 0 && <div className="h-1" />}
+-
+-          {/* RENDER PLANNED TASKS */}
+-          {visibleTasksGroups.listPlanned.map((task, index) => {
++
+             let left = -1;
+             let width = 0;
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

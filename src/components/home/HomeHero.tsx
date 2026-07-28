@@ -58,9 +58,9 @@ export default function HomeHero({ onNavigate }: HomeHeroProps) {
             transition={{ duration: 0.8, delay: 0.8, ease: "easeOut" }}
             className="font-display font-extrabold text-3xl md:text-4xl lg:text-5xl xl:text-6xl text-slate-900 leading-[1.15] tracking-tight"
           >
-            Ingeniería aplicada <br />
-            a la <span className="text-[#001c3a]">estanqueidad</span> <br />
-            de superficies.
+            Acabamos con las <br />
+            <span className="text-[#001c3a]">Filtraciones</span> que otros <br />
+            no pueden resolver.
           </motion.h1>
 
           <motion.p
@@ -69,7 +69,7 @@ export default function HomeHero({ onNavigate }: HomeHeroProps) {
             transition={{ duration: 0.8, delay: 1.1, ease: "easeOut" }}
             className="text-sm md:text-base lg:text-lg text-slate-700 font-sans max-w-xl leading-relaxed font-medium"
           >
-            Diagnóstico preciso. Intervención quirúrgica. Trazabilidad total.
+            No vendemos parches, aplicamos ingeniería. Soluciones definitivas con tecnología de impermeabilización de última generación.
           </motion.p>
 
           {/* Badges/Features */}
@@ -81,11 +81,15 @@ export default function HomeHero({ onNavigate }: HomeHeroProps) {
           >
             <div className="flex items-center gap-1.5 bg-white/50 border border-slate-300 rounded-full px-3 py-1.5 backdrop-blur-sm shadow-sm">
               <ShieldCheck size={14} className="text-secondary" />
-              <span className="text-xs text-slate-800 font-bold">Garantía Total</span>
+              <span className="text-xs text-slate-800 font-bold">Mapeo de patologías</span>
             </div>
             <div className="flex items-center gap-1.5 bg-white/50 border border-slate-300 rounded-full px-3 py-1.5 backdrop-blur-sm shadow-sm">
               <TrendingUp size={14} className="text-secondary" />
-              <span className="text-xs text-slate-800 font-bold">Sin obras ni agua</span>
+              <span className="text-xs text-slate-800 font-bold">Intervención quirúrgica</span>
+            </div>
+            <div className="flex items-center gap-1.5 bg-white/50 border border-slate-300 rounded-full px-3 py-1.5 backdrop-blur-sm shadow-sm">
+              <ShieldCheck size={14} className="text-secondary" />
+              <span className="text-xs text-slate-800 font-bold">Respaldo documentado</span>
             </div>
           </motion.div>
 
@@ -96,14 +100,14 @@ export default function HomeHero({ onNavigate }: HomeHeroProps) {
             className="flex flex-col sm:flex-row items-start sm:items-center gap-3 pt-1"
           >
             <a href="#servicios" className="px-5 py-2.5 md:px-6 md:py-3 bg-transparent border-2 border-[#001c3a] text-[#001c3a] font-sans font-bold text-xs uppercase tracking-wider rounded-lg hover:bg-[#001c3a]/5 transition-all active:scale-95 flex items-center gap-2 w-full sm:w-auto justify-center">
-              Descubrir más
+              Ver Servicios
             </a>
             <a 
               href="#" 
               onClick={(e) => { e.preventDefault(); onNavigate('contact', 'push'); }} 
               className="px-5 py-2.5 md:px-6 md:py-3 bg-secondary text-white font-sans font-bold text-xs uppercase tracking-wider rounded-lg hover:bg-[#9a0c2d] transition-all shadow-lg shadow-secondary/30 active:scale-95 flex items-center gap-2 group w-full sm:w-auto justify-center"
             >
-              Contactar <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+              Agendar Inspección <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
             </a>
           </motion.div>
         </div>

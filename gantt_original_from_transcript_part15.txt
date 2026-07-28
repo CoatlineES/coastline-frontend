@@ -1,0 +1,329 @@
+Created At: 2026-07-27T11:28:55Z
+Completed At: 2026-07-27T11:28:58Z
+File Path: `file:///c:/Users/whilmis/Documents/GitHub/coastline-/src/views/employee/projects/tabs/GanttGrid.tsx`
+Total Lines: 1339
+Total Bytes: 69878
+Showing lines 990 to 1310
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+990:             }
+991:             return <React.Fragment key={task.id}></React.Fragment>;
+992:           })}
+993: 
+994:           {visibleTasksGroups.listUnplanned.length > 0 && <div className="h-1" />}
+995: 
+996:           {/* RENDER PLANNED TASKS */}
+997:           {visibleTasksGroups.listPlanned.map((task, index) => {
+998:             let left = -1;
+999:             let width = 0;
+1000: 
+1001:             if (task.startDate && task.endDate) {
+1002:               const start = new Date(task.startDate);
+1003:               const end = new Date(task.endDate);
+1004:               const segments = splitTaskIntoSegments(start, end, viewMode);
+1005:               
+1006:               const baselineSegments = (showBaseline && task.baselineStartDate && task.baselineEndDate) 
+1007:                 ? splitTaskIntoSegments(new Date(task.baselineStartDate), new Date(task.baselineEndDate), viewMode) 
+1008:                 : [];
+1009:               
+1010:               const isMoving = dragRef.current?.taskId === task.id && (dragRef.current?.mode === 'move' || dragRef.current?.mode === 'saving-move');
+1011:               const isResizing = dragRef.current?.taskId === task.id && (dragRef.current?.mode === 'resize' || dragRef.current?.mode === 'saving-resize');
+1012: 
+1013:               const getSegmentGeometry = (seg: {start: Date, end: Date}) => {
+1014:                 let diffUnits = 0;
+1015:                 let durationUnits = 0;
+1016: 
+1017:                 if (viewMode === 'days') {
+1018:                   const normStart = new Date(seg.start);
+1019:                   normStart.setHours(0, 0, 0, 0);
+1020:                   const fullDaysOffset = Math.round((normStart.getTime() - headers.dates[0].getTime()) / 86400000);
+1021:                   
+1022:                   let fractionalOffset = 0;
+1023:                   if (seg.start.getHours() >= 8 && seg.start.getHours() < 17) {
+1024:                     const minsSince8AM = (seg.start.getHours() - 8) * 60 + seg.start.getMinutes();
+1025:                     fractionalOffset = minsSince8AM / 540;
+1026:                   } else if (seg.start.getHours() >= 17) {
+1027:                     fractionalOffset = 1;
+1028:                   }
+1029:                   
+1030:                   diffUnits = fullDaysOffset + fractionalOffset;
+1031:                   
+1032:                   const wMinsDuration = calculateWorkingMinutes(seg.start, seg.end);
+1033:                   durationUnits = wMinsDuration === 0 ? 0.1 : wMinsDuration / 540;
+1034:                 } else {
+1035:                   const diffTimeStart = seg.start.getTime() - headers.dates[0].getTime();
+1036:                   const diffTimeEnd = seg.end.getTime() - seg.start.getTime();
+1037:                   diffUnits = diffTimeStart / (1000 * 60 * 60);
+1038:                   durationUnits = diffTimeEnd / (1000 * 60 * 60);
+1039:                 }
+1040:                 
+1041:                 return {
+1042:                   left: diffUnits >= 0 ? diffUnits * cellWidth : -1,
+1043:                   width: diffUnits >= 0 ? durationUnits * cellWidth : 0
+1044:                 };
+1045:               };
+1046: 
+1047:               return (
+1048:                 <div key={task.id} className="h-16 border-b border-transparent relative flex items-center group hover:bg-slate-50/50">
+1049:                   {/* Baseline Segments */}
+1050:                   {baselineSegments.map((seg, segIndex) => {
+1051:                     const geom = getSegmentGeometry(seg);
+1052:                     if (geom.left < 0 || geom.width <= 0) return null;
+1053:                     return (
+1054:                       <div 
+1055:                         key={`base-${segIndex}`}
+1056:                         className="absolute h-7 rounded z-0 opacity-40 mix-blend-multiply bg-slate-300 border-b-2 border-slate-400 pointer-events-none"
+1057:                         style={{ 
+1058:                           left: `${geom.left}px`, 
+1059:                           width: `${Math.max(4, geom.width)}px`,
+1060:                           top: '1.25rem'
+1061:                         }}
+1062:                       />
+1063:                     );
+1064:                   })}
+1065:                   
+1066:                   {/* Main Segments */}
+1067:                   {segments.map((seg, segIndex) => {
+1068:                     const geom = getSegmentGeometry(seg);
+1069:                     const left = geom.left;
+1070:                     const width = geom.width;
+1071:                     
+1072:                     if (left < 0 || width <= 0) return null;
+1073:                     
+1074:                     return (
+1075:                       <React.Fragment key={segIndex}>
+1076:                         <div
+1077:                           onMouseDown={(e) => handleMouseDown(e, task.id, left, width)}
+1078:                           className={`absolute h-7 rounded shadow-sm z-10 cursor-move border transition-all ${
+1079:                             task.type === 'ZONE' || task.type === 'SUBZONE' ? 'bg-indigo-500 border-indigo-600' : 
+1080:                             task.isUnplanned ? 'bg-red-500 border-red-600' : 'bg-blue-500 border-blue-600'
+1081:                           } ${isMoving ? 'opacity-50 pointer-events-none' : 'hover:brightness-110'}`}
+1082:                           style={{ 
+1083:                             left: `${left}px`, 
+1084:                             width: `${Math.max(4, width)}px`,
+1085:                             top: '1.25rem'
+1086:                           }}
+1087:                         >
+1088:                           <div 
+1089:                             onMouseDown={(e) => handleResizeMouseDown(e, task.id, left, width)}
+1090:                             className="absolute right-0 top-0 bottom-0 w-2 cursor-ew-resize hover:bg-black/20 rounded-r z-20"
+1091:                           />
+1092:                         </div>
+1093:                         {isMoving && (
+1094:                           <div
+1095:                             className={`absolute h-7 rounded shadow-md z-30 cursor-move border opacity-80 ring-2 ring-blue-400 ${
+1096:                               task.type === 'ZONE' || task.type === 'SUBZONE' ? 'bg-indigo-500 border-indigo-600' : 
+1097:                               task.isUnplanned ? 'bg-red-500 border-red-600' : 'bg-blue-500 border-blue-600'
+1098:                             }`}
+1099:                             style={{ 
+1100:                               left: `${dragRef.current?.currentLeft}px`, 
+1101:                               width: `${Math.max(4, width)}px`,
+1102:                               top: '1.25rem'
+1103:                             }}
+1104:                           />
+1105:                         )}
+1106:                         {isResizing && (
+1107:                           <div
+1108:                             className={`absolute h-7 rounded shadow-md z-30 cursor-ew-resize border opacity-80 ring-2 ring-orange-400 ${
+1109:                               task.type === 'ZONE' || task.type === 'SUBZONE' ? 'bg-indigo-500 border-indigo-600' : 
+1110:                               task.isUnplanned ? 'bg-red-500 border-red-600' : 'bg-blue-500 border-blue-600'
+1111:                             }`}
+1112:                             style={{ 
+1113:                               left: `${left}px`, 
+1114:                               width: `${Math.max(4, dragRef.current?.currentWidth || width)}px`,
+1115:                               top: '1.25rem'
+1116:                             }}
+1117:                           />
+1118:                         )}
+1119:                         {/* Renderear Componentes (Operarios / Materiales) */}
+1120:                         {segIndex === 0 && task.components && task.components.length > 0 && (
+1121:                           <div 
+1122:                             className="absolute flex gap-1 pointer-events-auto whitespace-nowrap z-20"
+1123:                             style={{
+1124:                               left: `${left}px`,
+1125:                               top: '2.25rem' // h-7 (1.75rem) + some gap
+1126:                             }}
+1127:                           >
+1128:                             {task.components
+1129:                               .filter(c => {
+1130:                                 if (assignmentViewMode === 'MANO_OBRA') {
+1131:                                   return c.resourceType === 'MANO_OBRA' || c.resourceType === 'MANO_DE_OBRA';
+1132:                                 } else if (assignmentViewMode === 'MAQUINARIA') {
+1133:                                   return c.resourceType === 'MAQUINARIA' || c.resourceType === 'EQUIPO';
+1134:                                 } else {
+1135:                                   return c.resourceType === 'MATERIALES' || c.resourceType === 'MATERIAL' || c.resourceType === 'RECURSO';
+1136:                                 }
+1137:                               })
+1138:                               .map(c => {
+1139:                                 const assignedCount = c.plannedWorkers?.length || 0;
+1140:                                 const isFulfilled = c.quantity > 0 && assignedCount >= c.quantity;
+1141:                                 
+1142:                                 const executedWorkers = c.dailyLogTaskWorkers || [];
+1143:                                 const executedCount = executedWorkers.length;
+1144:                                 
+1145:                                 let executionStatus = 'none'; // 'none', 'match', 'mismatch', 'partial'
+1146:                                 let executedQuantity = 0;
+1147: 
+1148:                                 if (assignmentViewMode === 'MANO_OBRA') {
+1149:                                     const plannedIds = new Set(c.plannedWorkers?.map((pw: any) => pw.userId) || []);
+1150:                                     const anyPlannedExecuted = executedWorkers.some((ew: any) => plannedIds.has(ew.dailyLogWorker?.userId));
+1151:                                     executionStatus = anyPlannedExecuted ? 'match' : 'mismatch';
+1152:                                   } else if (assignmentViewMode) {
+1153:                                     const actualPlan = plansMap ? (plansMap.get(task.planId) || plan) : plan;
+1154:                                     const requests = [...(task.inventoryRequests || [])];
+1155:                                     if (actualPlan?.project?.inventoryRequests) {
+1156:                                       for (const req of actualPlan.project.inventoryRequests) {
+1157:                                       if (!req.projectTaskId || req.projectTaskId === task.id) {
+1158:                                         let isDateMatch = true;
+1159:                                         if (!req.projectTaskId && task.startDate) {
+1160:                                           const reqDate = new Date(req.dateReviewed || req.dateRequested);
+1161:                                           const tStart = new Date(task.startDate);
+1162:                                           tStart.setDate(tStart.getDate() - 2); 
+1163:                                           const tEnd = task.endDate ? new Date(task.endDate) : new Date(task.startDate);
+1164:                                           tEnd.setDate(tEnd.getDate() + 2); 
+1165:                                           
+1166:                                           if (reqDate < tStart || reqDate > tEnd) {
+1167:                                             isDateMatch = false;
+1168:                                           }
+1169:                                         }
+1170: 
+1171:                                         if (isDateMatch && !requests.some(r => r.id === req.id)) {
+1172:                                           requests.push(req);
+1173:                                         }
+1174:                                       }
+1175:                                     }
+1176:                                   }
+1177:                                   for (const req of requests) {
+1178:                                     if (req.status === 'APPROVED' || req.status === 'approved') {
+1179:                                       const items = req.items || [];
+1180:                                       for (const reqItem of items) {
+1181:                                         if (reqItem.item?.resourceId === c.resourceId) {
+1182:                                           executedQuantity += reqItem.qtyApproved || reqItem.quantity;
+1183:                                         }
+1184:                                       }
+1185:                                     }
+1186:                                   }
+1187: 
+1188:                                   if (executedQuantity === 0) {
+1189:                                     executionStatus = 'none';
+1190:                                   } else if (executedQuantity >= c.quantity) {
+1191:                                     executionStatus = 'match';
+1192:                                   } else {
+1193:                                     executionStatus = 'partial';
+1194:                                   }
+1195:                                 }
+1196: 
+1197:                                 let containerClasses = `flex items-center gap-1 border shadow-sm rounded px-1.5 py-0.5 text-[9px] cursor-pointer transition-colors `;
+1198:                                 
+1199:                                 if (assignmentViewMode === 'MANO_OBRA') {
+1200:                                   if (executionStatus === 'mismatch') {
+1201:                                     containerClasses += `bg-orange-50 border-orange-400 text-orange-700`;
+1202:                                   } else if (executionStatus === 'match') {
+1203:                                     containerClasses += `bg-emerald-100 border-emerald-500 text-emerald-800`;
+1204:                                   } else {
+1205:                                     containerClasses += isFulfilled ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 
+1206:                                       assignedCount > 0 ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-white border-slate-200 text-slate-600 hover:border-blue-300';
+1207:                                   }
+1208:                                 } else if (assignmentViewMode === 'MAQUINARIA') {
+1209:                                   if (executionStatus === 'match') {
+1210:                                     containerClasses += `bg-emerald-50 border-emerald-400 text-emerald-800 hover:bg-emerald-100`;
+1211:                                   } else if (executionStatus === 'partial') {
+1212:                                     containerClasses += `bg-orange-50 border-orange-400 text-orange-800 hover:bg-orange-100`;
+1213:                                   } else {
+1214:                                     containerClasses += `bg-yellow-50 border-yellow-300 text-yellow-800 hover:bg-yellow-100`;
+1215:                                   }
+1216:                                 } else {
+1217:                                   if (executionStatus === 'match') {
+1218:                                     containerClasses += `bg-emerald-50 border-emerald-400 text-emerald-800 hover:bg-emerald-100`;
+1219:                                   } else if (executionStatus === 'partial') {
+1220:                                     containerClasses += `bg-orange-50 border-orange-400 text-orange-800 hover:bg-orange-100`;
+1221:                                   } else {
+1222:                                     containerClasses += `bg-purple-50 border-purple-300 text-purple-800 hover:bg-purple-100`;
+1223:                                   }
+1224:                                 }
+1225: 
+1226:                                 if (dragOverComponentId === c.id) {
+1227:                                   containerClasses += ' ring-2 ring-blue-500 scale-105';
+1228:                                 }
+1229: 
+1230:                                 return (
+1231:                                   <div 
+1232:                                     key={c.id} 
+1233:                                     onClick={(e) => { e.stopPropagation(); setSelectedTaskComponent({ taskId: task.id, component: c }); }}
+1234:                                     onDragOver={(e) => {
+1235:                                       e.preventDefault();
+1236:                                       setDragOverComponentId(c.id);
+1237:                                     }}
+1238:                                     onDragLeave={() => setDragOverComponentId(null)}
+1239:                                     onDrop={async (e) => {
+1240:                                       e.preventDefault();
+1241:                                       setDragOverComponentId(null);
+1242:                                       
+1243:                                       try {
+1244:                                         const payloadStr = e.dataTransfer.getData('application/json');
+1245:                                         if (!payloadStr) return;
+1246:                                         
+1247:                                         const payload = JSON.parse(payloadStr);
+1248:                                         if (payload.type === 'worker') {
+1249:                                           await handleAssignWorker(task.id, c.id, payload);
+1250:                                         }
+1251:                                       } catch (err: any) {
+1252:                                         toast.error('Error asignando operario: ' + (err.response?.data?.error || err.message));
+1253:                                       }
+1254:                                     }}
+1255:                                     className={containerClasses}
+1256:                                     title={`Ver asignaciones de ${c.concept}`}
+1257:                                   >
+1258:                                     {assignmentViewMode === 'MANO_OBRA' && <HardHat size={10} />}
+1259:                                     {assignmentViewMode === 'MAQUINARIA' && <Tractor size={10} />}
+1260:                                     {assignmentViewMode === 'MATERIALES' && <Package size={10} />}
+1261:                                     
+1262:                                     {executionStatus === 'match' && <CheckCircle2 size={12} className="text-emerald-600" />}
+1263:                                     {(executionStatus === 'mismatch' || executionStatus === 'partial') && <AlertTriangle size={12} className="text-orange-600" />}
+1264:                                     
+1265:                                     <span className={executionStatus !== 'none' ? 'font-bold' : 'font-semibold'}>
+1266:                                       {c.concept}
+1267:                                     </span>
+1268:                                     
+1269:                                     {assignmentViewMode === 'MANO_OBRA' && (
+1270:                                       <span className="opacity-80 flex items-center">
+1271:                                         {(() => {
+1272:                                           let names = '';
+1273:                                           if (executedCount > 0) {
+1274:                                             names = executedWorkers.map((ew: any) => ew.dailyLogWorker?.user?.name || ew.dailyLogWorker?.externalName || 'Ext').join(', ');
+1275:                                           } else if (c.plannedWorkers && c.plannedWorkers.length > 0) {
+1276:                                             names = c.plannedWorkers.map((pw: any) => pw.user?.name || 'Usr').join(', ');
+1277:                                           }
+1278:                                           if (names) {
+1279:                                             return <span className="ml-1 italic truncate max-w-[120px]" title={names}>- {names}</span>;
+1280:                                           }
+1281:                                           return <span>({assignedCount}{c.quantity > 0 ? `/${c.quantity}` : ''})</span>;
+1282:                                         })()}
+1283:                                       </span>
+1284:                                     )}
+1285:                                     {assignmentViewMode !== 'MANO_OBRA' && (
+1286:                                       <span className="opacity-80 ml-0.5 flex items-center gap-1">
+1287:                                         <span>({executedQuantity > 0 ? `${executedQuantity}/` : ''}{c.quantity})</span>
+1288:                                         {c.plannedWorkers && c.plannedWorkers.length > 0 && (
+1289:                                           <span className="italic truncate max-w-[120px]" title={c.plannedWorkers.map((pw: any) => pw.user?.name || 'Usr').join(', ')}>
+1290:                                             - {c.plannedWorkers.map((pw: any) => pw.user?.name?.split(' ')[0] || 'Usr').join(', ')}
+1291:                                           </span>
+1292:                                         )}
+1293:                                       </span>
+1294:                                     )}
+1295:                                   </div>
+1296:                                 );
+1297:                               })}
+1298:                           </div>
+1299:                         )}
+1300:                       </React.Fragment>
+1301:                     );
+1302:                   })}
+1303:                 </div>
+1304:               );
+1305:             }
+1306:             return <div key={task.id} className="h-16 border-b border-transparent relative flex items-center group hover:bg-slate-50/50" />;
+1307:           })}
+1308:         </div>
+1309:       </div>
+1310: 
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
