@@ -4,10 +4,11 @@ import { useAuth, UserRole } from '../../contexts/AuthContext';
 
 interface ProtectedRouteProps {
   allowedRoles?: UserRole[];
+  allowedPermissions?: string[];
   children?: React.ReactNode;
 }
 
-export default function ProtectedRoute({ allowedRoles, children }: ProtectedRouteProps) {
+export default function ProtectedRoute({ allowedRoles, allowedPermissions, children }: ProtectedRouteProps) {
   const { user } = useAuth();
   const location = useLocation();
 
@@ -21,8 +22,16 @@ export default function ProtectedRoute({ allowedRoles, children }: ProtectedRout
   }
 
   const roleName = typeof user.role === 'object' && user.role !== null ? (user.role as any).name : user.role;
+  const userPermissions = user.customPermissions || [];
 
-  if (allowedRoles && roleName && !allowedRoles.includes(roleName)) {
+  const hasRequiredRole = Boolean(allowedRoles && roleName && allowedRoles.includes(roleName as any));
+  const hasRequiredPerm = Boolean(allowedPermissions && userPermissions.some(p => allowedPermissions.includes(p)));
+
+  // If restrictions are defined, user must have either the role OR the permission
+  const hasRestrictions = Boolean(allowedRoles?.length || allowedPermissions?.length);
+  const hasAccess = !hasRestrictions || hasRequiredRole || hasRequiredPerm;
+
+  if (!hasAccess) {
     // Si el rol no está permitido, lo enviamos a su home base
     const redirectPath = roleName === 'CLIENT' ? '/app/cliente' : '/app/empleado';
     return <Navigate to={redirectPath} replace />;

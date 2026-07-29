@@ -72,6 +72,11 @@ export const myDayService = {
     return data;
   },
 
+  getWeeklyTasks: async (): Promise<any[]> => {
+    const { data } = await api.get('/my-day/tasks/weekly', { params: getWorkerParams() });
+    return data;
+  },
+
   logWork: async (date: string, logs: Array<{ projectId: string; taskId: string; hours: number; quantityDone?: number; notes?: string }>): Promise<{ success: boolean; count: number }> => {
     const { data } = await api.post('/my-day/tasks/log', getWorkerBody({ date, logs }));
     return data;

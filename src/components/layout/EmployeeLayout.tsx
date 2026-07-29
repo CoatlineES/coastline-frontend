@@ -111,14 +111,16 @@ export default function EmployeeLayout() {
           { name: "Ausencias", path: "/app/empleado/ausencias", icon: <CalendarOff size={20} /> }
         );
         
-        if (isAdmin || isSuperadmin) {
+        if (isAdmin || isSuperadmin || isSupervisor || isRRHH) {
           rrhhItems.push({ name: "Gestión Ausencias", path: "/app/empleado/gestion-ausencias", icon: <CalendarOff size={20} /> });
         }
       }
       if (hasPerm('documentos')) {
         rrhhItems.push({ name: "Mis Documentos", path: "/app/empleado/documentos", icon: <FolderOpen size={20} /> });
       }
-      if (hasPerm('rrhh') || isAdmin || isSuperadmin) {
+      
+      const isRRHH = roleName === 'RRHH';
+      if (hasPerm('rrhh') || isAdmin || isSuperadmin || isSupervisor || isRRHH) {
         rrhhItems.push({ name: "Admin Documentos", path: "/app/empleado/documentos-admin", icon: <FolderOpen size={20} /> });
       }
       // Siempre añadir estos básicos a la carpeta RRHH para no perderlos si tienen acceso

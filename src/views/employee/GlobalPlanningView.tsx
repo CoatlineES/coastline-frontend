@@ -144,8 +144,8 @@ export default function GlobalPlanningView() {
           <p className="text-sm text-slate-500 mt-1">Vista global de planificación y asignación en todos los proyectos activos</p>
         </div>
         
-        <div className="flex items-center gap-4">
-          <div className="flex bg-slate-100 p-1 rounded-lg">
+        <div className="flex flex-wrap items-center gap-2 md:gap-4">
+          <div className="flex flex-wrap bg-slate-100 p-1 rounded-lg">
             <button 
               onClick={() => setGlobalViewMode('LIST')}
               className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-colors ${globalViewMode === 'LIST' ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-600 hover:text-slate-800'}`}
@@ -171,8 +171,8 @@ export default function GlobalPlanningView() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white border-b border-slate-200 px-6 py-4 shadow-sm flex items-center gap-4">
-        <div className="flex items-center gap-2 text-slate-600 font-medium text-sm mr-2">
+      <div className="bg-white border-b border-slate-200 px-4 md:px-6 py-4 shadow-sm flex flex-wrap items-center gap-3 md:gap-4">
+        <div className="flex items-center gap-2 text-slate-600 font-medium text-sm mr-0 md:mr-2">
           <Filter size={18} /> Filtros:
         </div>
         

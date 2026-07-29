@@ -12,6 +12,11 @@ export const projectsService = {
     return response.data;
   },
 
+  getProjectTimeline: async (id: string): Promise<any[]> => {
+    const response = await api.get(`/projects/${id}/timeline`);
+    return response.data;
+  },
+
   getMyAssignedProjects: async (): Promise<Project[]> => {
     const workerId = localStorage.getItem('contractor_worker_id');
     const params = workerId ? { workerId } : {};

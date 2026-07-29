@@ -138,7 +138,12 @@ export function GlobalGanttTimeline({ plans, onUpdate, calendars }: GlobalGanttT
     
     tasks.forEach(projectRoot => {
       if (isAddingUnplanned) {
-        rows.push({ type: 'UNPLANNED_HEADER', isAddingUnplanned: true, projectId: projectRoot.planId });
+        rows.push({ 
+          type: 'UNPLANNED_HEADER', 
+          isAddingUnplanned: true, 
+          projectId: projectRoot.planId,
+          onAddUnplanned: (date?: Date) => handleAddSub(projectRoot.planId!, 'UNPLANNED', date)
+        });
         const unplannedTasks = (projectRoot.children || []).filter(t => t.isUnplanned);
         unplannedTasks.forEach(t => {
           rows.push({ type: 'TASK', task: t, level: 1 });
@@ -161,6 +166,31 @@ export function GlobalGanttTimeline({ plans, onUpdate, calendars }: GlobalGanttT
 
   // Initially collapse all projects (as asked in implementation plan and confirmed)
   
+  const handleAddSub = async (planId: string, parentType: string, date?: Date) => {
+    const name = prompt('Nombre de la nueva Tarea Extra:');
+    if (!name) return;
+    
+    const taskData: any = { name, type: 'TASK' };
+    
+    if (parentType === 'UNPLANNED') {
+      taskData.isUnplanned = true;
+      if (date) {
+        taskData.startDate = date.toISOString();
+        taskData.durationDays = 1;
+        const end = new Date(date);
+        end.setDate(end.getDate() + 1);
+        taskData.endDate = end.toISOString();
+      }
+    }
+    
+    try {
+      await projectPlanningService.createTask(planId, taskData);
+      onUpdate();
+    } catch (error) {
+      console.error(error);
+      alert('Error al crear la tarea extra');
+    }
+  };
 
   const handleExpandAll = () => {
     const allIds = new Set<string>();
@@ -178,6 +208,65 @@ export function GlobalGanttTimeline({ plans, onUpdate, calendars }: GlobalGanttT
     setExpandedNodes(new Set());
   };
 
+  const handleDropWorker = async (e: React.DragEvent<HTMLDivElement>, task: ProjectTask) => {
+    e.preventDefault();
+    try {
+      const data = e.dataTransfer.getData('application/json') || e.dataTransfer.getData('text/plain');
+      if (!data) return;
+      const payload = JSON.parse(data);
+      if (payload.type !== 'worker') return;
+      
+      let targetComponent = task.components?.find(c => {
+         if (assignmentViewMode === 'MANO_OBRA') return c.resourceType === 'MANO_OBRA' || c.resourceType === 'MANO_DE_OBRA';
+         if (assignmentViewMode === 'MAQUINARIA') return c.resourceType === 'MAQUINARIA' || c.resourceType === 'EQUIPO';
+         return c.resourceType === 'MATERIALES' || c.resourceType === 'MATERIAL' || c.resourceType === 'RECURSO';
+      });
+      
+      if (!targetComponent) {
+        if (window.confirm(`Esta tarea no tiene componentes de ${assignmentViewMode}. ¿Desea crear uno automáticamente para asignar al operario?`)) {
+          targetComponent = await projectPlanningService.addTaskComponent(task.id, {
+             concept: 'Asignación General',
+             resourceType: assignmentViewMode,
+             quantity: 1,
+             unitCost: 0
+          });
+        } else {
+          return;
+        }
+      }
+
+      await projectPlanningService.assignWorkerToComponent(task.id, targetComponent.id, { 
+        userId: payload.userId, 
+        contractorWorkerId: payload.contractorWorkerId 
+      });
+      onUpdate();
+      
+    } catch (err: any) {
+      if (err.response?.status === 409 && err.response?.data?.clash) {
+         if (window.confirm(`El operario ya está asignado a otras tareas en estas fechas:\n\n${err.response.data.clashes.join('\\n')}\n\n¿Desea asignarlo de todos modos?`)) {
+            const data = e.dataTransfer.getData('application/json') || e.dataTransfer.getData('text/plain');
+            const parsed = JSON.parse(data);
+            const targetComponent = task.components?.find(c => {
+               if (assignmentViewMode === 'MANO_OBRA') return c.resourceType === 'MANO_OBRA' || c.resourceType === 'MANO_DE_OBRA';
+               if (assignmentViewMode === 'MAQUINARIA') return c.resourceType === 'MAQUINARIA' || c.resourceType === 'EQUIPO';
+               return c.resourceType === 'MATERIALES' || c.resourceType === 'MATERIAL' || c.resourceType === 'RECURSO';
+            });
+            if (targetComponent) {
+              await projectPlanningService.assignWorkerToComponent(task.id, targetComponent.id, {
+                userId: parsed.userId,
+                contractorWorkerId: parsed.contractorWorkerId,
+                force: true
+              });
+              onUpdate();
+            }
+         }
+      } else {
+         console.error(err);
+         alert('Error al asignar operario');
+      }
+    }
+  };
+
   const handleTaskClick = (task: ProjectTask) => {
     if (task.type === 'TASK') {
       setSelectedTaskForBreakdown(task);
@@ -191,10 +280,14 @@ export function GlobalGanttTimeline({ plans, onUpdate, calendars }: GlobalGanttT
     }
     if (row.type === 'UNPLANNED_HEADER') {
       return (
-        <div key={`unplanned-header-${index}`} className="flex items-center justify-between p-2 h-16 border-b border-indigo-200 bg-indigo-50" style={{ gridTemplateColumns: '1fr 130px 140px' }}>
+        <div key={`unplanned-header-${index}`} className="flex items-center justify-between p-2 h-16 border-b border-indigo-200 bg-indigo-50" style={{ gridTemplateColumns: '1fr 90px 70px' }}>
           <span className="text-indigo-800 font-bold text-sm ml-2">⚠️ TAREAS CORRECTIVAS / EXTRA</span>
           {row.isAddingUnplanned && (
-            <button className="text-xs font-medium text-indigo-700 bg-indigo-100 hover:bg-indigo-200 px-3 py-1.5 rounded flex items-center gap-1 opacity-50 cursor-not-allowed" title="Añadir desde un proyecto individual">
+            <button 
+              onClick={() => row.projectId && handleAddSub(row.projectId, 'UNPLANNED')}
+              className="text-xs font-medium text-indigo-700 bg-indigo-100 hover:bg-indigo-200 px-3 py-1.5 rounded flex items-center gap-1 transition-colors"
+              title="Añadir Tarea Extra"
+            >
               <Plus size={14} /> Añadir Tarea Extra
             </button>
           )}
@@ -215,7 +308,17 @@ export function GlobalGanttTimeline({ plans, onUpdate, calendars }: GlobalGanttT
             task.type === 'PHASE' ? 'bg-[#002D5A]/5 hover:bg-blue-50/40' : 
             task.type === 'ZONE' ? 'bg-slate-50/80 hover:bg-blue-50/40' : 'hover:bg-blue-50/40'
           }`}
-          style={{ gridTemplateColumns: '1fr 130px 140px' }}
+          style={{ gridTemplateColumns: '1fr 90px 70px' }}
+          onDragOver={(e) => {
+            if (task.type !== 'VIRTUAL_ADD_UNPLANNED') {
+              e.preventDefault();
+            }
+          }}
+          onDrop={(e) => {
+            if (task.type !== 'VIRTUAL_ADD_UNPLANNED') {
+              handleDropWorker(e, task);
+            }
+          }}
         >
           {/* Nombre */}
           <div 
@@ -286,7 +389,7 @@ export function GlobalGanttTimeline({ plans, onUpdate, calendars }: GlobalGanttT
     <div className="flex flex-col h-full bg-white relative">
       {/* Top Toolbar */}
       <div className="flex items-center justify-between p-4 border-b border-slate-200 bg-white z-20 shrink-0">
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-4">
           <div className="flex bg-slate-100 p-1 rounded-lg">
             <button 
               onClick={() => setViewMode('days')}
@@ -326,7 +429,7 @@ export function GlobalGanttTimeline({ plans, onUpdate, calendars }: GlobalGanttT
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center justify-center gap-2 lg:gap-3">
           <div className="flex bg-slate-100 p-1 rounded-lg">
             <button 
               onClick={handleExpandAll}
@@ -374,7 +477,7 @@ export function GlobalGanttTimeline({ plans, onUpdate, calendars }: GlobalGanttT
 
       {/* Main Grid Area */}
       <div className="flex-1 flex overflow-hidden" onDragOver={handleDragOver}>
-        <div className="w-[45%] min-w-[400px] shrink-0 border-r border-slate-300 bg-white z-10 shadow-sm flex flex-col">
+        <div className="w-[30%] min-w-[280px] max-w-[350px] shrink-0 border-r border-slate-300 bg-white z-10 shadow-sm flex flex-col">
           {/* Rows Container */}
           <div 
             className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar relative"
@@ -384,7 +487,7 @@ export function GlobalGanttTimeline({ plans, onUpdate, calendars }: GlobalGanttT
             <div className="flex bg-slate-100 border-b border-slate-300 h-7 shrink-0 sticky top-0 z-40">
                {/* Empty top bar to match the groups header */}
             </div>
-            <div className="grid h-7 bg-slate-50 border-b-2 border-slate-300 sticky top-7 z-30 shrink-0" style={{ gridTemplateColumns: '1fr 130px 140px' }}>
+            <div className="grid h-7 bg-slate-50 border-b-2 border-slate-300 sticky top-7 z-30 shrink-0" style={{ gridTemplateColumns: '1fr 90px 70px' }}>
               <div className="px-3 font-bold text-[11px] uppercase text-[#002D5A] border-r border-slate-200 flex items-center">Proyecto / Tarea</div>
               <div className="px-3 font-bold text-[11px] uppercase text-[#002D5A] border-r border-slate-200 flex items-center justify-center">Fechas</div>
               <div className="px-3 font-bold text-[11px] uppercase text-[#002D5A] flex items-center justify-center">Progreso</div>

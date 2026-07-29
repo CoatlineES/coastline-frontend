@@ -246,6 +246,69 @@ export function GanttTimeline({ plan, project, onUpdate, calendars, selectedCale
     }
   };
 
+  const handleDropWorker = async (e: React.DragEvent<HTMLDivElement>, task: ProjectTask) => {
+    e.preventDefault();
+    try {
+      const data = e.dataTransfer.getData('application/json') || e.dataTransfer.getData('text/plain');
+      console.log("DROP DATA:", data, "TASK:", task);
+      if (!data) {
+        console.warn("No data in drop event");
+        return;
+      }
+      const payload = JSON.parse(data);
+      if (payload.type !== 'worker') return;
+      
+      let targetComponent = task.components?.find(c => {
+         if (assignmentViewMode === 'MANO_OBRA') return c.resourceType === 'MANO_OBRA' || c.resourceType === 'MANO_DE_OBRA';
+         if (assignmentViewMode === 'MAQUINARIA') return c.resourceType === 'MAQUINARIA' || c.resourceType === 'EQUIPO';
+         return c.resourceType === 'MATERIALES' || c.resourceType === 'MATERIAL' || c.resourceType === 'RECURSO';
+      });
+      
+      if (!targetComponent) {
+        if (window.confirm(`Esta tarea no tiene componentes de ${assignmentViewMode}. ¿Desea crear uno automáticamente para asignar al operario?`)) {
+          targetComponent = await projectPlanningService.addTaskComponent(task.id, {
+             concept: 'Asignación General',
+             resourceType: assignmentViewMode,
+             quantity: 1,
+             unitCost: 0
+          });
+        } else {
+          return;
+        }
+      }
+
+      await projectPlanningService.assignWorkerToComponent(task.id, targetComponent.id, { 
+        userId: payload.userId, 
+        contractorWorkerId: payload.contractorWorkerId 
+      });
+      onUpdate();
+      
+    } catch (err: any) {
+      if (err.response?.status === 409 && err.response?.data?.clash) {
+         if (window.confirm(`El operario ya está asignado a otras tareas en estas fechas:\n\n${err.response.data.clashes.join('\\n')}\n\n¿Desea asignarlo de todos modos?`)) {
+            const data = e.dataTransfer.getData('application/json') || e.dataTransfer.getData('text/plain');
+            const parsed = JSON.parse(data);
+            const targetComponent = task.components?.find(c => {
+               if (assignmentViewMode === 'MANO_OBRA') return c.resourceType === 'MANO_OBRA' || c.resourceType === 'MANO_DE_OBRA';
+               if (assignmentViewMode === 'MAQUINARIA') return c.resourceType === 'MAQUINARIA' || c.resourceType === 'EQUIPO';
+               return c.resourceType === 'MATERIALES' || c.resourceType === 'MATERIAL' || c.resourceType === 'RECURSO';
+            });
+            if (targetComponent) {
+              await projectPlanningService.assignWorkerToComponent(task.id, targetComponent.id, {
+                userId: parsed.userId,
+                contractorWorkerId: parsed.contractorWorkerId,
+                force: true
+              });
+              onUpdate();
+            }
+         }
+      } else {
+         console.error(err);
+         alert('Error al asignar operario');
+      }
+    }
+  };
+
   const handleUpdateApu = async (apuTask: ProjectTask, newQuantity: number) => {
     const newExpanded = new Set(expandedNodes);
     // ... logic
@@ -352,6 +415,16 @@ export function GanttTimeline({ plan, project, onUpdate, calendars, selectedCale
             task.type === 'ZONE' ? 'bg-slate-50/80' : 'bg-white'
           }`}
           style={{ gridTemplateColumns: '1fr 130px 140px 90px 60px' }}
+          onDragOver={(e) => {
+            if (task.type !== 'VIRTUAL_ADD_UNPLANNED') {
+              e.preventDefault();
+            }
+          }}
+          onDrop={(e) => {
+            if (task.type !== 'VIRTUAL_ADD_UNPLANNED') {
+              handleDropWorker(e, task);
+            }
+          }}
         >
           {/* Columna: Nombre */}
           <div 

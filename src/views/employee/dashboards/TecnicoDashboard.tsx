@@ -7,6 +7,7 @@ import { myDayService, MyDayTask, AttendanceRecord } from '../../../services/my-
 import { dailyLogsService, DailyLog } from '../../../services/daily-logs.service';
 import { usersService } from '../../../services/users.service';
 import toast from 'react-hot-toast';
+import { WeeklyTasksWidget } from './components/WeeklyTasksWidget';
 
 export default function TecnicoDashboard() {
   const { user } = useAuth();
@@ -231,23 +232,46 @@ export default function TecnicoDashboard() {
             const assignedTask = suggestedTasks.find(t => 
               t.components?.some(c => c.plannedWorkers && c.plannedWorkers.length > 0)
             );
-            const task = assignedTask || suggestedTasks[0];
-            const assignedManpower = task.components?.find(c => c.resourceType === 'MANO_OBRA' && c.plannedWorkers && c.plannedWorkers.length > 0);
+            const mainTask = assignedTask || suggestedTasks[0];
+            const assignedManpower = mainTask.components?.find(c => c.resourceType === 'MANO_OBRA' && c.plannedWorkers && c.plannedWorkers.length > 0);
             const roleName = assignedManpower?.concept || '';
+
+            const otherTasks = suggestedTasks.filter(t => t.id !== mainTask.id);
 
             return (
               <>
-                <p className="text-white font-sans max-w-2xl mb-6 text-lg md:text-xl leading-relaxed">
-                  Tu proyecto para el día de hoy es <strong>{task.plan?.project?.name || 'Proyecto Asignado'}</strong>{task.plan?.project?.address ? ` (ubicado en ${task.plan.project.address}${task.plan.project.city ? `, ${task.plan.project.city}` : ''})` : ''}, realizando la partida <strong>{task.name}</strong>{roleName ? ` como ${roleName}` : ''}.
-                  {task.description && <span className="block mt-2 text-white/70 text-base">{task.description}</span>}
+                {mainTask.isUnplanned && (
+                  <div className="inline-block bg-orange-500/20 text-orange-200 border border-orange-500/30 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-3">
+                    TAREA EXTRA - PRIORIDAD ALTA
+                  </div>
+                )}
+                <p className="text-white font-sans max-w-2xl mb-4 text-lg md:text-xl leading-relaxed">
+                  Tu proyecto para el día de hoy es <strong>{mainTask.plan?.project?.name || 'Proyecto Asignado'}</strong>{mainTask.plan?.project?.address ? ` (ubicado en ${mainTask.plan.project.address}${mainTask.plan.project.city ? `, ${mainTask.plan.project.city}` : ''})` : ''}, realizando la partida <strong>{mainTask.name}</strong>{roleName ? ` como ${roleName}` : ''}.
+                  {mainTask.description && <span className="block mt-2 text-white/70 text-base">{mainTask.description}</span>}
                 </p>
+
+                {otherTasks.length > 0 && (
+                  <div className="mb-6 bg-white/5 border border-white/10 rounded-xl p-4 max-w-2xl">
+                    <h3 className="text-sm font-bold text-white/80 uppercase tracking-wide mb-2 flex items-center gap-2">
+                      <FileText size={14} /> Otras tareas planificadas para hoy
+                    </h3>
+                    <ul className="space-y-2">
+                      {otherTasks.map(t => (
+                        <li key={t.id} className="text-white/60 text-sm flex flex-col md:flex-row md:items-center justify-between gap-1">
+                           <span><strong>{t.name}</strong> en {t.plan?.project?.name || 'Proyecto'}</span>
+                           {t.isUnplanned && <span className="text-orange-300 text-[10px] font-bold border border-orange-400/30 px-1.5 py-0.5 rounded bg-orange-400/10">TAREA EXTRA</span>}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
                 
                 <div className="flex flex-wrap items-center gap-4">
                   <button 
                     onClick={() => navigate('/app/empleado/partes')}
                     className="bg-secondary hover:bg-secondary-container text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-all shadow-lg active:scale-95"
                   >
-                    <Navigation size={18} /> Iniciar Tarea
+                    <Navigation size={18} /> Iniciar {mainTask.isUnplanned ? 'Tarea Extra' : 'Tarea'}
                   </button>
                 </div>
               </>
@@ -376,6 +400,18 @@ export default function TecnicoDashboard() {
         </motion.div>
 
       </div>
+
+      {/* Planificación Semanal */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.25 }}
+      >
+        <WeeklyTasksWidget 
+          isContractor={isContractor} 
+          selectedWorkerId={selectedWorkerId} 
+        />
+      </motion.div>
 
       {/* Avisos */}
       {/* 

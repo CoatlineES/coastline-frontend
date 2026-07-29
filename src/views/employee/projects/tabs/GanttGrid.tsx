@@ -783,6 +783,39 @@ export function GanttGrid({ plan, project, expandedNodes, onUpdate, viewMode, ba
                                   <div 
                                     key={c.id} 
                                     onClick={(e) => { e.stopPropagation(); setSelectedTaskComponent({ taskId: task.id, component: c }); }}
+                                    onDragOver={(e) => {
+                                      e.preventDefault();
+                                    }}
+                                    onDrop={async (e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+                                      const data = e.dataTransfer.getData('application/json') || e.dataTransfer.getData('text/plain');
+                                      if (!data) return;
+                                      const payload = JSON.parse(data);
+                                      if (payload.type === 'worker') {
+                                        try {
+                                          await projectPlanningService.assignWorkerToComponent(task.id, c.id, {
+                                            userId: payload.userId,
+                                            contractorWorkerId: payload.contractorWorkerId
+                                          });
+                                          onUpdate();
+                                        } catch (err: any) {
+                                          if (err.response?.status === 409 && err.response?.data?.clash) {
+                                            if (window.confirm(`El operario ya está asignado a otras tareas en estas fechas:\n\n${err.response.data.clashes.join('\\n')}\n\n¿Desea asignarlo de todos modos?`)) {
+                                              await projectPlanningService.assignWorkerToComponent(task.id, c.id, {
+                                                userId: payload.userId,
+                                                contractorWorkerId: payload.contractorWorkerId,
+                                                force: true
+                                              });
+                                              onUpdate();
+                                            }
+                                          } else {
+                                            console.error(err);
+                                            alert('Error al asignar operario');
+                                          }
+                                        }
+                                      }
+                                    }}
                                     className={containerClasses}
                                     title={`Ver asignaciones de ${c.concept}`}
                                   >

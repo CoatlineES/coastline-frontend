@@ -11,6 +11,7 @@ import { ProjectBudgetTab } from './tabs/ProjectBudgetTab';
 import ProjectTeamTab from './tabs/ProjectTeamTab';
 import { PartesDiariosView } from './tabs/PartesDiariosView';
 import { ProjectReportsTab } from './tabs/ProjectReportsTab';
+import { ProjectTimelineTab } from './tabs/ProjectTimelineTab';
 import ProjectExtraExpensesTab from './tabs/ProjectExtraExpensesTab';
 
 export default function ProjectDetailView() {
@@ -605,7 +606,11 @@ export default function ProjectDetailView() {
             <ProjectReportsTab project={project} />
           )}
 
-          {['FACTURACION', 'TIMELINE'].includes(activeTab) && (
+          {activeTab === 'TIMELINE' && (
+            <ProjectTimelineTab project={project} />
+          )}
+
+          {['FACTURACION'].includes(activeTab) && (
             <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mt-6 p-12 text-center text-slate-400">
               Esta sección está en desarrollo.
             </div>

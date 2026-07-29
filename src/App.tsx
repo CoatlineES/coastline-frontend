@@ -168,7 +168,7 @@ export default function App() {
             <Route path="administracion" element={<div className="p-8">Módulo de Administración en construcción...</div>} />
             <Route path="documentos" element={<EmployeeDocumentsView />} />
             <Route path="documentos-admin" element={
-              <ProtectedRoute allowedRoles={['SUPERADMIN', 'ADMIN', 'SUPERVISOR', 'RRHH']}>
+              <ProtectedRoute allowedRoles={['SUPERADMIN', 'ADMIN', 'SUPERVISOR', 'RRHH']} allowedPermissions={['rrhh']}>
                 <AdminDocumentsView />
               </ProtectedRoute>
             } />

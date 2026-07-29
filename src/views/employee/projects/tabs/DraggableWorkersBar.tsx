@@ -75,6 +75,7 @@ export function DraggableWorkersBar({ projectId }: DraggableWorkersBarProps) {
       : JSON.stringify({ type: 'worker', userId: worker.userId });
     
     e.dataTransfer.setData('application/json', payload);
+    e.dataTransfer.setData('text/plain', payload);
     e.dataTransfer.effectAllowed = 'copy';
   };
 
