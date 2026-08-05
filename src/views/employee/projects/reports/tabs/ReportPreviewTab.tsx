@@ -159,10 +159,11 @@ export function ReportPreviewTab({ report }: ReportPreviewTabProps) {
 
       {/* PREVIEW AREA */}
       <div className="flex-1 overflow-y-auto p-8 flex justify-center bg-slate-100">
-        <div id="report-pdf-content" className="w-[794px] bg-white shadow-xl origin-top" style={{ minHeight: '1123px' }}>
-          
-          {/* PAGE 1: COVER */}
-          <div className="relative w-full h-[1123px] overflow-hidden bg-slate-900">
+        <div className="shadow-xl origin-top">
+          <div id="report-pdf-content" className="w-[794px] bg-white" style={{ minHeight: '1123px' }}>
+            
+            {/* PAGE 1: COVER */}
+            <div className="relative w-full h-[1123px] overflow-hidden bg-slate-900">
             <img src={coverImage} className="absolute inset-0 w-full h-full object-cover" alt="Cover" />
             <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-slate-900/60 to-transparent" />
             
@@ -481,6 +482,7 @@ export function ReportPreviewTab({ report }: ReportPreviewTabProps) {
             </div>
           )}
 
+          </div>
         </div>
       </div>
     </div>

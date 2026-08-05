@@ -6,6 +6,7 @@ import { inspectionReportsService } from '../../../../services/inspection-report
 import { InspectionReport } from '../../../../types/inspection-report';
 import toast from 'react-hot-toast';
 import { EstanqueidadView } from './EstanqueidadView';
+import { ReportTypeWizardModal } from '../reports/ReportTypeWizardModal';
 
 interface ProjectReportsTabProps {
   project: Project;
@@ -15,6 +16,7 @@ export function ProjectReportsTab({ project }: ProjectReportsTabProps) {
   const navigate = useNavigate();
   const [reports, setReports] = useState<InspectionReport[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isWizardOpen, setIsWizardOpen] = useState(false);
 
   useEffect(() => {
     loadReports();
@@ -31,17 +33,13 @@ export function ProjectReportsTab({ project }: ProjectReportsTabProps) {
     }
   };
 
-  const handleCreateReport = async () => {
-    try {
-      const report = await inspectionReportsService.create({
-        projectId: project.id,
-        clientName: project.account?.name || '',
-        status: 'DRAFT',
-      });
-      navigate(`/app/empleado/proyectos/${project.id}/informes/${report.id}`);
-    } catch (error) {
-      toast.error('Error al crear el informe');
-    }
+  const handleCreateReport = () => {
+    setIsWizardOpen(true);
+  };
+
+  const handleWizardSuccess = (reportId: string) => {
+    setIsWizardOpen(false);
+    navigate(`/app/empleado/proyectos/${project.id}/informes/${reportId}`);
   };
 
   const handleDeleteReport = async (e: React.MouseEvent, reportId: string) => {
@@ -115,6 +113,13 @@ export function ProjectReportsTab({ project }: ProjectReportsTabProps) {
       {/* SECCIÓN CERTIFICADOS DE ESTANQUEIDAD */}
       <EstanqueidadView project={project as any} />
 
+      <ReportTypeWizardModal 
+        isOpen={isWizardOpen}
+        onClose={() => setIsWizardOpen(false)}
+        projectId={project.id}
+        clientName={project.account?.name || ''}
+        onSuccess={handleWizardSuccess}
+      />
     </div>
   );
 }

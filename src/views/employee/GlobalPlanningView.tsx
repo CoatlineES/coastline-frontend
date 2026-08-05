@@ -261,8 +261,8 @@ export default function GlobalPlanningView() {
       )}
 
       {globalViewMode === 'GLOBAL_CALENDAR' ? (
-        <div className="p-6">
-          <div className="rounded-2xl shadow-sm border border-slate-200 overflow-hidden bg-white flex flex-col" style={{ height: 'calc(100vh - 220px)' }}>
+        <div className="flex-1 flex flex-col pt-4">
+          <div className="rounded-2xl shadow-sm border border-slate-200 overflow-hidden bg-white flex flex-col" style={{ minHeight: 'calc(100vh - 150px)' }}>
             <GlobalGanttTimeline 
               plans={filteredPlans}
               calendars={calendars}

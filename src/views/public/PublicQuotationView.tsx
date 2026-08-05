@@ -190,7 +190,7 @@ export default function PublicQuotationView() {
                 </div>
               </div>
               <div className="text-right text-[10px] leading-relaxed text-[#002D5A]/80 flex-shrink-0">
-                <div className="font-bold text-[#002D5A] text-sm mb-1">Coatline SL</div>
+                <img src={`${window.location.origin}/images/logo.png`} alt="Coatline Logo" className="h-8 object-contain mb-2 ml-auto" />
                 <div>Calle Resina 35, Nave 7</div>
                 <div>28001 Madrid</div>
                 <div>CIF B56572936 · Tel. 689 680 350</div>
@@ -356,7 +356,7 @@ export default function PublicQuotationView() {
               {/* Coatline Signature */}
               <div className="text-[#002D5A] w-72 flex flex-col items-center">
                 <div className="flex flex-col items-center text-center w-full">
-                  <img src="/images/firma-coatline.png" alt="Firma Coatline" className="h-16 object-contain mb-2" />
+                  <img src={`${window.location.origin}/images/firma-coatline.png`} alt="Firma Coatline" className="h-16 object-contain mb-2" />
                   <div className="w-full border-b border-dashed border-[#002D5A]/40 mb-2"></div>
                   <div className="text-[9px] font-bold mb-0.5">Coatline SL · CIF B56572936</div>
                   <div className="text-[8px] text-[#002D5A]/70">Calle Resina 35, Nave 7 · 28001 Madrid · Tel. 689 680 350</div>

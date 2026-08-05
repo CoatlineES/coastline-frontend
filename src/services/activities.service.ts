@@ -1,20 +1,29 @@
 import api, { cleanParams } from './api';
 
 export enum ActivityType {
-  TASK = 'task',
-  CALL = 'call',
-  EMAIL = 'email',
-  LLAMADA = 'llamada',
-  REUNION_COMERCIAL = 'reunion_comercial',
-  REUNION_SEGUIMIENTO = 'reunion_seguimiento',
-  COTIZACION = 'cotizacion',
-  SEGUIMIENTO = 'seguimiento'
+  TASK = 'TASK',
+  CALL = 'CALL',
+  EMAIL = 'EMAIL',
+  LLAMADA = 'LLAMADA',
+  REUNION_COMERCIAL = 'REUNION_COMERCIAL',
+  REUNION_SEGUIMIENTO = 'REUNION_SEGUIMIENTO',
+  COTIZACION = 'COTIZACION',
+  SEGUIMIENTO = 'SEGUIMIENTO'
 }
 
 export enum ActivityResult {
   CALL_BACK = 'CALL_BACK',
   INTERESTED = 'INTERESTED',
-  NO_ANSWER = 'NO_ANSWER'
+  NO_ANSWER = 'NO_ANSWER',
+  SUCCESSFUL = 'SUCCESSFUL',
+  UNSUCCESSFUL = 'UNSUCCESSFUL'
+}
+
+export enum ActivityStatus {
+  PLANNED = 'PLANNED',
+  IN_PROGRESS = 'IN_PROGRESS',
+  COMPLETED = 'COMPLETED',
+  CANCELLED = 'CANCELLED'
 }
 
 export interface Activity {
@@ -23,6 +32,8 @@ export interface Activity {
   notes: string | null;
   activityType: ActivityType;
   result: ActivityResult | null;
+  status: ActivityStatus;
+  plannedDate: string | null;
   completedAt: string | null;
   accountId: string;
   userId: string | null;

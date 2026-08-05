@@ -341,7 +341,7 @@ export default function DetectionView({ onNavigate }: DetectionViewProps) {
               transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
               className="text-sm md:text-base lg:text-lg text-slate-700 font-sans max-w-xl leading-relaxed font-medium"
             >
-              Diagnóstico de alta precisión sin consumo de agua ni alteraciones estructurales. Tecnología no invasiva que identifica microfisuras con exactitud milimétrica.
+              Diagnóstico de alta precisión sin alteraciones estructurales. Tecnología no invasiva que identifica microfisuras con exactitud milimétrica.
             </motion.p>
             
             <motion.div 

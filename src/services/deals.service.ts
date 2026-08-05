@@ -21,6 +21,7 @@ export interface Deal {
   userId: string | null;
   probability?: number | null;
   businessLineId?: string | null;
+  sourceActivityId?: string | null;
   createdAt: string;
   updatedAt: string;
   
@@ -31,6 +32,7 @@ export interface Deal {
   businessLine?: { id: string; name: string };
   activities?: Activity[];
   quotations?: { id: string; number: string; status: string }[];
+  projects?: { id: string; name: string; status: string }[];
 }
 
 export const dealsService = {

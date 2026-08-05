@@ -68,8 +68,8 @@ export const NotificationsDropdown: React.FC<NotificationsDropdownProps> = ({ on
     if (notif.type === 'DEAL' && notif.referenceId) {
       // Pass the referenceId so the CRM dashboard can potentially open the 360 view
       navigate(`/app/empleado/crm?tab=dashboard&dealId=${notif.referenceId}`);
-    } else if (notif.type === 'ACTIVITY') {
-      navigate(`/app/empleado/crm?tab=activities`);
+    } else if (notif.type === 'ACTIVITY' && notif.referenceId) {
+      navigate(`/app/empleado/crm?tab=dashboard&activityId=${notif.referenceId}`);
     } else {
       // Fallback
       navigate('/app/empleado/crm');

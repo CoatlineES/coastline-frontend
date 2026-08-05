@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FileText, Plus, Search, Filter, MoreHorizontal, FileDown, CheckCircle, Clock, XCircle, Trash2, Copy, FileSignature } from 'lucide-react';
+import { FileText, Plus, Search, Filter, MoreHorizontal, FileDown, CheckCircle, Clock, XCircle, Trash2, Copy, FileSignature, Download } from 'lucide-react';
 import { Quotation, QuotationSummary, QuotationStatus } from '../../../types/quotation';
 import { quotationsService } from '../../../services/quotations.service';
 import { BusinessLine } from '../../../services/business-lines.service';
 import { UserResponse } from '../../../services/types';
+import { exportQuotationsKpiToExcel } from '../../../utils/exportQuotationsKpiReport';
 import toast from 'react-hot-toast';
 
 interface QuotationListViewProps {
@@ -88,13 +89,31 @@ export default function QuotationListView({ businessLines, users, onViewDetail, 
             </h2>
             <p className="text-sm text-slate-500 mt-1">Gestiona propuestas y presupuestos comerciales</p>
           </div>
-          <button
-            onClick={onCreateNew}
-            className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors font-medium flex items-center gap-2 shadow-sm"
-          >
-            <Plus size={18} />
-            Nueva Cotización
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={async () => {
+                try {
+                  const toastId = toast.loading('Generando reporte Excel...');
+                  const data = await quotationsService.getAll({});
+                  await exportQuotationsKpiToExcel(data as QuotationSummary[], 'Todos (Total histórico)');
+                  toast.success('Reporte generado correctamente', { id: toastId });
+                } catch (err) {
+                  toast.error('Error al exportar cotizaciones');
+                }
+              }}
+              className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors font-medium flex items-center gap-2 shadow-sm active:scale-95"
+            >
+              <Download size={18} />
+              Excel
+            </button>
+            <button
+              onClick={onCreateNew}
+              className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors font-medium flex items-center gap-2 shadow-sm"
+            >
+              <Plus size={18} />
+              Nueva Cotización
+            </button>
+          </div>
         </div>
 
         <form onSubmit={handleSearch} className="flex gap-4">

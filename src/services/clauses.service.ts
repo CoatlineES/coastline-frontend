@@ -1,7 +1,4 @@
-import axios from 'axios';
-
-const API_URL = 'http://localhost:4000/api/clauses';
-
+import api from './api';
 export interface LibraryClause {
   id: string;
   title: string;
@@ -15,30 +12,30 @@ export interface LibraryClause {
 
 export const clausesService = {
   getAll: async (): Promise<LibraryClause[]> => {
-    const response = await axios.get(API_URL);
-    return response.data;
+    const response = await api.get('/clauses');
+    return response;
   },
 
   getById: async (id: string): Promise<LibraryClause> => {
-    const response = await axios.get(`${API_URL}/${id}`);
-    return response.data;
+    const response = await api.get(`/clauses/${id}`);
+    return response;
   },
 
   create: async (data: Omit<LibraryClause, 'id' | 'createdAt' | 'updatedAt'>): Promise<LibraryClause> => {
-    const response = await axios.post(API_URL, data);
-    return response.data;
+    const response = await api.post('/clauses', data);
+    return response;
   },
 
   update: async (id: string, data: Partial<LibraryClause>): Promise<LibraryClause> => {
-    const response = await axios.put(`${API_URL}/${id}`, data);
-    return response.data;
+    const response = await api.put(`/clauses/${id}`, data);
+    return response;
   },
 
   delete: async (id: string): Promise<void> => {
-    await axios.delete(`${API_URL}/${id}`);
+    await api.delete(`/clauses/${id}`);
   },
 
   reorder: async (updates: { id: string; sortOrder: number }[]): Promise<void> => {
-    await axios.post(`${API_URL}/reorder`, { updates });
+    await api.post(`/clauses/reorder`, { updates });
   },
 };

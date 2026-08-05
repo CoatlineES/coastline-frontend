@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'motion/react';
 import { FileText, CheckCircle2, AlertTriangle, ShieldCheck } from 'lucide-react';
-import thermalScan from '../../assets/thermal_scan.png';
+import waterproofRoof from '../../assets/waterproof_roof.png';
 
 export default function CssAnimatedReport() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -96,7 +96,7 @@ export default function CssAnimatedReport() {
             {/* Block 2: Thermal Scan Image */}
             <div className="flex items-center gap-6 py-2">
               <div className="relative w-20 h-20 shrink-0 border-2 border-slate-300/80 rounded-lg shadow-inner overflow-hidden">
-                <img src={thermalScan} alt="Escaneo Térmico" className="w-full h-full object-cover" />
+                <img src={waterproofRoof} alt="Escaneo Térmico" className="w-full h-full object-cover" />
                 {/* Target reticle overlay on the image */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 border border-red-500 rounded-full flex items-center justify-center animate-pulse">
                    <div className="w-1 h-1 bg-red-500 rounded-full"></div>

@@ -40,6 +40,7 @@ const ProjectDetailView = React.lazy(() => import('./views/employee/projects/Pro
 import { ReportEditorView } from './views/employee/projects/reports/ReportEditorView';
 import CostesLaboralesView from './views/employee/CostesLaboralesView';
 const PublicQuotationView = React.lazy(() => import('./views/public/PublicQuotationView'));
+const PublicCertificationView = React.lazy(() => import('./views/public/PublicCertificationView'));
 const EmployeeDocumentsView = React.lazy(() => import('./views/employee/documents/EmployeeDocumentsView'));
 const AdminDocumentsView = React.lazy(() => import('./views/employee/documents/AdminDocumentsView'));
 
@@ -194,6 +195,18 @@ export default function App() {
       <React.Suspense fallback={<div className="min-h-screen bg-slate-50 flex items-center justify-center text-primary font-bold">Cargando documento...</div>}>
         <Routes location={location} key={location.pathname}>
           <Route path="/quote/:token" element={<PublicQuotationView />} />
+        </Routes>
+      </React.Suspense>
+    );
+  }
+
+  // Certification Public Area
+  const isCertificationArea = location.pathname.startsWith('/certificacion');
+  if (isCertificationArea) {
+    return (
+      <React.Suspense fallback={<div className="min-h-screen bg-slate-50 flex items-center justify-center text-primary font-bold">Cargando documento...</div>}>
+        <Routes location={location} key={location.pathname}>
+          <Route path="/certificacion/:token" element={<PublicCertificationView />} />
         </Routes>
       </React.Suspense>
     );

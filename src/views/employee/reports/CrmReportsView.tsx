@@ -7,6 +7,12 @@ import {
 import { TrendingUp, RefreshCw, AlertCircle, BarChart2, DollarSign, Target, Briefcase, Filter, Calendar as CalendarIcon, User, Layers, FileText, Users, Clock, Star, Trophy, ArrowRight, LineChart, Building2, CheckCircle, Activity, Flame, PieChart as PieChartIcon } from 'lucide-react';
 import api from '../../../services/api';
 import { UserResponse } from '../../../services/types';
+import { exportActivitiesToExcel } from '../../../utils/exportActivityReport';
+import { ActivityKpiPdfReport } from '../../../components/ActivityKpiPdfReport';
+import { AccountsReportTab } from './AccountsReportTab';
+import { ProjectsKpiReportTab } from './ProjectsKpiReportTab';
+// @ts-ignore
+import html2pdf from 'html2pdf.js';
 
 const COLORS = ['#002D5A', '#0f766e', '#0369a1', '#b45309', '#be123c', '#4338ca', '#047857', '#a21caf'];
 
@@ -35,7 +41,7 @@ interface Props {
   users: UserResponse[];
 }
 
-type ReportTab = 'general' | 'deals' | 'quotations' | 'team';
+type ReportTab = 'general' | 'deals' | 'quotations' | 'team' | 'accounts' | 'projects';
 
 export default function CrmReportsView({ users }: Props) {
   const [activeTab, setActiveTab] = useState<ReportTab>('general');
@@ -122,8 +128,58 @@ export default function CrmReportsView({ users }: Props) {
     return null;
   };
 
+  const [exportingTarget, setExportingTarget] = useState<'excel' | 'pdf' | null>(null);
+  const pdfRef = React.useRef<HTMLDivElement>(null);
+  const [pdfData, setPdfData] = useState<any>(null);
+
+  const handleExportActivityReport = async (format: 'excel' | 'pdf') => {
+    setExportingTarget(format);
+    try {
+      const params = new URLSearchParams();
+      if (startDate) params.append('startDate', startDate);
+      if (endDate) params.append('endDate', endDate);
+      if (userId) params.append('userId', userId);
+      if (activityType) params.append('activityType', activityType);
+      
+      const filtersInfo = [
+        startDate ? `Desde: ${startDate}` : '',
+        endDate ? `Hasta: ${endDate}` : '',
+        userId ? `Usuario Filtrado` : '', 
+        activityType ? `Tipo: ${ACTIVITY_TYPE_LABELS[activityType]}` : ''
+      ].filter(Boolean).join(' | ') || 'Todos los registros';
+
+      const res = await api.get(`/activities/export-report?${params.toString()}`);
+      
+      if (format === 'excel') {
+        await exportActivitiesToExcel(res.data, filtersInfo);
+      } else if (format === 'pdf') {
+        setPdfData({ data: res.data, filtersInfo });
+        setTimeout(() => {
+          if (pdfRef.current) {
+            html2pdf().from(pdfRef.current).set({
+              margin: 10,
+              filename: `Informe_Actividades_${new Date().getTime()}.pdf`,
+              image: { type: 'jpeg', quality: 0.98 },
+              html2canvas: { scale: 2 },
+              jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            }).save().then(() => setPdfData(null));
+          }
+        }, 500);
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error al exportar el reporte');
+    } finally {
+      if (format === 'excel') setExportingTarget(null);
+      if (format === 'pdf') {
+        setTimeout(() => setExportingTarget(null), 1500);
+      }
+    }
+  };
+
   return (
     <div className="flex flex-col gap-6 p-2 min-h-[600px] font-sans relative">
+      <ActivityKpiPdfReport ref={pdfRef} data={pdfData?.data} filtersInfo={pdfData?.filtersInfo || ''} />
       
       {/* Navegación Interna */}
       <div className="flex border-b border-slate-200 gap-6 px-2">
@@ -155,9 +211,24 @@ export default function CrmReportsView({ users }: Props) {
           <Users size={18} /> Equipo & Actividad
           {activeTab === 'team' && <motion.div layoutId="reports-tab" className="absolute bottom-[-1px] left-0 right-0 h-[3px] bg-[#002D5A] rounded-t-full" />}
         </button>
+        <button
+          onClick={() => setActiveTab('accounts')}
+          className={`pb-3 font-semibold flex items-center gap-2 transition-colors relative ${activeTab === 'accounts' ? 'text-[#002D5A]' : 'text-slate-500 hover:text-slate-700'}`}
+        >
+          <Building2 size={18} /> Empresas y Sectores
+          {activeTab === 'accounts' && <motion.div layoutId="reports-tab" className="absolute bottom-[-1px] left-0 right-0 h-[3px] bg-[#002D5A] rounded-t-full" />}
+        </button>
+        <button
+          onClick={() => setActiveTab('projects')}
+          className={`pb-3 font-semibold flex items-center gap-2 transition-colors relative ${activeTab === 'projects' ? 'text-[#002D5A]' : 'text-slate-500 hover:text-slate-700'}`}
+        >
+          <Activity size={18} /> KPIs Proyectos
+          {activeTab === 'projects' && <motion.div layoutId="reports-tab" className="absolute bottom-[-1px] left-0 right-0 h-[3px] bg-[#002D5A] rounded-t-full" />}
+        </button>
       </div>
 
-      {/* Barra de Filtros Elegante */}
+      {/* Barra de Filtros Elegante (Oculta en pestaña Empresas/Proyectos porque tiene los suyos propios) */}
+      {activeTab !== 'accounts' && activeTab !== 'projects' && (
       <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-center gap-4 justify-between">
         <div className="flex items-center gap-2 text-slate-700 font-bold">
           <Filter size={18} className="text-[#002D5A]" />
@@ -210,15 +281,19 @@ export default function CrmReportsView({ users }: Props) {
           )}
         </div>
       </div>
+      )}
 
-      {loading && !data && (
+      {activeTab === 'accounts' && <AccountsReportTab />}
+      {activeTab === 'projects' && <ProjectsKpiReportTab />}
+
+      {loading && !data && activeTab !== 'accounts' && activeTab !== 'projects' && (
         <div className="flex flex-col items-center justify-center p-16 h-full flex-1">
           <RefreshCw size={32} className="animate-spin text-[#001c3a] mb-4" />
           <p className="text-slate-500 font-medium">Cargando métricas...</p>
         </div>
       )}
 
-      {error && !data && (
+      {error && !data && activeTab !== 'accounts' && activeTab !== 'projects' && (
         <div className="flex flex-col items-center justify-center p-16 h-full flex-1 text-red-500 bg-red-50 rounded-2xl border border-red-200">
           <AlertCircle size={32} className="mb-4" />
           <p className="font-semibold text-center">{error}</p>
@@ -226,7 +301,7 @@ export default function CrmReportsView({ users }: Props) {
         </div>
       )}
 
-      {data && (
+      {data && activeTab !== 'accounts' && activeTab !== 'projects' && (
         <div className="relative">
           {loading && (
             <div className="absolute inset-0 bg-white/50 backdrop-blur-[1px] z-10 flex items-center justify-center rounded-2xl min-h-[300px]">
@@ -725,6 +800,27 @@ export default function CrmReportsView({ users }: Props) {
                   {activityType && (
                     <button onClick={() => setActivityType('')} className="text-xs font-semibold text-slate-500 hover:text-red-500 transition-colors">Limpiar</button>
                   )}
+
+                  <div className="flex-1" />
+                  
+                  <div className="flex items-center gap-2 border-l border-slate-200 pl-4">
+                    <button 
+                      onClick={() => handleExportActivityReport('excel')}
+                      disabled={exportingTarget !== null}
+                      className="flex items-center gap-2 bg-[#001c3a] hover:bg-[#002855] text-white px-3 py-1.5 rounded-lg text-sm font-bold transition-colors disabled:opacity-50"
+                    >
+                      {exportingTarget === 'excel' ? <RefreshCw size={14} className="animate-spin" /> : <FileText size={14} />}
+                      Exportar Excel
+                    </button>
+                    <button 
+                      onClick={() => handleExportActivityReport('pdf')}
+                      disabled={exportingTarget !== null}
+                      className="flex items-center gap-2 bg-rose-600 hover:bg-rose-700 text-white px-3 py-1.5 rounded-lg text-sm font-bold transition-colors disabled:opacity-50"
+                    >
+                      {exportingTarget === 'pdf' ? <RefreshCw size={14} className="animate-spin" /> : <FileText size={14} />}
+                      Exportar PDF
+                    </button>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

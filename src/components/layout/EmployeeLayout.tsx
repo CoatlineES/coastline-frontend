@@ -11,7 +11,8 @@ import { useAuth } from '../../contexts/AuthContext';
 import logoUrl from '../../assets/logo.png';
 import WorkerSelectionScreen from '../../views/employee/WorkerSelectionScreen';
 import { NotificationsDropdown } from './NotificationsDropdown';
-import { getUnreadCount } from '../../services/notifications.service';
+import { getUnreadCount, getNotifications } from '../../services/notifications.service';
+import toast from 'react-hot-toast';
 
 interface NavItem {
   name: string;
@@ -53,6 +54,59 @@ export default function EmployeeLayout() {
     }
   }, [user, isNotificationsOpen]); // Re-fetch when dropdown closes to sync read state
 
+  // Show a popup with unread notifications on initial load
+  React.useEffect(() => {
+    if (user) {
+      getNotifications(5).then(notifs => {
+        const unread = notifs.filter(n => !n.isRead);
+        if (unread.length > 0) {
+          const first = unread[0];
+          toast.custom((t) => (
+            <div className={`${t.visible ? 'animate-enter' : 'animate-leave'} max-w-sm w-full bg-white shadow-lg rounded-xl border border-slate-100 pointer-events-auto flex ring-1 ring-black ring-opacity-5`}>
+              <div className="flex-1 w-0 p-4">
+                <div className="flex items-start">
+                  <div className="ml-3 flex-1">
+                    <p className="text-sm font-bold text-slate-900">
+                      Tienes notificaciones sin leer
+                    </p>
+                    <p className="mt-1 text-sm text-slate-500">
+                      {first.title}: {first.message}
+                    </p>
+                    {first.referenceId && (
+                      <button
+                        onClick={() => {
+                          toast.dismiss(t.id);
+                          if (first.type === 'DEAL') {
+                            navigate(`/app/empleado/crm?tab=dashboard&dealId=${first.referenceId}`);
+                          } else if (first.type === 'ACTIVITY') {
+                            navigate(`/app/empleado/crm?tab=dashboard&activityId=${first.referenceId}`);
+                          } else {
+                            navigate(`/app/empleado/crm`);
+                          }
+                        }}
+                        className="mt-3 bg-[#001c3a] text-white px-4 py-1.5 rounded-lg text-xs font-bold hover:bg-[#002D5A] transition-colors"
+                      >
+                        Ver Notificación
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className="flex border-l border-slate-100">
+                <button
+                  onClick={() => toast.dismiss(t.id)}
+                  className="w-full border border-transparent rounded-none rounded-r-xl p-4 flex items-center justify-center text-sm font-medium text-slate-400 hover:text-slate-500 focus:outline-none"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+            </div>
+          ), { duration: 6000, position: 'top-right' });
+        }
+      }).catch(err => console.error(err));
+    }
+  }, [user]); // Runs once when user is set
+
   const handleLogout = () => {
     logout();
     navigate('/login');
@@ -90,6 +144,7 @@ export default function EmployeeLayout() {
     const isSuperadmin = roleName === 'SUPERADMIN';
     const isAdmin = roleName === 'ADMIN';
     const isSupervisor = roleName === 'SUPERVISOR';
+    const isRRHH = roleName === 'RRHH';
     
     const isComercial = deptName === 'COMERCIAL';
     const isAdministracion = deptName === 'ADMINISTRACION' || deptName === 'DIRECCION';
@@ -119,7 +174,6 @@ export default function EmployeeLayout() {
         rrhhItems.push({ name: "Mis Documentos", path: "/app/empleado/documentos", icon: <FolderOpen size={20} /> });
       }
       
-      const isRRHH = roleName === 'RRHH';
       if (hasPerm('rrhh') || isAdmin || isSuperadmin || isSupervisor || isRRHH) {
         rrhhItems.push({ name: "Admin Documentos", path: "/app/empleado/documentos-admin", icon: <FolderOpen size={20} /> });
       }

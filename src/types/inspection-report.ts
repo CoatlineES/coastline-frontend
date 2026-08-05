@@ -1,8 +1,19 @@
 export interface InspectionReportPhoto {
   id: string;
-  type: 'GENERAL' | 'MAP' | 'DETAIL';
+  type: 'GENERAL' | 'MAP' | 'DETAIL' | 'ZONE_GENERAL' | 'ZONE_GEOMEMBRANE' | 'ZONE_RISKS' | 'ZONE_EQUIPMENT' | 'ZONE_PHOTOS' | 'FINDING';
   url: string;
   caption?: string;
+}
+
+export interface MapFinding {
+  id: string;
+  x: number;
+  y: number;
+  category: 'Fuga crítica' | 'Depresión crítica' | 'Observación técnica';
+  type?: string;
+  description?: string;
+  photos: InspectionReportPhoto[];
+  number: number;
 }
 
 export interface InspectionReportZone {
@@ -59,12 +70,55 @@ export interface InspectionReportZone {
   fotografias: InspectionReportPhoto[];
 }
 
+export interface GeomembraneZone {
+  id: string;
+  name: string;
+  area: number;
+  description: string;
+  
+  // Datos generales
+  installationType?: string;
+  installationTypeOther?: string;
+  installationUse?: string;
+  inspectedArea?: string;
+  fillLevel?: string;
+  observations?: string;
+  
+  // Geomembrana
+  materialType?: string;
+  thickness?: string;
+  thicknessUnknown?: boolean;
+  finish?: string;
+  brand?: string;
+  brandUnknown?: boolean;
+  color?: string;
+  installationYear?: string;
+  yearUnknown?: boolean;
+  geomembraneObservations?: string;
+  
+  // Riesgos y observaciones
+  risksText?: string;
+  risksObservations?: string;
+  
+  // Equipos utilizados
+  equipment?: string[];
+  equipmentObservations?: string;
+  
+  // Mapa de hallazgos
+  baseImage?: string;
+  mapFindings?: MapFinding[];
+  zoneObservations?: string;
+
+  fotografias: InspectionReportPhoto[];
+}
+
 export interface InspectionReport {
   id: string;
   projectId: string;
   number: string;
   version: number;
   status: 'DRAFT' | 'FINAL';
+  type: string;
   
   date: string;
   technician?: string;
@@ -78,7 +132,8 @@ export interface InspectionReport {
   introduction?: string;
   globalRecomms?: string;
   
-  zonesData: InspectionReportZone[];
+  zonesData: any[]; // Can be InspectionReportZone[] or GeomembraneZone[]
+  extraData?: any;
   
   createdAt: string;
   updatedAt: string;

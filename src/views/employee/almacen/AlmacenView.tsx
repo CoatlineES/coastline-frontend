@@ -98,7 +98,7 @@ export default function AlmacenView() {
         }
       }
 
-      await inventoryService.createRequest({
+      const newRequest = await inventoryService.createRequest({
         projectId: requestForm.projectId || undefined,
         destination: finalDestination || undefined,
         requestType: selectedBinAction.action === 'devolver' ? (requestForm.isFinalReturn ? 'return_final' : 'return') : 'withdrawal',
@@ -109,6 +109,16 @@ export default function AlmacenView() {
           notes: requestForm.notes
         }]
       });
+
+      // Auto-approve if user is almacen_admin
+      const perms = user?.customPermissions || [];
+      if (perms.includes('almacen_admin')) {
+        await inventoryService.updateRequestStatus(newRequest.id, {
+          status: 'APPROVED',
+          approvalReason: 'Auto-aprobado automáticamente (Admin de Almacén)'
+        });
+      }
+
       showNotification('Solicitud enviada correctamente', 'success');
       setSelectedBinAction(null);
       fetchData();
@@ -768,7 +778,7 @@ export default function AlmacenView() {
                     {req.status === 'PENDING' && (() => {
                       const roleName = typeof user?.role === 'object' ? (user.role as any).name : user?.role;
                       const perms = user?.customPermissions || [];
-                      const canApprove = roleName === 'SUPERADMIN' || roleName === 'ADMIN' || perms.includes('almacen_admin');
+                      const canApprove = perms.includes('almacen_admin');
                       return canApprove;
                     })() && (
                       <div className="flex items-center gap-2">

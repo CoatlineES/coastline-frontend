@@ -75,6 +75,7 @@ export interface Quotation {
     probability?: number | null;
     stage: string;
     closeDate?: string | null;
+    projects?: { id: string; name: string; status: string }[];
   };
   accountId: string;
   account: {

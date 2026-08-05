@@ -5,10 +5,16 @@ import { inspectionReportsService } from '../../../../services/inspection-report
 import { InspectionReport } from '../../../../types/inspection-report';
 import toast from 'react-hot-toast';
 import { ReportDatosTab } from './tabs/ReportDatosTab';
+import { ReportZonasTab } from './tabs/ReportZonasTab';
 import { ReportIntroTab } from './tabs/ReportIntroTab';
 import { ReportCoverTab } from './tabs/ReportCoverTab';
-import { ReportZonasTab } from './tabs/ReportZonasTab';
 import { ReportPreviewTab } from './tabs/ReportPreviewTab';
+
+import { GeomembranasDatosTab } from './tabs/geomembranas/GeomembranasDatosTab';
+import { GeomembranasIntroTab } from './tabs/geomembranas/GeomembranasIntroTab';
+import { GeomembranasZonasTab } from './tabs/geomembranas/GeomembranasZonasTab';
+import { GeomembranasFotosTab } from './tabs/geomembranas/GeomembranasFotosTab';
+import { GeomembranasPreviewTab } from './tabs/geomembranas/GeomembranasPreviewTab';
 
 export function ReportEditorView() {
   const { id: projectId, reportId } = useParams<{ id: string; reportId: string }>();
@@ -55,7 +61,16 @@ export function ReportEditorView() {
     return <div className="p-8 flex justify-center text-slate-500">Cargando informe...</div>;
   }
 
-  const tabs = [
+  const isGeomembranas = report.type === 'GEOMEMBRANAS';
+  
+  const tabs = isGeomembranas ? [
+    { id: 'DATOS', label: 'Datos generales' },
+    { id: 'PORTADA', label: 'Portada' },
+    { id: 'INTRO', label: 'Introducción' },
+    { id: 'ZONAS', label: 'Zonas e inspección' },
+    { id: 'FOTOS', label: 'Fotos' },
+    { id: 'PREVIEW', label: 'PDF' }
+  ] : [
     { id: 'DATOS', label: 'Datos' },
     { id: 'ZONAS', label: 'Zonas' },
     { id: 'INTRO', label: 'Introducción' },
@@ -140,20 +155,46 @@ export function ReportEditorView() {
       {/* CONTENT */}
       <div className="flex-1 overflow-auto p-8">
         <div className="max-w-6xl mx-auto">
-          {activeTab === 'DATOS' && (
-            <ReportDatosTab report={report} onChange={handleUpdateReport} />
+          {!isGeomembranas && (
+            <>
+              {activeTab === 'DATOS' && (
+                <ReportDatosTab report={report} onChange={handleUpdateReport} />
+              )}
+              {activeTab === 'ZONAS' && (
+                <ReportZonasTab report={report} onChange={handleUpdateReport} />
+              )}
+              {activeTab === 'INTRO' && (
+                <ReportIntroTab report={report} onChange={handleUpdateReport} />
+              )}
+              {activeTab === 'PORTADA' && (
+                <ReportCoverTab report={report} onChange={handleUpdateReport} />
+              )}
+              {activeTab === 'PREVIEW' && (
+                <ReportPreviewTab report={report} />
+              )}
+            </>
           )}
-          {activeTab === 'ZONAS' && (
-            <ReportZonasTab report={report} onChange={handleUpdateReport} />
-          )}
-          {activeTab === 'INTRO' && (
-            <ReportIntroTab report={report} onChange={handleUpdateReport} />
-          )}
-          {activeTab === 'PORTADA' && (
-            <ReportCoverTab report={report} onChange={handleUpdateReport} />
-          )}
-          {activeTab === 'PREVIEW' && (
-            <ReportPreviewTab report={report} />
+          {isGeomembranas && (
+            <>
+              {activeTab === 'DATOS' && (
+                <GeomembranasDatosTab report={report} onChange={handleUpdateReport} />
+              )}
+              {activeTab === 'PORTADA' && (
+                <ReportCoverTab report={report} onChange={handleUpdateReport} />
+              )}
+              {activeTab === 'INTRO' && (
+                <GeomembranasIntroTab report={report} onChange={handleUpdateReport} />
+              )}
+              {activeTab === 'ZONAS' && (
+                <GeomembranasZonasTab report={report} onChange={handleUpdateReport} />
+              )}
+              {activeTab === 'FOTOS' && (
+                <GeomembranasFotosTab report={report} onChange={handleUpdateReport} />
+              )}
+              {activeTab === 'PREVIEW' && (
+                <GeomembranasPreviewTab report={report} />
+              )}
+            </>
           )}
         </div>
       </div>
