@@ -15,7 +15,7 @@ const panelVariants = {
 
 export const HUDOverlay: React.FC<HUDOverlayProps> = ({ currentPhase }) => {
   return (
-    <div className="absolute top-8 left-8 z-30 pointer-events-none flex flex-col gap-4">
+    <div className="pointer-events-none flex flex-col gap-4 relative z-30">
       <AnimatePresence mode="wait">
         
         {currentPhase === 1 && (
@@ -23,7 +23,7 @@ export const HUDOverlay: React.FC<HUDOverlayProps> = ({ currentPhase }) => {
             key="phase1"
             variants={panelVariants}
             initial="hidden" animate="visible" exit="exit" transition={springTransition}
-            className="bg-[#0a1120]/40 backdrop-blur-2xl border border-white/10 rounded-xl p-4 w-72 shadow-2xl"
+            className="bg-[#0a1120]/40 backdrop-blur-2xl border border-white/10 rounded-xl p-4 w-full md:w-72 shadow-2xl"
           >
             <div className="text-red-500 font-mono text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 mb-2">
               <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.8)]"></span>
@@ -40,7 +40,7 @@ export const HUDOverlay: React.FC<HUDOverlayProps> = ({ currentPhase }) => {
             key="phase2"
             variants={panelVariants}
             initial="hidden" animate="visible" exit="exit" transition={springTransition}
-            className="bg-[#0a1120]/40 backdrop-blur-2xl border border-[#0ea5e9]/30 rounded-xl p-4 w-72 shadow-[0_8px_32px_rgba(14,165,233,0.15)]"
+            className="bg-[#0a1120]/40 backdrop-blur-2xl border border-[#0ea5e9]/30 rounded-xl p-4 w-full md:w-72 shadow-[0_8px_32px_rgba(14,165,233,0.15)]"
           >
             <div className="text-[#0ea5e9] font-mono text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 mb-2">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
@@ -57,7 +57,7 @@ export const HUDOverlay: React.FC<HUDOverlayProps> = ({ currentPhase }) => {
             key="phase3"
             variants={panelVariants}
             initial="hidden" animate="visible" exit="exit" transition={springTransition}
-            className="bg-[#0a1120]/60 backdrop-blur-3xl border border-red-500/40 rounded-xl p-4 w-72 shadow-[0_8px_32px_rgba(239,68,68,0.2)]"
+            className="bg-[#0a1120]/60 backdrop-blur-3xl border border-red-500/40 rounded-xl p-4 w-full md:w-72 shadow-[0_8px_32px_rgba(239,68,68,0.2)]"
           >
             <div className="text-red-400 font-mono text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 mb-3">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
@@ -86,7 +86,7 @@ export const HUDOverlay: React.FC<HUDOverlayProps> = ({ currentPhase }) => {
             key="phase4"
             variants={panelVariants}
             initial="hidden" animate="visible" exit="exit" transition={springTransition}
-            className="bg-[#0a1120]/40 backdrop-blur-2xl border border-[#4299e1]/30 rounded-xl p-4 w-72 shadow-[0_8px_32px_rgba(66,153,225,0.15)]"
+            className="bg-[#0a1120]/40 backdrop-blur-2xl border border-[#4299e1]/30 rounded-xl p-4 w-full md:w-72 shadow-[0_8px_32px_rgba(66,153,225,0.15)]"
           >
             <div className="text-[#4299e1] font-mono text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 mb-2">
               <svg className="animate-spin" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>

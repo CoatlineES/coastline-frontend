@@ -143,22 +143,32 @@ export default function WaterproofingShield() {
         </AnimatePresence>
       </div>
 
-      <HUDOverlay currentPhase={currentPhase} />
+      {/* UI Overlay Flex Container */}
+      <div className="absolute inset-0 z-40 pointer-events-none flex flex-col justify-between p-4 md:p-8">
+        
+        {/* Top Section */}
+        <div className="flex flex-col md:flex-row justify-between items-start gap-4">
+          <div className="w-full md:w-auto">
+            <HUDOverlay currentPhase={currentPhase} />
+          </div>
+          
+          <div className="pointer-events-auto flex flex-row md:flex-col gap-2 self-start md:self-auto bg-black/20 md:bg-transparent p-2 md:p-0 rounded-2xl md:rounded-none backdrop-blur-md md:backdrop-blur-none border border-white/10 md:border-none">
+            <WeatherButton icon="☀️" active={weather === 'clear'} onClick={() => changeWeather('clear')} label="Despejado" />
+            <WeatherButton icon="🌧️" active={weather === 'rain'} onClick={() => changeWeather('rain')} label="Lluvia" />
+            <WeatherButton icon="⛈️" active={weather === 'storm'} onClick={() => changeWeather('storm')} label="Tormenta" />
+          </div>
+        </div>
 
-      {/* Weather Controls (Top Right) */}
-      <div className="absolute top-8 right-8 z-40 flex flex-col gap-2">
-        <WeatherButton icon="☀️" active={weather === 'clear'} onClick={() => changeWeather('clear')} label="Despejado" />
-        <WeatherButton icon="🌧️" active={weather === 'rain'} onClick={() => changeWeather('rain')} label="Lluvia" />
-        <WeatherButton icon="⛈️" active={weather === 'storm'} onClick={() => changeWeather('storm')} label="Tormenta" />
+        {/* Bottom Section */}
+        <div className="w-full pb-2 md:pb-0 pointer-events-auto">
+          <StoryTimeline 
+            currentPhase={currentPhase} 
+            setPhase={setCurrentPhase} 
+            isAutoPlay={isAutoPlay} 
+            toggleAutoPlay={handleToggleAutoPlay} 
+          />
+        </div>
       </div>
-
-      {/* Interactive Story Scroller / Timeline */}
-      <StoryTimeline 
-        currentPhase={currentPhase} 
-        setPhase={setCurrentPhase} 
-        isAutoPlay={isAutoPlay} 
-        toggleAutoPlay={handleToggleAutoPlay} 
-      />
 
       {/* ISOMETRIC STRUCTURE (SVG Layers) */}
       <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none drop-shadow-2xl" ref={svgContainerRef}>
@@ -192,7 +202,7 @@ const WeatherButton: React.FC<{ icon: string, active: boolean, onClick: () => vo
     className={`group relative flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 backdrop-blur-md border ${active ? 'bg-white/20 border-white/50 shadow-[0_0_15px_rgba(255,255,255,0.2)]' : 'bg-black/20 border-white/10 hover:bg-white/10'}`}
   >
     <span className="text-lg">{icon}</span>
-    <span className="absolute right-12 opacity-0 group-hover:opacity-100 transition-opacity bg-black/80 text-white text-xs px-2 py-1 rounded whitespace-nowrap pointer-events-none border border-white/10">
+    <span className="absolute top-12 right-auto md:top-auto md:right-12 opacity-0 group-hover:opacity-100 transition-opacity bg-black/80 text-white text-xs px-2 py-1 rounded whitespace-nowrap pointer-events-none border border-white/10 z-50">
       {label}
     </span>
   </button>

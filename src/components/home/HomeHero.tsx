@@ -31,7 +31,7 @@ export default function HomeHero({ onNavigate }: HomeHeroProps) {
   // but the main shield logic handles its own mouse tracking now.
 
   return (
-    <header className="relative pt-8 px-6 md:px-16 bg-slate-50 overflow-hidden h-[calc(100vh-80px)] flex flex-col justify-center">
+    <header className="relative pt-8 px-6 md:px-16 bg-slate-50 overflow-hidden min-h-[calc(100vh-80px)] md:h-[calc(100vh-80px)] flex flex-col justify-center">
       {/* Very subtle background gradient/pattern to add depth to the white space */}
       <div className="absolute inset-0 z-0 bg-gradient-to-br from-white via-slate-50 to-slate-100"></div>
       
@@ -39,10 +39,10 @@ export default function HomeHero({ onNavigate }: HomeHeroProps) {
       <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-[#285a8a]/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
       <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[#df3d52]/5 rounded-full blur-3xl translate-y-1/3 -translate-x-1/4"></div>
 
-      <div className="max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-12 gap-4 lg:gap-8 items-center relative z-10 text-left h-full max-h-[calc(100vh-80px)] py-4">
+      <div className="max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-12 gap-4 lg:gap-8 items-center relative z-10 text-left min-h-full md:h-full md:max-h-[calc(100vh-80px)] py-8 md:py-4">
 
         {/* Left Column: Typography */}
-        <div className="md:col-span-7 flex flex-col justify-center space-y-4">
+        <div className="md:col-span-7 flex flex-col justify-center space-y-4 pt-4 md:pt-0">
           <motion.h1
             initial={{ opacity: 0, x: -30, filter: 'blur(10px)' }}
             animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
@@ -88,7 +88,7 @@ export default function HomeHero({ onNavigate }: HomeHeroProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 1.7, ease: "easeOut" }}
-            className="flex flex-col sm:flex-row items-start sm:items-center gap-3 pt-1"
+            className="flex flex-col sm:flex-row items-start sm:items-center gap-3 pt-1 pb-8 md:pb-0"
           >
             <a href="#servicios" className="px-5 py-2.5 md:px-6 md:py-3 bg-white border-2 border-slate-300 text-slate-700 font-sans font-bold text-xs uppercase tracking-wider rounded-lg hover:border-[#285a8a] hover:text-[#285a8a] transition-all active:scale-95 flex items-center gap-2 w-full sm:w-auto justify-center">
               Ver Servicios
@@ -104,7 +104,7 @@ export default function HomeHero({ onNavigate }: HomeHeroProps) {
         </div>
 
         {/* Right Column: Hovering Shield Animation */}
-        <div className="md:col-span-5 relative flex justify-center items-center h-full w-full translate-x-4 lg:translate-x-12">
+        <div className="md:col-span-5 relative flex justify-center items-center min-h-[500px] w-full translate-x-0 md:translate-x-4 lg:translate-x-12 mt-4 mb-12 md:mt-0 md:mb-0">
           <WaterproofingShield />
         </div>
       </div>
