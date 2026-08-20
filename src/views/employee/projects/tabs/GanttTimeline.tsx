@@ -146,7 +146,18 @@ const DurationEditor = ({ task, onUpdate }: { task: ProjectTask, onUpdate: () =>
 
 export function GanttTimeline({ plan, project, onUpdate, calendars, selectedCalendarId }: GanttTimelineProps) {
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set(plan.tasks?.map(t => t.id) || []));
-  const [baseDate, setBaseDate] = useState<Date>(new Date());
+  const [baseDate, setBaseDate] = useState<Date>(() => {
+    if (plan.tasks && plan.tasks.length > 0) {
+      const startDates = plan.tasks
+        .map(t => t.startDate)
+        .filter(Boolean)
+        .map(d => new Date(d as string).getTime());
+      if (startDates.length > 0) {
+        return new Date(Math.min(...startDates));
+      }
+    }
+    return new Date();
+  });
   const [showBaseline, setShowBaseline] = useState<boolean>(true);
 
   const [viewMode, setViewMode] = useState<'days' | 'hours'>('days');
@@ -441,17 +452,17 @@ export function GanttTimeline({ plan, project, onUpdate, calendars, selectedCale
             
             <span 
               onClick={() => handleTaskClick(task)}
-              className={`text-sm truncate block ${
+              className={`text-sm line-clamp-2 leading-tight cursor-pointer ${
                 task.type === 'VIRTUAL_ADD_UNPLANNED' ? 'text-indigo-800 font-bold' :
                 task.isUnplanned ? 'text-indigo-700' :
                 task.type === 'PHASE' ? 'font-bold text-[#002D5A] uppercase' :
                 task.type === 'ZONE' ? 'font-bold text-slate-800' :
                 'text-slate-700 font-medium cursor-pointer hover:text-blue-600 hover:underline'
               }`}
-              title={task.name}
-            >
-              {task.name}
-            </span>
+              title={task.alias || task.name}
+              >
+                {task.alias || task.name}
+              </span>
             
             <div className="ml-auto flex items-center opacity-0 group-hover/row:opacity-100 transition-opacity shrink-0 bg-white/50 shadow-[-8px_0_10px_white]">
               {task.type !== 'TASK' && task.type !== 'VIRTUAL_ADD_UNPLANNED' && (

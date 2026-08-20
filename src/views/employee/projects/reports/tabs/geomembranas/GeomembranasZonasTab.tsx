@@ -806,6 +806,11 @@ export function GeomembranasZonasTab({ report, onChange }: GeomembranasZonasTabP
                     
                     {/* Mapa de hallazgos */}
                     <InteractiveZoneMap 
+                      categories={{
+                        'Fuga crítica': { bg: 'bg-red-500', text: 'text-red-500' },
+                        'Depresión crítica': { bg: 'bg-purple-500', text: 'text-purple-500' },
+                        'Observación técnica': { bg: 'bg-orange-500', text: 'text-orange-500' }
+                      }} 
                       zone={zone}
                       updateZone={updateZone}
                       setCameraModalOpen={setCameraModalOpen}

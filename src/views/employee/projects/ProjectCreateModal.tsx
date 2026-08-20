@@ -18,8 +18,7 @@ interface ProjectCreateModalProps {
 export default function ProjectCreateModal({ isOpen, onClose, onSuccess }: ProjectCreateModalProps) {
   const [formData, setFormData] = useState<Partial<Project>>({
     name: '',
-    status: 'ACTIVE',
-    operationalPhase: 'PENDING_PLANNING',
+    status: 'AWARDED',
     accountId: '',
     responsibleId: '',
   });
@@ -93,7 +92,7 @@ export default function ProjectCreateModal({ isOpen, onClose, onSuccess }: Proje
         const newDemo = await projectsService.createDemo(formData.name);
         onSuccess(newDemo);
         onClose();
-        setFormData({ name: '', status: 'ACTIVE', operationalPhase: 'PENDING_PLANNING', accountId: '', responsibleId: '', businessLineId: '', dealId: '' });
+        setFormData({ name: '', status: 'AWARDED', accountId: '', responsibleId: '', businessLineId: '', dealId: '' });
         setSelectedQuotationId('');
         return;
       }
@@ -124,7 +123,7 @@ export default function ProjectCreateModal({ isOpen, onClose, onSuccess }: Proje
 
       onSuccess(updatedProject);
       onClose();
-      setFormData({ name: '', status: 'ACTIVE', operationalPhase: 'PENDING_PLANNING', accountId: '', responsibleId: '', businessLineId: '', dealId: '' });
+      setFormData({ name: '', status: 'AWARDED', accountId: '', responsibleId: '', businessLineId: '', dealId: '' });
       setSelectedQuotationId('');
     } catch (err) {
       console.error('Error creating project:', err);

@@ -4,6 +4,7 @@ import { Plus, Trash2, ChevronDown, ChevronRight, UploadCloud, ImageIcon, Mic, E
 import { projectPlanningService, ProjectTask } from '../../../../../services/project-planning.service';
 import { uploadService } from '../../../../../services/upload.service';
 import { CameraCaptureModal } from './CameraCaptureModal';
+import { InteractiveZoneMap } from './geomembranas/InteractiveZoneMap';
 import ReportTextTemplatesModal from './ReportTextTemplatesModal';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
@@ -169,6 +170,19 @@ export function ReportZonasTab({ report, onChange }: ReportZonasTabProps) {
     } finally {
       setUploadingPhotos(prev => ({ ...prev, [uploadKey]: false }));
     }
+  };
+
+    const handleMapUpload = async (e: React.ChangeEvent<HTMLInputElement>, zoneId: string) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const url = await uploadService.uploadImage(file);
+      handleUpdateZone(zoneId, { baseImage: url });
+    } catch (err) {
+      console.error(err);
+      alert('Error al subir mapa base');
+    }
+    e.target.value = '';
   };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, zoneId: string, type: 'GENERAL' | 'MAP' | 'DETAIL') => {
@@ -662,105 +676,22 @@ export function ReportZonasTab({ report, onChange }: ReportZonasTabProps) {
                     </div>
                   </div>
 
-                  {/* FOTOGRAFÍAS */}
+                  {/* MAPA INTERACTIVO Y FOTOGRAFÍAS */}
                   <div>
-                    <h4 className="text-sm font-bold text-slate-800 mb-4 border-b border-slate-200 pb-2 uppercase tracking-wider">Fotografías</h4>
-                    <p className="text-xs text-slate-500 mb-6 italic">Arrastra las fotos para reordenarlas, moverlas entre bloques o entre zonas. Usa el icono ↻ para rotar 90°.</p>
-                    
-                    {[
-                      { type: 'GENERAL', title: 'Imagen general del área' },
-                      { type: 'MAP', title: 'Imagen cenital / mapa de fugas' },
-                      { type: 'DETAIL', title: 'Fotos de detalle' }
-                    ].map(section => (
-                      <div key={section.type} className="mb-8">
-                        <div className="flex items-center justify-between mb-4">
-                          <h5 className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                            <ImageIcon size={16} className="text-blue-500" />
-                            {section.title}
-                          </h5>
-                          <div className="flex items-center gap-3">
-                            <button 
-                              onClick={() => {
-                                setActiveCameraTarget({ zoneId: zone.id, type: section.type as any });
-                                setCameraModalOpen(true);
-                              }}
-                              className="flex items-center gap-1 text-xs font-semibold text-slate-600 hover:text-slate-900 bg-white border border-slate-300 px-3 py-1.5 rounded-lg shadow-sm cursor-pointer"
-                            >
-                              <ImageIcon size={14} /> Cámara
-                            </button>
-                            <label className="flex items-center gap-1 text-xs font-semibold text-slate-600 hover:text-slate-900 bg-white border border-slate-300 px-3 py-1.5 rounded-lg shadow-sm cursor-pointer">
-                              <UploadCloud size={14} /> Galería
-                              <input type="file" accept="image/*" className="hidden" onChange={(e) => handleFileUpload(e, zone.id, section.type as any)} />
-                            </label>
-                          </div>
-                        </div>
-
-                        <div className="grid grid-cols-3 gap-6">
-                          {/* Botón de añadir */}
-                          <label className={`border-2 border-dashed border-slate-300 rounded-xl h-48 flex flex-col items-center justify-center transition-colors cursor-pointer bg-slate-50/50 ${uploadingPhotos[`${zone.id}-${section.type}`] ? 'border-blue-300 bg-blue-50/50' : 'hover:bg-slate-50 hover:border-slate-400'}`}>
-                            {uploadingPhotos[`${zone.id}-${section.type}`] ? (
-                              <>
-                                <Loader2 size={24} className="mb-2 text-blue-500 animate-spin" />
-                                <span className="text-xs font-medium text-blue-600">Subiendo...</span>
-                              </>
-                            ) : (
-                              <>
-                                <Plus size={24} className="mb-2 text-slate-400" />
-                                <span className="text-xs font-medium text-slate-500">Añadir foto</span>
-                              </>
-                            )}
-                            <input 
-                              type="file" 
-                              accept="image/*" 
-                              className="hidden" 
-                              onChange={(e) => handleFileUpload(e, zone.id, section.type as any)} 
-                              disabled={uploadingPhotos[`${zone.id}-${section.type}`]} 
-                            />
-                          </label>
-
-                          {/* Fotos de esta categoría */}
-                          {zone.fotografias.filter(f => f.type === section.type).map(photo => (
-                            <div key={photo.id} className="relative group rounded-xl overflow-hidden h-48 border border-slate-200 bg-white shadow-sm flex flex-col">
-                              <div className="flex-1 overflow-hidden relative bg-slate-100">
-                                <img src={photo.url} className="w-full h-full object-cover" />
-                                <button 
-                                  onClick={() => {
-                                    if (!window.confirm('¿Eliminar esta foto?')) return;
-                                    handleUpdateZone(zone.id, { fotografias: zone.fotografias.filter(f => f.id !== photo.id) });
-                                  }}
-                                  className="absolute top-2 right-2 p-1.5 bg-red-500/90 text-white rounded-lg hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
-                                >
-                                  <Trash2 size={14} />
-                                </button>
-                              </div>
-                              <div className="h-16 p-2 bg-white flex items-center gap-2 border-t border-slate-100">
-                                <textarea 
-                                  placeholder="Descripción de la foto..."
-                                  value={photo.caption || ''}
-                                  onChange={e => {
-                                    const updatedPhotos = zone.fotografias.map(f => f.id === photo.id ? { ...f, caption: e.target.value } : f);
-                                    handleUpdateZone(zone.id, { fotografias: updatedPhotos });
-                                  }}
-                                  className="text-[11px] text-slate-600 flex-1 h-full resize-none bg-transparent outline-none p-1"
-                                />
-                                <div className="flex flex-col gap-1">
-                                  <button 
-                                    onClick={() => handleStartTranscription(zone.id, photo.id, photo.caption || '')}
-                                    className={`p-1 rounded transition-colors ${recordingPhotoId === photo.id ? 'text-red-600 bg-red-100 animate-pulse' : 'text-slate-400 hover:text-blue-600 bg-slate-50 hover:bg-blue-50'}`}
-                                    title={recordingPhotoId === photo.id ? 'Escuchando...' : 'Dictar por voz'}
-                                  >
-                                    <Mic size={14} />
-                                  </button>
-                                  <button className="p-1 text-slate-400 hover:text-blue-600 rounded bg-slate-50 hover:bg-blue-50">
-                                    <Edit2 size={14} />
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
+                    <InteractiveZoneMap 
+                      zone={zone}
+                      updateZone={handleUpdateZone}
+                      setCameraModalOpen={(config) => {
+                        setActiveCameraTarget({ zoneId: config.zoneId, type: config.type as any });
+                        setCameraModalOpen(true);
+                      }}
+                      handleMapUpload={handleMapUpload}
+                      categories={{
+          'Fugas Críticas': { bg: 'bg-red-500', text: 'text-red-500' },
+          'Fugas Moderadas': { bg: 'bg-yellow-500', text: 'text-yellow-500' },
+          'En Observación': { bg: 'bg-blue-500', text: 'text-blue-500' }
+        }}
+                    />
                   </div>
 
                   {/* RECOMENDACIONES DE LA ZONA */}

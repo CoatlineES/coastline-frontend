@@ -293,8 +293,9 @@ export default function QuotationChapterEditor({ quotationId, chapter, index, on
             const children = chapter.lines.filter(cl => cl.parentId === l.id);
             const isGroup = l.isGroup;
             const isApu = l.isApu;
-            const baseCost = (isGroup || isApu) ? children.reduce((sum, cl) => sum + (cl.quantity * cl.unitPrice), 0) : l.unitPrice;
-            const computedUnitPrice = isApu ? baseCost * (1 + (l.margin || 0) / 100) : baseCost;
+            const hasChildren = children.length > 0;
+              const baseCost = (isGroup || isApu) && hasChildren ? children.reduce((sum, cl) => sum + (cl.quantity * cl.unitPrice), 0) : l.unitPrice;
+            const computedUnitPrice = isApu && hasChildren ? baseCost * (1 + (l.margin || 0) / 100) : (isGroup && hasChildren ? baseCost : l.unitPrice);
             const totalCost = (l.quantity || 1) * computedUnitPrice;
 
             return (
@@ -691,7 +692,7 @@ export default function QuotationChapterEditor({ quotationId, chapter, index, on
           <span>{chapter.lines.filter(l => !l.parentId).length} Partidas</span>
           <span className="w-px h-4 bg-slate-300 block"></span>
           <span>SUBTOTAL CAPÍTULO: <span className="font-bold text-slate-800 ml-1 text-base">
-            {formatCurrency(chapter.lines.filter(l => !l.parentId).reduce((a, l) => { const children = chapter.lines.filter(cl => cl.parentId === l.id); const up = l.isGroup ? children.reduce((sum, cl) => sum + (cl.quantity * cl.unitPrice), 0) : l.unitPrice; return a + (l.quantity * up); }, 0))}
+            {formatCurrency(chapter.lines.filter(l => !l.parentId).reduce((a, l) => { const children = chapter.lines.filter(cl => cl.parentId === l.id); const hasChildren = children.length > 0; const up = l.isGroup && hasChildren ? children.reduce((sum, cl) => sum + (cl.quantity * cl.unitPrice), 0) : (l.isApu && hasChildren ? children.reduce((sum, cl) => sum + (cl.quantity * cl.unitPrice), 0) * (1 + (l.margin || 0) / 100) : l.unitPrice); return a + (l.quantity * up); }, 0))}
           </span></span>
         </div>
       </div>

@@ -19,6 +19,7 @@ export function TaskBreakdownModal({ task, onClose, onUpdate }: TaskBreakdownMod
   const [localUnit, setLocalUnit] = useState(task.unit || 'ud');
   
   const [localName, setLocalName] = useState(task.name || '');
+  const [localAlias, setLocalAlias] = useState(task.alias || '');
   const [localStartDate, setLocalStartDate] = useState(task.startDate ? task.startDate.split('T')[0] : '');
   const [localEndDate, setLocalEndDate] = useState(task.endDate ? task.endDate.split('T')[0] : '');
   const [localProgress, setLocalProgress] = useState(task.progress || 0);
@@ -30,6 +31,7 @@ export function TaskBreakdownModal({ task, onClose, onUpdate }: TaskBreakdownMod
       setIsSaving(true);
       await projectPlanningService.updateTask(task.id, {
         name: localName,
+        alias: localAlias || null,
         quantity: localQuantity,
         unit: localUnit,
         margin: localMargin,
@@ -165,13 +167,22 @@ export function TaskBreakdownModal({ task, onClose, onUpdate }: TaskBreakdownMod
           <div className="flex-1 pr-10 w-full">
             <div className="flex items-center gap-2 mb-4">
               <Package size={20} className="text-amber-500 flex-shrink-0" />
-              <input
-                type="text"
-                value={localName}
-                onChange={e => setLocalName(e.target.value)}
-                className="text-lg font-bold text-[#001c3a] bg-white border border-slate-200 rounded px-2 py-1 focus:border-primary outline-none w-full max-w-xl"
-                placeholder="Nombre de la Tarea"
-              />
+              <div className="w-full max-w-xl flex flex-col gap-1">
+                  <input
+                    type="text"
+                    value={localName}
+                    onChange={e => setLocalName(e.target.value)}
+                    className="text-lg font-bold text-[#001c3a] bg-white border border-slate-200 rounded px-2 py-1 focus:border-primary outline-none w-full"
+                    placeholder="Nombre de la Tarea"
+                  />
+                  <input
+                    type="text"
+                    value={localAlias}
+                    onChange={e => setLocalAlias(e.target.value)}
+                    className="text-sm font-medium text-slate-600 bg-slate-50 border border-slate-200 rounded px-2 py-1 focus:border-primary outline-none w-full placeholder-slate-400 italic"
+                    placeholder="Alias de la tarea (opcional)"
+                  />
+                </div>
             </div>
             
             <div className="flex flex-wrap items-center gap-4 text-sm">

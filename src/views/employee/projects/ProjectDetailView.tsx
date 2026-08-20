@@ -12,6 +12,7 @@ import ProjectTeamTab from './tabs/ProjectTeamTab';
 import { PartesDiariosView } from './tabs/PartesDiariosView';
 import { ProjectReportsTab } from './tabs/ProjectReportsTab';
 import { ProjectTimelineTab } from './tabs/ProjectTimelineTab';
+import { ProjectPhotosTab } from './tabs/ProjectPhotosTab';
 import ProjectExtraExpensesTab from './tabs/ProjectExtraExpensesTab';
 
 export default function ProjectDetailView() {
@@ -181,17 +182,34 @@ export default function ProjectDetailView() {
             <div className="flex items-start justify-between">
               <div className="flex-1 mr-8">
                 {isEditing ? (
-                  <input
-                    type="text"
-                    value={formData.name || ''}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full text-2xl font-bold text-slate-900 mb-2 border-b border-blue-500 focus:outline-none bg-blue-50"
-                  />
-                ) : (
-                  <h1 className="text-3xl font-bold text-slate-900 mb-2">
-                    {project.name}
-                  </h1>
-                )}
+                    <div className="mb-2">
+                      <input
+                        type="text"
+                        value={formData.name || ''}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        className="w-full text-2xl font-bold text-slate-900 mb-1 border-b border-blue-500 focus:outline-none bg-blue-50 placeholder-slate-400"
+                        placeholder="Nombre del proyecto"
+                      />
+                      <input
+                        type="text"
+                        value={formData.alias || ''}
+                        onChange={(e) => setFormData({ ...formData, alias: e.target.value })}
+                        className="w-full text-sm font-medium text-slate-600 border-b border-blue-500 focus:outline-none bg-blue-50 placeholder-slate-400"
+                        placeholder="Alias del proyecto (opcional)"
+                      />
+                    </div>
+                  ) : (
+                    <div className="mb-2">
+                      <h1 className="text-3xl font-bold text-slate-900 mb-1">
+                        {project.name}
+                      </h1>
+                      {project.alias && (
+                        <h2 className="text-sm font-medium text-slate-500">
+                          Alias: {project.alias}
+                        </h2>
+                      )}
+                    </div>
+                  )}
                 
                 <div className="flex items-center gap-4 text-slate-500">
                   <div className="flex items-center gap-2">
@@ -279,7 +297,7 @@ export default function ProjectDetailView() {
           </div>
 
             {/* Tabs Navigation */}
-            <div className="flex border-b border-slate-100 bg-slate-50/50 overflow-x-auto">
+            <div className="flex flex-wrap border-b border-slate-100 bg-slate-50/50">
               {[
                 { id: 'DATOS', label: 'Datos', show: true },
                 { id: 'EQUIPO', label: 'Equipo', show: project.projectOrigin !== 'DEMO' },
@@ -290,11 +308,12 @@ export default function ProjectDetailView() {
                 { id: 'INFORMES', label: 'Informes', show: project.projectOrigin !== 'DEMO' },
                 { id: 'FACTURACION', label: 'Facturación', show: project.projectOrigin !== 'DEMO' },
                 { id: 'TIMELINE', label: 'Timeline', show: project.projectOrigin !== 'DEMO' },
+                { id: 'FOTOS', label: 'Fotos', show: true },
               ].filter(t => t.show).map(tab => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`px-6 py-3 text-sm font-medium border-b-2 whitespace-nowrap transition-colors ${
+                  className={`flex-1 px-2 md:px-3 py-3 text-sm md:text-[13px] xl:text-sm font-medium border-b-2 whitespace-nowrap transition-colors ${
                     activeTab === tab.id
                       ? 'border-[#002D5A] text-[#002D5A] bg-white'
                       : 'border-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-100/50'
@@ -608,6 +627,9 @@ export default function ProjectDetailView() {
 
           {activeTab === 'TIMELINE' && (
             <ProjectTimelineTab project={project} />
+          )}
+          {activeTab === 'FOTOS' && (
+            <ProjectPhotosTab project={project} />
           )}
 
           {['FACTURACION'].includes(activeTab) && (

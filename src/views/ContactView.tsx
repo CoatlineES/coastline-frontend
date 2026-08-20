@@ -50,7 +50,7 @@ export default function ContactView({ onNavigate }: ContactViewProps) {
   const [expandedFaq, setExpandedFaq] = useState<number | null>(0);
 
   // Form Submit Handler
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: { [key: string]: string } = {};
 
@@ -76,7 +76,27 @@ export default function ContactView({ onNavigate }: ContactViewProps) {
     }
 
     setErrors({});
-    setIsSubmitted(true);
+    setIsSubmitted(true); // Using this as loading state for the button animation
+
+    try {
+      const res = await fetch('http://localhost:4000/api/public/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name, company, email, phone, typology, sector, services, area, budget, message
+        })
+      });
+
+      const data = await res.json();
+      if (!data.success) {
+        setErrors({ submit: data.message || 'Error al enviar el mensaje' });
+        setIsSubmitted(false);
+      }
+    } catch (error) {
+      console.error(error);
+      setErrors({ submit: 'Error de red al conectar con el servidor.' });
+      setIsSubmitted(false);
+    }
   };
 
   const handleReset = () => {
@@ -272,6 +292,12 @@ export default function ContactView({ onNavigate }: ContactViewProps) {
                       visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
                     }}
                   >
+                    {errors.submit && (
+                      <div className="bg-red-50 text-red-600 font-sans text-sm p-3 rounded border border-red-100 mb-4 text-center">
+                        {errors.submit}
+                      </div>
+                    )}
+
                     {/* Row 1: Nombre & Empresa */}
                     <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="relative group">

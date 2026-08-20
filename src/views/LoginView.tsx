@@ -6,6 +6,8 @@ import { ScreenId } from '../types';
 import logoUrl from '../assets/logo.png';
 import { useAuth } from '../contexts/AuthContext';
 import { authService } from '../services/auth.service';
+import { useMsal } from '@azure/msal-react';
+import { loginRequest } from '../config/msalConfig';
 
 interface LoginViewProps {
   onNavigate: (screen: ScreenId, transition: 'none' | 'push') => void;
@@ -20,6 +22,47 @@ export default function LoginView({ onNavigate }: LoginViewProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const { instance, accounts } = useMsal();
+  
+  const handleMicrosoftLogin = async () => {
+    try {
+      setIsSubmitting(true);
+      setErrorMsg('');
+      const loginResponse = await instance.loginPopup(loginRequest);
+      
+      if (loginResponse && loginResponse.accessToken) {
+        // Enviar el token al backend
+        const res = await fetch('http://localhost:4000/api/auth/microsoft', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ accessToken: loginResponse.accessToken })
+        });
+        
+        const data = await res.json();
+        
+        if (!data.success || !data.data) {
+          setErrorMsg(data.message || 'Error al iniciar sesión con Microsoft');
+          setIsSubmitting(false);
+          return;
+        }
+        
+        login(data.data.user, data.data.token);
+        
+        if (data.data.user.role === 'CLIENT') {
+          navigate('/app/cliente');
+        } else {
+          navigate('/app/empleado');
+        }
+      } else {
+        setIsSubmitting(false);
+      }
+    } catch (error: any) {
+      console.error(error);
+      setErrorMsg(error.message || 'Error de autenticación con Microsoft');
+      setIsSubmitting(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -148,6 +191,31 @@ export default function LoginView({ onNavigate }: LoginViewProps) {
             )}
           </button>
         </form>
+
+          <div className="relative flex items-center justify-center mt-6 mb-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-slate-200"></div>
+            </div>
+            <div className="relative px-4 bg-white text-xs text-slate-400 font-sans uppercase tracking-wider">
+              O iniciar sesión con
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleMicrosoftLogin}
+            disabled={isSubmitting}
+            className="w-full py-3.5 bg-white border border-slate-300 text-slate-700 font-sans font-bold text-sm rounded-lg hover:bg-slate-50 transition-all flex justify-center items-center gap-3 shadow-sm hover:shadow disabled:opacity-70 disabled:cursor-not-allowed"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 21 21">
+              <title>MS-SymbolLockup</title>
+              <rect x="1" y="1" width="9" height="9" fill="#f25022" />
+              <rect x="1" y="11" width="9" height="9" fill="#00a4ef" />
+              <rect x="11" y="1" width="9" height="9" fill="#7fba00" />
+              <rect x="11" y="11" width="9" height="9" fill="#ffb900" />
+            </svg>
+            Microsoft Outlook
+          </button>
         
         <div className="mt-8 text-center border-t border-slate-100 pt-6">
           <p className="font-sans text-xs text-slate-500">

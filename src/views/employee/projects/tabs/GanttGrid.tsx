@@ -656,11 +656,7 @@ export function GanttGrid({ plan, project, expandedNodes, onUpdate, viewMode, ba
                             />
                           )}
                           
-                          {isFirst && (
-                            <span className="text-[10px] font-bold text-white px-2 truncate relative z-20 mix-blend-screen drop-shadow-md pointer-events-none">
-                              {task.name}
-                            </span>
-                          )}
+                          
 
                           {isLast && (
                             <div

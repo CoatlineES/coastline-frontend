@@ -22,6 +22,7 @@ const EmployeeDashboardView = React.lazy(() => import('./views/employee/Employee
 const ForcePasswordChangeView = React.lazy(() => import('./views/auth/ForcePasswordChangeView'));
 const ClientLayout = React.lazy(() => import('./components/layout/ClientLayout'));
 const ClientDashboardView = React.lazy(() => import('./views/client/ClientDashboardView'));
+const ExecutiveDashboardView = React.lazy(() => import('./views/employee/ExecutiveDashboardView'));
 
 const FichajeView = React.lazy(() => import('./views/employee/FichajeView'));
 const PartesDiariosView = React.lazy(() => import('./views/employee/PartesDiariosView'));
@@ -129,6 +130,7 @@ export default function App() {
             </ProtectedRoute>
           }>
             <Route index element={<EmployeeDashboardView />} />
+            <Route path="ejecutivo" element={<ExecutiveDashboardView />} />
             <Route path="fichaje" element={<FichajeView />} />
             <Route path="partes" element={<PartesDiariosView />} />
             <Route path="ausencias" element={<AusenciasView />} />

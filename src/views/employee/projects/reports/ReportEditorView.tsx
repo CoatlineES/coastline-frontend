@@ -5,9 +5,11 @@ import { inspectionReportsService } from '../../../../services/inspection-report
 import { InspectionReport } from '../../../../types/inspection-report';
 import toast from 'react-hot-toast';
 import { ReportDatosTab } from './tabs/ReportDatosTab';
+import { ReportSeccionesTab } from './tabs/ReportSeccionesTab';
 import { ReportZonasTab } from './tabs/ReportZonasTab';
 import { ReportIntroTab } from './tabs/ReportIntroTab';
 import { ReportCoverTab } from './tabs/ReportCoverTab';
+import { EjecucionObraPreviewTab } from './tabs/EjecucionObraPreviewTab';
 import { ReportPreviewTab } from './tabs/ReportPreviewTab';
 
 import { GeomembranasDatosTab } from './tabs/geomembranas/GeomembranasDatosTab';
@@ -62,14 +64,20 @@ export function ReportEditorView() {
   }
 
   const isGeomembranas = report.type === 'GEOMEMBRANAS';
+  const isEjecucionObra = report.type === 'OBRA';
   
-  const tabs = isGeomembranas ? [
+    const tabs = isGeomembranas ? [
     { id: 'DATOS', label: 'Datos generales' },
     { id: 'PORTADA', label: 'Portada' },
     { id: 'INTRO', label: 'Introducción' },
     { id: 'ZONAS', label: 'Zonas e inspección' },
     { id: 'FOTOS', label: 'Fotos' },
     { id: 'PREVIEW', label: 'PDF' }
+  ] : isEjecucionObra ? [
+    { id: 'DATOS', label: 'Datos' },
+    { id: 'SECCIONES', label: 'Secciones' },
+    { id: 'PORTADA', label: 'Portada' },
+    { id: 'PREVIEW', label: 'Vista previa' }
   ] : [
     { id: 'DATOS', label: 'Datos' },
     { id: 'ZONAS', label: 'Zonas' },
@@ -155,7 +163,23 @@ export function ReportEditorView() {
       {/* CONTENT */}
       <div className="flex-1 overflow-auto p-8">
         <div className="max-w-6xl mx-auto">
-          {!isGeomembranas && (
+          {isEjecucionObra && (
+            <>
+              {activeTab === 'DATOS' && (
+                <ReportDatosTab report={report} onChange={handleUpdateReport} />
+              )}
+              {activeTab === 'SECCIONES' && (
+                <ReportSeccionesTab report={report} onChange={handleUpdateReport} />
+              )}
+              {activeTab === 'PORTADA' && (
+                <ReportCoverTab report={report} onChange={handleUpdateReport} />
+              )}
+              {activeTab === 'PREVIEW' && (
+                <EjecucionObraPreviewTab report={report} />
+              )}
+            </>
+          )}
+          {!isGeomembranas && !isEjecucionObra && (
             <>
               {activeTab === 'DATOS' && (
                 <ReportDatosTab report={report} onChange={handleUpdateReport} />

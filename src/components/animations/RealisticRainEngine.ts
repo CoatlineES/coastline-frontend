@@ -39,6 +39,8 @@ export class RealisticRainEngine {
   public currentPhase: number = 5; // Default to final state
   private rainIntensityMultiplier: number = 1.0;
 
+  private resizeObserver: ResizeObserver | null = null;
+
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
     const ctx = canvas.getContext('2d');
@@ -47,6 +49,11 @@ export class RealisticRainEngine {
     
     this.resize();
     window.addEventListener('resize', this.resize.bind(this));
+    
+    if (canvas.parentElement) {
+      this.resizeObserver = new ResizeObserver(() => this.resize());
+      this.resizeObserver.observe(canvas.parentElement);
+    }
     
     this.initDrops(200);
   }
@@ -74,9 +81,9 @@ export class RealisticRainEngine {
     const isMobile = this.width < 768;
     const svgScale = isMobile ? (450 / 600) : 1; // Assuming desktop is 600px width for 500 viewBox
     
-    // The SVG is perfectly centered in the container via flex, with a translate-y-8
+    // The SVG is perfectly centered in the container via flex, with a -translate-y-12
     const svgHeight = 400 * svgScale;
-    const svgTop = (this.height - svgHeight) / 2 + 32; // 32px is roughly translate-y-8
+    const svgTop = (this.height - svgHeight) / 2 - 48; // -48px is -translate-y-12
     
     // Map the 4 points of the isometric roof top face into canvas coordinates
     const originX = this.width / 2;
@@ -160,6 +167,9 @@ export class RealisticRainEngine {
   public destroy() {
     this.stop();
     window.removeEventListener('resize', this.resize.bind(this));
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+    }
   }
   
   private checkShieldCollision(drop: RainDrop): boolean {

@@ -12,7 +12,7 @@ export const BaseBuilding: React.FC<BaseBuildingProps> = ({ bgX, bgY, bgScale })
       <defs>
         {/* --- CLIP PATH GLOBAL PARA CAPAS SUPERIORES (animaciones) --- */}
         <clipPath id="roof-clip">
-          <polygon points="-180,50 0,-20 180,50 0,120" />
+          <polygon points="-180,50 0,-40 180,50 0,140" />
         </clipPath>
 
         {/* --- FILTRO 1: Textura granulada de concreto/asfalto --- */}
@@ -61,7 +61,7 @@ export const BaseBuilding: React.FC<BaseBuildingProps> = ({ bgX, bgY, bgScale })
       {/* --- EDIFICIO PRINCIPAL (IMAGEN IA) --- */}
       <g transform={`translate(${bgX}, ${bgY}) scale(${bgScale})`}>
         <image 
-          href="/corporate_building_v2.png" 
+          href="/corporate_building_v3_nobg.png" 
           x="0" 
           y="0" 
           width="1024" 
@@ -77,16 +77,16 @@ export const BaseBuilding: React.FC<BaseBuildingProps> = ({ bgX, bgY, bgScale })
       <g clipPath="url(#roof-clip)">
         <image 
           href="/roof_texture_realistic.png" 
-          x="-185" 
-          y="-25" 
-          width="370" 
-          height="150" 
+          x="-250" 
+          y="-100" 
+          width="500" 
+          height="300" 
           preserveAspectRatio="none"
           opacity="0.9"
         />
         {/* Oscurecimiento sutil para integrar con la escena nocturna */}
         <polygon 
-          points="0,-20 180,50 0,120 -180,50" 
+          points="0,-40 180,50 0,140 -180,50" 
           fill="#0a1120" 
           opacity="0.25"
         />
@@ -94,7 +94,7 @@ export const BaseBuilding: React.FC<BaseBuildingProps> = ({ bgX, bgY, bgScale })
 
       {/* Iluminación direccional sobre la textura */}
       <polygon 
-        points="0,-20 180,50 0,120 -180,50" 
+        points="0,-40 180,50 0,140 -180,50" 
         fill="url(#roof-light)" 
       />
 
@@ -103,14 +103,14 @@ export const BaseBuilding: React.FC<BaseBuildingProps> = ({ bgX, bgY, bgScale })
       {/* ============================================= */}
       
       {/* Cara izquierda del pretil */}
-      <polygon points="-180,50 0,120 0,127 -180,57" fill="#1e293b" />
+      <polygon points="-180,50 0,140 0,147 -180,57" fill="#1e293b" />
       {/* Cara derecha del pretil */}
-      <polygon points="0,120 180,50 180,57 0,127" fill="#334155" />
+      <polygon points="0,140 180,50 180,57 0,147" fill="#334155" />
       
       {/* Borde superior metálico (flasheo/coping) */}
-      <polyline points="-180,50 0,120 180,50" fill="none" stroke="#94a3b8" strokeWidth="1.5" opacity="0.6" />
+      <polyline points="-180,50 0,140 180,50" fill="none" stroke="#94a3b8" strokeWidth="1.5" opacity="0.6" />
       {/* Borde inferior oscuro (sombra base del pretil) */}
-      <polyline points="-180,57 0,127 180,57" fill="none" stroke="#0f172a" strokeWidth="2" opacity="0.8" />
+      <polyline points="-180,57 0,147 180,57" fill="none" stroke="#0f172a" strokeWidth="2" opacity="0.8" />
     </g>
   );
 };

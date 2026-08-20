@@ -395,7 +395,7 @@ export default function EmployeeLayout() {
   );
 
   return (
-    <div className="flex h-screen bg-slate-50 overflow-hidden font-sans">
+    <div className="flex h-screen print:h-auto bg-slate-50 overflow-hidden print:overflow-visible font-sans">
       
       {/* Mobile Sidebar Overlay */}
       <AnimatePresence>
@@ -417,15 +417,15 @@ export default function EmployeeLayout() {
       </AnimatePresence>
 
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex flex-col w-72 border-r border-slate-200 z-10 shrink-0 shadow-[4px_0_24px_rgba(0,0,0,0.02)] relative">
+      <aside className="hidden md:flex flex-col w-72 print:hidden border-r border-slate-200 z-10 shrink-0 shadow-[4px_0_24px_rgba(0,0,0,0.02)] relative">
         {renderSidebarContent()}
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col min-w-0 h-full overflow-hidden relative bg-[#f8fafc]">
+      <main className="flex-1 flex flex-col min-w-0 h-full print:h-auto overflow-hidden print:overflow-visible relative bg-[#f8fafc]">
         
         {/* Cabecera Principal (Topbar) - Visible en Desktop y Mobile */}
-        <header className="flex items-center justify-between p-4 bg-white border-b border-slate-200 shadow-sm z-20 shrink-0 h-16">
+        <header className="flex items-center justify-between p-4 bg-white border-b border-slate-200 shadow-sm z-20 shrink-0 h-16 print:hidden">
           <div className="flex items-center gap-4">
             <button onClick={() => setIsSidebarOpen(true)} className="text-slate-600 hover:text-primary md:hidden">
               <Menu size={24} />
@@ -503,12 +503,12 @@ export default function EmployeeLayout() {
         )}
 
         {/* Scrollable View Area */}
-        <div className="flex-1 overflow-y-auto relative pb-20 md:pb-0 p-4 md:p-6 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto print:overflow-visible relative pb-20 md:pb-0 p-4 md:p-6 print:p-0 custom-scrollbar">
           <Outlet />
         </div>
         
         {/* Mobile Bottom Navigation (Quick Actions) */}
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex justify-around items-center h-16 z-30 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] pb-safe">
+        <nav className="md:hidden print:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex justify-around items-center h-16 z-30 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] pb-safe">
           <NavLink to="/app/empleado" end className={({isActive}) => `flex flex-col items-center gap-1 ${isActive ? 'text-[#001c3a]' : 'text-slate-400'}`}>
             <Home size={22} />
             <span className="text-[10px] font-bold">Inicio</span>

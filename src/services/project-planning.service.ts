@@ -30,6 +30,7 @@ export interface ProjectTask {
   planId: string;
   parentId: string | null;
   name: string;
+  alias?: string | null;
   description: string | null;
   startDate: string;
   endDate: string;

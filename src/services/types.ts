@@ -34,16 +34,21 @@ export interface UpdateUserPayload {
   customPermissions?: string[];
 }
 
-export interface UserResponse extends User {
+export interface UserResponse {
+  id: string;
+  name: string;
+  email: string;
+  role: {
+    name: string;
+  };
   manager?: {
     id: string;
     name: string;
   };
 }
 
-export type ProjectStatus = 'ACTIVE' | 'COMPLETED' | 'CANCELLED';
+export type ProjectStatus = 'AWARDED' | 'IN_PROGRESS' | 'COMPLETED' | 'INVOICED' | 'CLOSED' | 'CANCELLED';
 export type ProjectOrigin = 'QUOTATION' | 'DEMO' | 'STANDALONE';
-export type OperationalPhase = 'PENDING_PLANNING' | 'CONSTRUCTION_PLANNING' | 'INSPECTION_DONE' | 'COMPLETION' | 'CERT_INVOICING';
 
 export type PaymentStatus = 'PENDING' | 'PARTIAL' | 'PAID';
 export type DocumentCategory = 'PLANS' | 'SAFETY_ACTS' | 'ADDITIONAL_DOCS' | 'GENERATED';
@@ -71,6 +76,7 @@ export interface ProjectWorker {
 export interface Project {
   id: string;
   name: string;
+  alias?: string | null;
   status: ProjectStatus;
   address?: string | null;
   city?: string | null;
@@ -83,7 +89,6 @@ export interface Project {
   dealId?: string | null;
   createdAt: string;
   updatedAt: string;
-  operationalPhase: OperationalPhase;
   contractNumber?: string | null;
   surfaceTotalM2?: number | null;
   divisionName?: string | null;

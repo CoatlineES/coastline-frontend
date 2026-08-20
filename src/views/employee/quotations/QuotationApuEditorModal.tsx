@@ -115,7 +115,7 @@ export default function QuotationApuEditorModal({
   };
 
   // Cálculo total de los componentes (Costo Base del APU)
-  const baseCost = childrenLines.reduce((sum, c) => sum + (c.quantity * c.unitPrice), 0);
+  const baseCost = childrenLines.length > 0 ? childrenLines.reduce((sum, c) => sum + (c.quantity * c.unitPrice), 0) : (line.unitCost || line.unitPrice / (1 + (line.margin || 0) / 100));
   const titleStr = line.concept?.split('\n')[0] || 'APU';
 
   return (

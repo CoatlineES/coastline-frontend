@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ProjectPlan, ProjectTask, projectPlanningService } from '../../../../services/project-planning.service';
+import { projectsService } from '../../../../services/projects.service';
 import { ChevronDown, ChevronRight, Grid, MoreVertical, Calendar, Save, Eye, EyeOff, HardHat, Tractor, Package, ChevronsDown, ChevronsUp, Plus } from 'lucide-react';
 import { GanttGrid } from './GanttGrid';
 import { DraggableWorkersBar } from './DraggableWorkersBar';
@@ -13,7 +14,18 @@ interface GlobalGanttTimelineProps {
 }
 
 export function GlobalGanttTimeline({ plans, onUpdate, calendars }: GlobalGanttTimelineProps) {
-  const [baseDate, setBaseDate] = useState<Date>(new Date());
+  const [baseDate, setBaseDate] = useState<Date>(() => {
+    let minDate = Infinity;
+    plans.forEach(p => {
+      p.tasks?.forEach(t => {
+        if (t.startDate) {
+          const time = new Date(t.startDate).getTime();
+          if (time < minDate) minDate = time;
+        }
+      });
+    });
+    return minDate !== Infinity ? new Date(minDate) : new Date();
+  });
   const [showBaseline, setShowBaseline] = useState<boolean>(true);
   const [isAddingUnplanned, setIsAddingUnplanned] = useState(false);
   const [viewMode, setViewMode] = useState<'days' | 'hours'>('days');
@@ -267,10 +279,21 @@ export function GlobalGanttTimeline({ plans, onUpdate, calendars }: GlobalGanttT
     }
   };
 
-  const handleTaskClick = (task: ProjectTask) => {
+  const handleTaskClick = async (task: ProjectTask) => {
     if (task.type === 'TASK') {
       setSelectedTaskForBreakdown(task);
       setIsTaskBreakdownOpen(true);
+    } else if (task.type === 'PROJECT') {
+      const newAlias = prompt('Nuevo alias para el proyecto (dejar en blanco para eliminar):', task.alias || '');
+      if (newAlias !== null) {
+        try {
+          await projectsService.update(task.id, { alias: newAlias || null });
+          onUpdate();
+        } catch (error) {
+          console.error(error);
+          alert('Error al actualizar el alias del proyecto');
+        }
+      }
     }
   };
 
@@ -333,10 +356,10 @@ export function GlobalGanttTimeline({ plans, onUpdate, calendars }: GlobalGanttT
               <div className="w-6 shrink-0" />
             )}
             
-            <div className="flex-1 truncate relative">
+            <div className="flex-1 relative pr-1">
               <span 
                 onClick={() => handleTaskClick(task)}
-                className={`text-[11px] uppercase tracking-wide truncate block cursor-pointer ${
+                className={`text-[11px] uppercase tracking-wide line-clamp-2 leading-tight cursor-pointer ${
                   isProjectRoot ? 'text-slate-800' : 
                   task.type === 'VIRTUAL_ADD_UNPLANNED' ? 'text-indigo-800 font-bold' :
                   task.isUnplanned ? 'text-indigo-700' :

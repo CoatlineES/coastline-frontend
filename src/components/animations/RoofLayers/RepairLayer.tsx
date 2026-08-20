@@ -50,16 +50,16 @@ export const RepairLayer: React.FC<RepairLayerProps> = ({ currentPhase }) => {
 
       {/* Mesh Layer */}
       <g clipPath="url(#reveal-clip)">
-        <path d="M 0 -20 L 180 50 L 0 120 L -180 50 Z" fill="url(#mesh-pattern)" opacity="0.9" />
+        <path d="M 0 -40 L 180 50 L 0 140 L -180 50 Z" fill="url(#mesh-pattern)" opacity="0.9" />
       </g>
 
       {/* Coat Layer */}
       <g clipPath="url(#coat-reveal-clip)">
         {/* The Vibrant Coatline Waterproofing Coating over the texture */}
-        <path d="M 0 -20 L 180 50 L 0 120 L -180 50 Z" fill="url(#waterproof-coat)" opacity="0.95" style={{ mixBlendMode: 'overlay' }} />
+        <path d="M 0 -40 L 180 50 L 0 140 L -180 50 Z" fill="url(#waterproof-coat)" opacity="0.95" style={{ mixBlendMode: 'overlay' }} />
         
         {/* Gloss Highlight on top of roof */}
-        <path d="M 0 -20 L 180 50 L 0 120 L -180 50 Z" fill="none" stroke="white" strokeWidth="2" strokeOpacity="0.4" />
+        <path d="M 0 -40 L 180 50 L 0 140 L -180 50 Z" fill="none" stroke="white" strokeWidth="2" strokeOpacity="0.4" />
         
         {/* Grid overlay to show "Engineering/Precision" */}
         <path d="M -90 15 L 90 85 M -45 32 L 135 102 M 45 -2 L 225 68" fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth="1" strokeDasharray="4 2" />
@@ -75,15 +75,15 @@ export const RepairLayer: React.FC<RepairLayerProps> = ({ currentPhase }) => {
         >
           <image 
             href="/roof_texture_repaired.png" 
-            x="-185" 
-            y="-25" 
-            width="370" 
-            height="150" 
+            x="-250" 
+            y="-100" 
+            width="500" 
+            height="300" 
             preserveAspectRatio="none"
           />
           {/* Slight dark overlay to match the night scene */}
           <polygon 
-            points="0,-20 180,50 0,120 -180,50" 
+            points="0,-40 180,50 0,140 -180,50" 
             fill="#0a1120" 
             opacity="0.15"
           />

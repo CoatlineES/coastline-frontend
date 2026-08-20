@@ -5,26 +5,21 @@ import { GeomembraneZone, MapFinding, InspectionReportPhoto } from '../../../../
 import { uploadService } from '../../../../../../services/upload.service';
 import { ImageViewerModal } from '../../../../../../components/ui/ImageViewerModal';
 
-interface InteractiveZoneMapProps {
-  zone: GeomembraneZone;
-  updateZone: (zoneId: string, updates: Partial<GeomembraneZone>) => void;
-  setCameraModalOpen: (config: { zoneId: string; type: string; findingId?: string }) => void;
-  handleMapUpload: (e: React.ChangeEvent<HTMLInputElement>, zoneId: string) => Promise<void>;
+interface CategoryConfig {
+  [key: string]: { bg: string; text: string };
 }
 
-const CATEGORY_COLORS = {
-  'Fuga crítica': 'bg-red-500',
-  'Depresión crítica': 'bg-purple-500',
-  'Observación técnica': 'bg-orange-500'
-};
+interface InteractiveZoneMapProps {
+  zone: any;
+  updateZone: (zoneId: string, updates: any) => void;
+  setCameraModalOpen: (config: { zoneId: string; type: string; findingId?: string }) => void;
+  handleMapUpload: (e: React.ChangeEvent<HTMLInputElement>, zoneId: string) => Promise<void>;
+  categories: CategoryConfig;
+}
 
-const CATEGORY_TEXT_COLORS = {
-  'Fuga crítica': 'text-red-500',
-  'Depresión crítica': 'text-purple-500',
-  'Observación técnica': 'text-orange-500'
-};
 
-export function InteractiveZoneMap({ zone, updateZone, setCameraModalOpen, handleMapUpload }: InteractiveZoneMapProps) {
+
+export function InteractiveZoneMap({ zone, updateZone, setCameraModalOpen, handleMapUpload, categories }: InteractiveZoneMapProps) {
   const zoneRef = useRef(zone);
   useEffect(() => {
     zoneRef.current = zone;
@@ -98,7 +93,7 @@ export function InteractiveZoneMap({ zone, updateZone, setCameraModalOpen, handl
           <div className="flex-1 space-y-4 min-w-0">
             {/* Toolbar */}
             <div className="flex gap-3">
-              {(Object.keys(CATEGORY_COLORS) as Array<keyof typeof CATEGORY_COLORS>).map(cat => (
+              {(Object.keys(categories)).map(cat => (
                 <button
                   key={cat}
                   onClick={() => setActiveTool(activeTool === cat ? null : cat)}
@@ -107,7 +102,7 @@ export function InteractiveZoneMap({ zone, updateZone, setCameraModalOpen, handl
                   }`}
                 >
                   <Plus size={14} />
-                  <div className={`w-2.5 h-2.5 rounded-full ${CATEGORY_COLORS[cat as keyof typeof CATEGORY_COLORS]}`} />
+                  <div className={`w-2.5 h-2.5 rounded-full ${categories[cat].bg}`} />
                   {cat}
                 </button>
               ))}
@@ -130,7 +125,7 @@ export function InteractiveZoneMap({ zone, updateZone, setCameraModalOpen, handl
                     setSelectedFindingId(finding.id);
                   }}
                   className={`absolute transform -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full text-white text-xs font-bold flex items-center justify-center shadow-md transition-transform ${
-                    CATEGORY_COLORS[finding.category as keyof typeof CATEGORY_COLORS]
+                    categories[finding.category]?.bg || 'bg-gray-500'
                   } ${selectedFindingId === finding.id ? 'ring-4 ring-white ring-opacity-50 scale-125' : 'hover:scale-110'}`}
                   style={{ left: `${finding.x}%`, top: `${finding.y}%` }}
                 >
@@ -141,9 +136,9 @@ export function InteractiveZoneMap({ zone, updateZone, setCameraModalOpen, handl
 
             {/* Legend */}
             <div className="flex gap-6 mt-4">
-              {(Object.keys(CATEGORY_COLORS) as Array<keyof typeof CATEGORY_COLORS>).map(cat => (
+              {(Object.keys(categories)).map(cat => (
                 <div key={cat} className="flex items-center gap-2 text-sm text-slate-600">
-                  <div className={`w-2.5 h-2.5 rounded-full ${CATEGORY_COLORS[cat as keyof typeof CATEGORY_COLORS]}`} />
+                  <div className={`w-2.5 h-2.5 rounded-full ${categories[cat].bg}`} />
                   {cat}
                 </div>
               ))}
@@ -165,7 +160,7 @@ export function InteractiveZoneMap({ zone, updateZone, setCameraModalOpen, handl
                       <tr key={finding.id} className="hover:bg-slate-50/50 cursor-pointer transition-colors" onClick={() => setSelectedFindingId(finding.id)}>
                         <td className="py-3">
                           <div className="flex items-center gap-2">
-                            <div className={`w-2.5 h-2.5 rounded-full ${CATEGORY_COLORS[finding.category as keyof typeof CATEGORY_COLORS]}`} />
+                            <div className={`w-2.5 h-2.5 rounded-full ${categories[finding.category]?.bg || 'bg-gray-500'}`} />
                             H{finding.number}
                           </div>
                         </td>
@@ -186,7 +181,7 @@ export function InteractiveZoneMap({ zone, updateZone, setCameraModalOpen, handl
             <div className="w-[400px] flex-shrink-0 bg-white border border-slate-200 rounded-xl shadow-lg flex flex-col h-fit sticky top-4">
               <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 rounded-t-xl">
                 <div className="flex items-center gap-2 font-bold text-slate-800">
-                  <div className={`w-3 h-3 rounded-full ${CATEGORY_COLORS[selectedFinding.category as keyof typeof CATEGORY_COLORS]}`} />
+                  <div className={`w-3 h-3 rounded-full ${categories[selectedFinding.category]?.bg || 'bg-gray-500'}`} />
                   Hallazgo H{selectedFinding.number}
                 </div>
                 <button 
@@ -205,9 +200,9 @@ export function InteractiveZoneMap({ zone, updateZone, setCameraModalOpen, handl
                     onChange={(e) => updateFinding(selectedFinding.id, { category: e.target.value as any })}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white"
                   >
-                    <option value="Fuga crítica">Fuga crítica</option>
-                    <option value="Depresión crítica">Depresión crítica</option>
-                    <option value="Observación técnica">Observación técnica</option>
+                    {Object.keys(categories).map(cat => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
                   </select>
                 </div>
 

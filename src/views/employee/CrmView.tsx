@@ -270,6 +270,9 @@ export default function CrmView() {
   const [dealsFilters, setDealsFilters] = useState({ name: '', amountMin: '', amountMax: '', stage: '', userId: '', accountId: '', contactId: '', startDate: '', endDate: '', closeDateFrom: '', closeDateTo: '' });
   const debouncedDealsFilters = useDebounce(dealsFilters, 500);
 
+  const [quotationsFilters, setQuotationsFilters] = useState({ status: '', businessLineId: '', startDate: '', endDate: '' });
+  const debouncedQuotationsFilters = useDebounce(quotationsFilters, 500);
+
   const [activitiesFilters, setActivitiesFilters] = useState({ subject: '', notes: '', activityType: '', result: '', userId: '', dealId: '', accountId: '', contactId: '', parentActivityId: '', startDate: '', endDate: '', completedAtFrom: '', completedAtTo: '' });
   const debouncedActivitiesFilters = useDebounce(activitiesFilters, 500);
 
@@ -295,7 +298,24 @@ export default function CrmView() {
       }
 
       const params = new URLSearchParams();
-      if (dashboardActivityUserFilter !== 'ALL') params.append('userId', dashboardActivityUserFilter);
+        if (dashboardActivityUserFilter !== 'ALL') params.append('userId', dashboardActivityUserFilter);
+        
+        // Agregar filtros globales de actividades
+        if (debouncedSearchQuery) params.append('search', debouncedSearchQuery);
+        if (debouncedActivitiesFilters.userId) params.append('userId', debouncedActivitiesFilters.userId);
+        if (debouncedActivitiesFilters.activityType) params.append('activityType', debouncedActivitiesFilters.activityType);
+        if (debouncedActivitiesFilters.result) params.append('result', debouncedActivitiesFilters.result);
+        if (debouncedActivitiesFilters.startDate) params.append('startDate', debouncedActivitiesFilters.startDate);
+        if (debouncedActivitiesFilters.endDate) params.append('endDate', debouncedActivitiesFilters.endDate);
+        if (debouncedActivitiesFilters.completedAtFrom) params.append('completedAtFrom', debouncedActivitiesFilters.completedAtFrom);
+        if (debouncedActivitiesFilters.completedAtTo) params.append('completedAtTo', debouncedActivitiesFilters.completedAtTo);
+
+        if (debouncedActivitiesFilters.startDate || debouncedActivitiesFilters.endDate) {
+          filtersInfo += " | Creación: " + (debouncedActivitiesFilters.startDate || '*') + " a " + (debouncedActivitiesFilters.endDate || '*');
+        }
+        if (debouncedActivitiesFilters.completedAtFrom || debouncedActivitiesFilters.completedAtTo) {
+          filtersInfo += " | Completado: " + (debouncedActivitiesFilters.completedAtFrom || '*') + " a " + (debouncedActivitiesFilters.completedAtTo || '*');
+        }
       
       const res = await api.get(`/activities/export-report?${params.toString()}`);
       
@@ -435,7 +455,7 @@ export default function CrmView() {
       if (dealsParams.amountMax) dealsParams.amountMax = Number(dealsParams.amountMax) as any;
 
       const [accountsData, contactsData, activitiesData, dealsData, usersData, businessLinesRes, projectsData] = await Promise.all([
-        accountsService.getAll({ search, ...debouncedAccountsFilters }),
+        accountsService.getAll({ search: debouncedSearchQuery, ...debouncedAccountsFilters }),
         contactsService.getAll({ search, ...debouncedContactsFilters }),
         activitiesService.getAll({ search, ...debouncedActivitiesFilters }),
         dealsService.getAll(dealsParams as any),
@@ -945,6 +965,41 @@ export default function CrmView() {
                   </>
                 )}
 
+                {activeTab === 'quotations' && (
+                  <>
+                    <div className="space-y-1.5 w-full md:w-48">
+                      <label className="text-xs font-bold text-slate-500 uppercase">Estado</label>
+                      <select value={quotationsFilters.status} onChange={(e) => setQuotationsFilters({...quotationsFilters, status: e.target.value})} className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#001c3a] shadow-sm">
+                        <option value="">Todos los estados</option>
+                        <option value="DRAFT">Borrador</option>
+                        <option value="SENT">Enviada</option>
+                        <option value="PENDING_SIGNATURE">Pendiente Firma</option>
+                        <option value="SIGNED">Firmado</option>
+                        <option value="ACCEPTED">Aceptada</option>
+                        <option value="REJECTED">Rechazada</option>
+                        <option value="EXPIRED">Caducada</option>
+                      </select>
+                    </div>
+                    <div className="space-y-1.5 w-full md:w-48">
+                      <label className="text-xs font-bold text-slate-500 uppercase">Línea</label>
+                      <select value={quotationsFilters.businessLineId} onChange={(e) => setQuotationsFilters({...quotationsFilters, businessLineId: e.target.value})} className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#001c3a] shadow-sm">
+                        <option value="">Todas las líneas</option>
+                        {businessLines.map(bl => (
+                          <option key={bl.id} value={bl.id}>{bl.name}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="space-y-1.5 w-full md:w-64">
+                      <label className="text-xs font-bold text-slate-500 uppercase">Fecha (Desde - Hasta)</label>
+                      <div className="flex items-center gap-2">
+                        <input type="date" value={quotationsFilters.startDate} onChange={(e) => setQuotationsFilters({...quotationsFilters, startDate: e.target.value})} className="w-full px-2 py-2 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#001c3a] shadow-sm" />
+                        <span className="text-slate-400">-</span>
+                        <input type="date" value={quotationsFilters.endDate} onChange={(e) => setQuotationsFilters({...quotationsFilters, endDate: e.target.value})} className="w-full px-2 py-2 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#001c3a] shadow-sm" />
+                      </div>
+                    </div>
+                  </>
+                )}
+
                 {activeTab === 'dashboard' && (
                   <>
                     <div className="space-y-1.5 w-full md:w-48">
@@ -958,7 +1013,7 @@ export default function CrmView() {
                       <label className="text-xs font-bold text-slate-500 uppercase">Tipo</label>
                       <select value={activitiesFilters.activityType} onChange={(e) => setActivitiesFilters({...activitiesFilters, activityType: e.target.value})} className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#001c3a] shadow-sm">
                         <option value="">Cualquiera</option>
-                        <option value={ActivityType.LLAMADA}>Llamada</option>
+                        <option value={ActivityType.CALL}>Llamada</option>
                         <option value={ActivityType.REUNION_COMERCIAL}>Reunión Comercial</option>
                         <option value={ActivityType.REUNION_SEGUIMIENTO}>Reunión Seguimiento</option>
                         <option value={ActivityType.COTIZACION}>Cotización</option>
@@ -1052,6 +1107,7 @@ export default function CrmView() {
                       setAccountsFilters({ name: '', cif: '', sector: '', city: '', email: '', phone: '', startDate: '', endDate: '' });
                       setContactsFilters({ name: '', email: '', phone: '', position: '', accountId: '', startDate: '', endDate: '' });
                       setDealsFilters({ name: '', amountMin: '', amountMax: '', stage: '', userId: '', accountId: '', contactId: '', startDate: '', endDate: '', closeDateFrom: '', closeDateTo: '' });
+                      setQuotationsFilters({ status: '', businessLineId: '', startDate: '', endDate: '' });
                       setActivitiesFilters({ subject: '', notes: '', activityType: '', result: '', userId: '', dealId: '', accountId: '', contactId: '', parentActivityId: '', startDate: '', endDate: '', completedAtFrom: '', completedAtTo: '' });
                     }}
                     className="text-xs font-bold text-slate-500 hover:text-slate-800 transition-colors"
@@ -1154,15 +1210,6 @@ export default function CrmView() {
                 title="Exportar a Excel"
               >
                 {exportingTarget === 'excel' ? <RefreshCw size={16} className="animate-spin" /> : <FileText size={16} />}
-              </button>
-
-              <button
-                onClick={() => handleExportDashboardActivities('pdf')}
-                disabled={exportingTarget !== null}
-                className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold transition-all bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 hover:text-red-800 shadow-sm active:scale-95 disabled:opacity-50"
-                title="Exportar a PDF"
-              >
-                {exportingTarget === 'pdf' ? <RefreshCw size={16} className="animate-spin" /> : <FileText size={16} />}
               </button>
               
               <button
@@ -1469,7 +1516,7 @@ export default function CrmView() {
                   try {
                     // Fetch ALL data without any filters for the export
                     const [allDeals, allActivities] = await Promise.all([
-                      dealsService.getAll({} as any),
+                      dealsService.getAll({ search: debouncedSearchQuery, ...debouncedDealsFilters } as any),
                       activitiesService.getAll({})
                     ]);
 
@@ -1484,7 +1531,17 @@ export default function CrmView() {
                       };
                     });
 
-                    const filtersInfo = 'Todos (Total histórico)';
+                    let filtersInfo = '';
+                    if (debouncedSearchQuery) filtersInfo += `Búsqueda: "${debouncedSearchQuery}" | `;
+                    if (debouncedDealsFilters.stage) filtersInfo += `Etapa: ${debouncedDealsFilters.stage} | `;
+                    if (debouncedDealsFilters.amountMin || debouncedDealsFilters.amountMax) filtersInfo += `Monto: ${debouncedDealsFilters.amountMin || '*'} a ${debouncedDealsFilters.amountMax || '*'} | `;
+                    if (debouncedDealsFilters.startDate || debouncedDealsFilters.endDate) filtersInfo += `Creación: ${debouncedDealsFilters.startDate || '*'} a ${debouncedDealsFilters.endDate || '*'} | `;
+                    if (debouncedDealsFilters.closeDateFrom || debouncedDealsFilters.closeDateTo) filtersInfo += `Cierre: ${debouncedDealsFilters.closeDateFrom || '*'} a ${debouncedDealsFilters.closeDateTo || '*'} | `;
+                    if (debouncedDealsFilters.accountId) filtersInfo += `Filtro Empresa Aplicado | `;
+                    if (debouncedDealsFilters.contactId) filtersInfo += `Filtro Contacto Aplicado | `;
+                    if (debouncedDealsFilters.userId) filtersInfo += `Filtro Responsable Aplicado | `;
+                    filtersInfo = filtersInfo ? filtersInfo.slice(0, -3) : 'Todos (Total histórico)';
+                    
                     await exportDealsKpiToExcel(exportData, filtersInfo);
                   } catch (err) {
                     console.error(err);
@@ -1723,12 +1780,14 @@ export default function CrmView() {
           />
         ) : (
           <QuotationListView 
-            businessLines={businessLines}
-            users={users}
-            onViewDetail={setViewingQuotationId}
-            onCreateNew={() => { setCreatingQuotationForDeal(null); setShowQuotationModal(true); }}
-            onDoubleClickQuotation={(id, accountId) => setRecord360({ id, type: 'quotation', accountId })}
-          />
+              businessLines={businessLines}
+              users={users}
+              onViewDetail={setViewingQuotationId}
+              onCreateNew={() => { setCreatingQuotationForDeal(null); setShowQuotationModal(true); }}
+              onDoubleClickQuotation={(id, accountId) => setRecord360({ id, type: 'quotation', accountId })}
+              searchQuery={debouncedSearchQuery}
+              filters={debouncedQuotationsFilters}
+            />
         )
       )}
 
@@ -1849,7 +1908,7 @@ export default function CrmView() {
                     try {
                       // Fetch ALL data without any filters for the export
                       const [allAccounts, allActivities, allDeals, allProjects] = await Promise.all([
-                        accountsService.getAll({}),
+                        accountsService.getAll({ search: debouncedSearchQuery, ...debouncedAccountsFilters }),
                         activitiesService.getAll({}),
                         dealsService.getAll({} as any),
                         projectsService.getAll()
@@ -1904,7 +1963,7 @@ export default function CrmView() {
                     try {
                       // Fetch ALL data without any filters for the export
                       const [allContacts, allActivities] = await Promise.all([
-                        contactsService.getAll({}),
+                        contactsService.getAll({ search: debouncedSearchQuery, ...debouncedContactsFilters }),
                         activitiesService.getAll({})
                       ]);
 
@@ -1934,7 +1993,14 @@ export default function CrmView() {
                         };
                       });
 
-                      const filtersInfo = 'Todos (Total histórico)';
+                      let filtersInfo = '';
+                      if (debouncedSearchQuery) filtersInfo += `Búsqueda: "${debouncedSearchQuery}" | `;
+                      if (debouncedContactsFilters.accountId) filtersInfo += `Filtro Empresa Aplicado | `;
+                      if (debouncedContactsFilters.position) filtersInfo += `Cargo: ${debouncedContactsFilters.position} | `;
+                      if (debouncedContactsFilters.activityStatus && debouncedContactsFilters.activityStatus !== 'ALL') filtersInfo += `Actividades: ${debouncedContactsFilters.activityStatus} | `;
+                      if (debouncedContactsFilters.startDate || debouncedContactsFilters.endDate) filtersInfo += `Creación: ${debouncedContactsFilters.startDate || '*'} a ${debouncedContactsFilters.endDate || '*'} | `;
+                      filtersInfo = filtersInfo ? filtersInfo.slice(0, -3) : 'Todos (Total histórico)';
+                      
                       await exportContactsKpiToExcel(exportData, filtersInfo);
                     } catch (err) {
                       console.error(err);
@@ -2470,7 +2536,7 @@ export default function CrmView() {
                       onChange={(e) => setEditingActivity({...editingActivity, activityType: e.target.value as ActivityType})}
                       className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#001c3a]/50"
                     >
-                      <option value={ActivityType.LLAMADA}>Llamada</option>
+                      <option value={ActivityType.CALL}>Llamada</option>
                       <option value={ActivityType.REUNION_COMERCIAL}>Reunión Comercial</option>
                       <option value={ActivityType.REUNION_SEGUIMIENTO}>Reunión Seguimiento</option>
                       <option value={ActivityType.COTIZACION}>Cotización</option>

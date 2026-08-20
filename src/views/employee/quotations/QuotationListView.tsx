@@ -14,6 +14,8 @@ interface QuotationListViewProps {
   onViewDetail: (id: string) => void;
   onCreateNew: () => void;
   onDoubleClickQuotation?: (id: string, accountId: string) => void;
+  searchQuery?: string;
+  filters?: { status: string; businessLineId: string; startDate: string; endDate: string; };
 }
 
 export const getStatusBadge = (status: QuotationStatus) => {
@@ -35,21 +37,20 @@ export const getStatusBadge = (status: QuotationStatus) => {
   );
 };
 
-export default function QuotationListView({ businessLines, users, onViewDetail, onCreateNew, onDoubleClickQuotation }: QuotationListViewProps) {
+export default function QuotationListView({ businessLines, users, onViewDetail, onCreateNew, onDoubleClickQuotation, searchQuery, filters }: QuotationListViewProps) {
   const [quotations, setQuotations] = useState<QuotationSummary[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<QuotationStatus | ''>('');
-  const [blFilter, setBlFilter] = useState('');
-
   const fetchQuotations = async () => {
     try {
       setLoading(true);
-      const filters: Record<string, string> = {};
-      if (statusFilter) filters.status = statusFilter;
-      if (blFilter) filters.businessLineId = blFilter;
-      if (searchTerm) filters.search = searchTerm;
-      const data = await quotationsService.getAll(filters);
+      const apiFilters: Record<string, string> = {};
+      if (filters?.status) apiFilters.status = filters.status;
+      if (filters?.businessLineId) apiFilters.businessLineId = filters.businessLineId;
+      if (filters?.startDate) apiFilters.startDate = filters.startDate;
+      if (filters?.endDate) apiFilters.endDate = filters.endDate;
+      if (searchQuery) apiFilters.search = searchQuery;
+      
+      const data = await quotationsService.getAll(apiFilters);
       setQuotations(data as QuotationSummary[]);
     } catch (err) {
       toast.error('Error al cargar cotizaciones');
@@ -60,13 +61,9 @@ export default function QuotationListView({ businessLines, users, onViewDetail, 
 
   useEffect(() => {
     fetchQuotations();
-  }, [statusFilter, blFilter]); // Fetch on filter change
+  }, [filters, searchQuery]); // Fetch on filter change
 
-  // Handle search with simple debounce manually or just button
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    fetchQuotations();
-  };
+  
 
   const calculateTotal = (q: any) => {
     if (!q.chapters) return 0;
@@ -94,8 +91,25 @@ export default function QuotationListView({ businessLines, users, onViewDetail, 
               onClick={async () => {
                 try {
                   const toastId = toast.loading('Generando reporte Excel...');
-                  const data = await quotationsService.getAll({});
-                  await exportQuotationsKpiToExcel(data as QuotationSummary[], 'Todos (Total histórico)');
+                  const apiFilters: Record<string, string> = {};
+                  if (filters?.status) apiFilters.status = filters.status;
+                  if (filters?.businessLineId) apiFilters.businessLineId = filters.businessLineId;
+                  if (filters?.startDate) apiFilters.startDate = filters.startDate;
+                  if (filters?.endDate) apiFilters.endDate = filters.endDate;
+                  if (searchQuery) apiFilters.search = searchQuery;
+                  const data = await quotationsService.getAll(apiFilters);
+                  
+                  let filtersInfo = '';
+                  if (searchQuery) filtersInfo += `Búsqueda: "${searchQuery}" | `;
+                  if (filters?.status) filtersInfo += `Estado: ${filters.status} | `;
+                  if (filters?.businessLineId) {
+                     const blName = businessLines.find(b => b.id === filters.businessLineId)?.name;
+                     if (blName) filtersInfo += `Línea: ${blName} | `;
+                  }
+                  if (filters?.startDate || filters?.endDate) filtersInfo += `Fecha: ${filters?.startDate || '*'} a ${filters?.endDate || '*'} | `;
+                  filtersInfo = filtersInfo ? filtersInfo.slice(0, -3) : 'Todos (Total histórico)';
+
+                  await exportQuotationsKpiToExcel(data as QuotationSummary[], filtersInfo);
                   toast.success('Reporte generado correctamente', { id: toastId });
                 } catch (err) {
                   toast.error('Error al exportar cotizaciones');
@@ -116,44 +130,7 @@ export default function QuotationListView({ businessLines, users, onViewDetail, 
           </div>
         </div>
 
-        <form onSubmit={handleSearch} className="flex gap-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-            <input
-              type="text"
-              placeholder="Buscar por número o empresa..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none"
-            />
-          </div>
-          <div className="flex items-center gap-2">
-            <Filter size={18} className="text-slate-400" />
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value as QuotationStatus | '')}
-              className="py-2 pl-3 pr-8 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none text-sm"
-            >
-              <option value="">Todos los estados</option>
-              {Object.values(QuotationStatus).map(status => (
-                <option key={status} value={status}>{status}</option>
-              ))}
-            </select>
-            <select
-              value={blFilter}
-              onChange={(e) => setBlFilter(e.target.value)}
-              className="py-2 pl-3 pr-8 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none text-sm"
-            >
-              <option value="">Todas las líneas</option>
-              {businessLines.map(bl => (
-                <option key={bl.id} value={bl.id}>{bl.name}</option>
-              ))}
-            </select>
-            <button type="submit" className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors font-medium text-sm">
-              Buscar
-            </button>
-          </div>
-        </form>
+        
       </div>
 
       {/* List */}

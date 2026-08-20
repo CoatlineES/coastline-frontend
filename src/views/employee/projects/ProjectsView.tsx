@@ -250,9 +250,7 @@ export default function ProjectsView() {
                             <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${getStatusColor(project.status)}`}>
                               {project.status}
                             </span>
-                            <span className={`text-xs font-medium px-2 py-0.5 rounded border ${getPhaseColor(project.operationalPhase)}`}>
-                              {formatPhase(project.operationalPhase)}
-                            </span>
+                            
                           </div>
                           <button
                             onClick={(e) => handleDeleteProject(e, project.id)}
@@ -263,8 +261,13 @@ export default function ProjectsView() {
                           </button>
                         </div>
                         <h3 className="text-base font-bold text-slate-900 mb-1 group-hover:text-blue-600 transition-colors line-clamp-2">
-                          {project.name}
-                        </h3>
+                            {project.name}
+                          </h3>
+                          {project.alias && (
+                            <div className="text-xs text-slate-400 font-medium italic truncate mb-1">
+                              Alias: {project.alias}
+                            </div>
+                          )}
                         <div className="text-sm text-slate-500 mb-4 flex items-center gap-2">
                           {project.divisionName && (
                             <span className="truncate flex items-center gap-1">

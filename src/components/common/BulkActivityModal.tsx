@@ -99,7 +99,7 @@ export function BulkActivityModal({ isOpen, onClose, onSubmit, users, currentUse
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-slate-500 uppercase">Tipo</label>
                     <select value={act.activityType} onChange={(e) => handleChange(idx, 'activityType', e.target.value)} className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#001c3a]/20 focus:border-[#001c3a] transition-all">
-                      <option value={ActivityType.LLAMADA}>Llamada</option>
+                      <option value={ActivityType.CALL}>Llamada</option>
                       <option value={ActivityType.EMAIL}>Correo</option>
                       <option value={ActivityType.REUNION_COMERCIAL}>Reunión Comercial</option>
                       <option value={ActivityType.REUNION_SEGUIMIENTO}>Reunión Seguimiento</option>

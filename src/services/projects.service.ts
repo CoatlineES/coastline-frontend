@@ -2,6 +2,16 @@ import api, { cleanParams } from './api';
 import { Project, ProjectDocument } from './types';
 
 export const projectsService = {
+  getProjectPhotos: async (id: string): Promise<any[]> => {
+    const response = await api.get(`/projects/${id}/photos`);
+    return response.data;
+  },
+
+  addProjectPhoto: async (projectId: string, data: { url: string, name: string, size?: number, mimetype?: string }) => {
+    const response = await api.post(`/projects/${projectId}/photos`, data);
+    return response.data;
+  },
+
   getAll: async (filters?: any): Promise<Project[]> => {
     const response = await api.get('/projects', { params: cleanParams(filters) });
     return response.data;

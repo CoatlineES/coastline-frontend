@@ -1,3 +1,11 @@
+export interface ReportSectionData {
+  id: string;
+  name: string;
+  content: string;
+  layout: '1' | '2' | '3';
+  images: InspectionReportPhoto[];
+}
+
 export interface InspectionReportPhoto {
   id: string;
   type: 'GENERAL' | 'MAP' | 'DETAIL' | 'ZONE_GENERAL' | 'ZONE_GEOMEMBRANE' | 'ZONE_RISKS' | 'ZONE_EQUIPMENT' | 'ZONE_PHOTOS' | 'FINDING';
@@ -60,6 +68,10 @@ export interface InspectionReportZone {
     observacion: { num: number; area: number };
     observaciones: string;
   };
+
+  // Mapa de hallazgos
+  baseImage?: string;
+  mapFindings?: MapFinding[];
   
   riesgosPrl: string[];
   riesgosPrlObs: string;
