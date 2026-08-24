@@ -34,6 +34,9 @@ import { BulkActivityModal, BulkActivityTemplate } from '../../components/common
 import { SectorAutocomplete } from '../../components/common/SectorAutocomplete';
 import { useAuth } from '../../contexts/AuthContext';
 
+import { ImportSuccessOverlay } from '../../components/animations/UI/ImportSuccessOverlay';
+
+
 type Tab = 'dashboard' | 'accounts' | 'contacts' | 'deals' | 'quotations' | 'reports' | 'library';
 
 const DEAL_STAGES: { value: DealStage; label: string; color: string }[] = [
@@ -180,6 +183,8 @@ export default function CrmView() {
   
   // UI state
   const [isLoading, setIsLoading] = useState(false);
+  const [showSuccessOverlay, setShowSuccessOverlay] = useState(false);
+  const [importCount, setImportCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
   
@@ -238,11 +243,12 @@ export default function CrmView() {
             toast.error(`Se importaron ${response.count} registros con ${response.errors.length} errores. Revisa la consola.`);
             console.error('Errores en importación:', response.errors);
           } else {
-            toast.success(`Se importaron ${response.count} registros correctamente`);
+            setImportCount(response.count);
+            setShowSuccessOverlay(true);
           }
           
           // Refresh data
-          loadData();
+          fetchData();
         } catch (err: any) {
           console.error('Error parseando excel:', err);
           toast.error(err.response?.data?.message || 'Error al procesar el archivo');
