@@ -336,7 +336,7 @@ export default function PublicQuotationView() {
                 <div className="flex flex-col items-center text-center">
                   {(quotation.status === 'SIGNED' || quotation.status === 'ACCEPTED') && quotation.clientSignature ? (
                     <>
-                      <img src={quotation.clientSignature} alt="Firma del cliente" className="h-16 object-contain mb-2" />
+                      <img src={quotation.clientSignature} alt="Firma del cliente" className="h-16 object-contain mb-2" onError={(e) => { e.currentTarget.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='150' height='50'><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='14' fill='%2394a3b8' font-style='italic'>Firma archivada</text></svg>"; e.currentTarget.className = "h-16 object-contain mb-2 opacity-50"; }} />
                       <div className="w-full border-b border-dashed border-[#002D5A]/40 mb-2"></div>
                       <div className="text-[10px] font-bold">{quotation.clientSignatoryName}</div>
                       <div className="text-[9px] text-[#002D5A]/70">DNI/NIF: {quotation.clientSignatoryDni}</div>
@@ -389,7 +389,7 @@ export default function PublicQuotationView() {
                   </div>
                   <div className="flex flex-col items-center border-t border-dashed border-slate-300 pt-6">
                     <span className="text-[10px] font-bold text-[#002D5A] mb-3 uppercase tracking-wider">Trazo Biométrico</span>
-                    <img src={quotation.clientSignature} alt="Firma del cliente" className="h-20 object-contain bg-white border border-slate-200 p-2 rounded" />
+                    <img src={quotation.clientSignature} alt="Firma del cliente" className="h-20 object-contain bg-white border border-slate-200 p-2 rounded" onError={(e) => { e.currentTarget.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='150' height='50'><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='14' fill='%2394a3b8' font-style='italic'>Firma archivada</text></svg>"; e.currentTarget.className = "h-20 object-contain bg-white border border-slate-200 p-2 rounded opacity-50"; }} />
                   </div>
                 </div>
               </div>

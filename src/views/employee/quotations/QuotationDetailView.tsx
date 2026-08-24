@@ -660,7 +660,7 @@ export default function QuotationDetailView({ quotationId, onBack, businessLines
                 <Accordion id="firma" title="Firma del Cliente" icon={<FileSignature size={18} />} color="bg-emerald-500" isOpen={activeAccordion === 'firma'} onToggle={() => setActiveAccordion(activeAccordion === 'firma' ? '' : 'firma')}>
                   <div className="flex gap-8 p-4 bg-emerald-50 rounded-xl border border-emerald-100">
                     <div className="w-64 bg-white p-4 rounded-lg border border-slate-200">
-                      <img src={quotation.clientSignature} alt="Firma" className="w-full h-auto" />
+                      <img src={quotation.clientSignature} alt="Firma" className="w-full h-auto" onError={(e) => { e.currentTarget.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='150' height='50'><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='14' fill='%2394a3b8' font-style='italic'>Firma archivada</text></svg>"; e.currentTarget.className = "w-full h-auto opacity-50"; }} />
                     </div>
                     <div>
                       <h4 className="font-bold text-slate-800 text-lg mb-1">{quotation.clientSignatoryName}</h4>

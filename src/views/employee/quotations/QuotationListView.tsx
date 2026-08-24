@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FileText, Plus, Search, Filter, MoreHorizontal, FileDown, CheckCircle, Clock, XCircle, Trash2, Copy, FileSignature, Download } from 'lucide-react';
+import { FileText, Plus, Search, Filter, MoreHorizontal, FileDown, CheckCircle, Clock, XCircle, Trash2, Copy, FileSignature, Download, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Quotation, QuotationSummary, QuotationStatus } from '../../../types/quotation';
 import { quotationsService } from '../../../services/quotations.service';
 import { BusinessLine } from '../../../services/business-lines.service';
@@ -40,9 +40,12 @@ export const getStatusBadge = (status: QuotationStatus) => {
 export default function QuotationListView({ businessLines, users, onViewDetail, onCreateNew, onDoubleClickQuotation, searchQuery, filters }: QuotationListViewProps) {
   const [quotations, setQuotations] = useState<QuotationSummary[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12;
   const fetchQuotations = async () => {
     try {
       setLoading(true);
+      setCurrentPage(1);
       const apiFilters: Record<string, string> = {};
       if (filters?.status) apiFilters.status = filters.status;
       if (filters?.businessLineId) apiFilters.businessLineId = filters.businessLineId;
@@ -146,15 +149,23 @@ export default function QuotationListView({ businessLines, users, onViewDetail, 
             <p className="text-sm">Prueba ajustando los filtros o crea una nueva.</p>
           </div>
         ) : (
-          <div className="grid gap-4 grid-cols-1 xl:grid-cols-2">
-            <AnimatePresence>
-              {quotations.map(q => {
+          <div className="flex flex-col h-full">
+            <div className="flex-1 content-start relative">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentPage}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 10 }}
+                  transition={{ duration: 0.2 }}
+                  className="grid gap-4 grid-cols-1 xl:grid-cols-2"
+                >
+                  {quotations.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map(q => {
                 const total = calculateTotal(q);
                 return (
                   <motion.div
-                    initial={{ opacity: 0, y: 10 }}
+                    initial={{ opacity: 0, y: 5 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
                     key={q.id}
                     onClick={() => onViewDetail(q.id)}
                     onDoubleClick={(e) => {
@@ -208,7 +219,37 @@ export default function QuotationListView({ businessLines, users, onViewDetail, 
                   </motion.div>
                 );
               })}
+                </motion.div>
             </AnimatePresence>
+            </div>
+            
+            {/* Controles de Paginación */}
+            {quotations.length > itemsPerPage && (
+              <div className="mt-6 flex items-center justify-between border-t border-slate-200 pt-4 pb-2">
+                <div className="text-sm text-slate-500">
+                  Mostrando <span className="font-medium text-slate-800">{(currentPage - 1) * itemsPerPage + 1}</span> a <span className="font-medium text-slate-800">{Math.min(currentPage * itemsPerPage, quotations.length)}</span> de <span className="font-medium text-slate-800">{quotations.length}</span> cotizaciones
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                    className="p-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <ChevronLeft size={18} />
+                  </button>
+                  <div className="text-sm font-medium text-slate-700 px-2">
+                    Página {currentPage} de {Math.ceil(quotations.length / itemsPerPage)}
+                  </div>
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(quotations.length / itemsPerPage)))}
+                    disabled={currentPage === Math.ceil(quotations.length / itemsPerPage)}
+                    className="p-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <ChevronRight size={18} />
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
