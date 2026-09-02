@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown } from 'lucide-react';
+﻿import React, { useState, useRef, useEffect } from 'react';
+import { ChevronDown, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 const PREDEFINED_SECTORS = [
@@ -24,12 +24,22 @@ export function SectorAutocomplete({ value, onChange, placeholder = 'Ej. Constru
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Combine predefined sectors with existing unique sectors from the database, removing duplicates
-  const allSectors = Array.from(new Set([...PREDEFINED_SECTORS, ...existingSectors]));
+  const allSectorsMap = new Map<string, string>();
+  [...PREDEFINED_SECTORS, ...existingSectors].forEach(sector => {
+    if (sector) {
+      const normalized = sector.trim().toLowerCase();
+      if (!allSectorsMap.has(normalized)) {
+        allSectorsMap.set(normalized, sector.trim());
+      }
+    }
+  });
+  const allSectors = Array.from(allSectorsMap.values());
 
   // Filter options based on current value, but show all if value is empty or exact match
-  const filteredOptions = allSectors.filter(sector => 
-    sector.toLowerCase().includes(value.toLowerCase())
-  );
+  const isExactMatch = allSectors.some(s => s.toLowerCase() === value.toLowerCase());
+  const filteredOptions = (!value || isExactMatch) 
+    ? allSectors 
+    : allSectors.filter(sector => sector.toLowerCase().includes(value.toLowerCase()));
 
   // Handle clicking outside to close the dropdown
   useEffect(() => {
@@ -54,15 +64,31 @@ export function SectorAutocomplete({ value, onChange, placeholder = 'Ej. Constru
           }}
           onFocus={() => setIsOpen(true)}
           placeholder={placeholder}
-          className={`w-full pr-8 ${className}`}
+          className={`w-full pr-14 ${className}`}
         />
-        <button
-          type="button"
-          onClick={() => setIsOpen(!isOpen)}
-          className="absolute right-2 text-slate-400 hover:text-slate-600 focus:outline-none"
-        >
-          <ChevronDown size={14} className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
-        </button>
+        <div className="absolute right-2 flex items-center gap-1">
+          {value && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onChange('');
+                setIsOpen(true);
+              }}
+              className="text-slate-400 hover:text-red-500 focus:outline-none transition-colors p-1"
+              title="Borrar sector"
+            >
+              <X size={14} />
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={() => setIsOpen(!isOpen)}
+            className="text-slate-400 hover:text-slate-600 focus:outline-none p-1"
+          >
+            <ChevronDown size={14} className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+          </button>
+        </div>
       </div>
 
       <AnimatePresence>

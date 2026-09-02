@@ -4,13 +4,14 @@ import {
   Package, Search, Plus, Filter, Edit2, Trash2, Box, Save, X, Activity, Layers, AlertCircle, CheckCircle
 } from 'lucide-react';
 import { inventoryService, InventoryItem } from '../../../services/inventory.service';
+import { resourcesService, Resource, ResourceType } from '../../../services/resources.service';
 import { useAuth } from '../../../contexts/AuthContext';
 
 export default function AlmacenAdminView() {
   const { user } = useAuth();
   
   const [items, setItems] = useState<InventoryItem[]>([]);
-  const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [notification, setNotification] = useState<{message: string, type: 'success'|'error'} | null>(null);
 
@@ -18,6 +19,7 @@ export default function AlmacenAdminView() {
   const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
 
   const defaultFormState = {
+    resourceId: null,
     name: '',
     sku: '',
     category: '',
@@ -37,7 +39,17 @@ export default function AlmacenAdminView() {
 
   useEffect(() => {
     fetchItems();
+    fetchResources();
   }, []);
+
+  const fetchResources = async () => {
+    try {
+      const data = await resourcesService.getAll();
+      
+    } catch (err) {
+      console.error('Error fetching resources:', err);
+    }
+  };
 
   const fetchItems = async () => {
     setLoading(true);
@@ -259,7 +271,7 @@ export default function AlmacenAdminView() {
                   ) : (
                     filteredItems.map((item) => (
                       <tr key={item.id} className="hover:bg-slate-50/80 transition-colors group">
-                        <td className="px-6 py-4">
+                        <td className="px-6 py-4 whitespace-normal min-w-[250px] max-w-[400px]">
                           <p className="font-bold text-slate-800">{item.name}</p>
                           <p className="text-xs text-slate-400 font-medium mt-0.5">{item.sku || 'Sin código'}</p>
                         </td>

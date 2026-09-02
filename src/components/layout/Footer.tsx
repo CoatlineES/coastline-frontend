@@ -29,7 +29,9 @@ export default function Footer({ onNavigate }: FooterProps) {
           {/* Branding Column */}
           <div className="space-y-6">
             <div className="flex items-center">
-              <img src={logoUrl} alt="Coatline" className="h-8 md:h-10 w-auto" />
+              <span className="font-sans text-3xl font-normal tracking-wide text-white border-b-2 border-secondary pb-1">
+                coatline
+              </span>
             </div>
             <p className="font-sans text-sm text-slate-300 leading-relaxed">
               Mantenga sus superficies siempre en perfecto estado con soluciones de ingeniería premium.

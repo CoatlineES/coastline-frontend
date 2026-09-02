@@ -44,13 +44,13 @@ export interface Activity {
   updatedAt: string;
   account?: { name: string };
   user?: { name: string, email: string };
-  contact?: { name: string };
-  deal?: { name: string };
+  contact?: { name: string, email?: string | null, phone?: string | null, position?: string | null };
+  deal?: { name: string, stage?: string, businessLineId?: string };
   parentActivity?: { subject: string, id: string };
 }
 
 export const activitiesService = {
-  getAll: async (params?: { search?: string; subject?: string; notes?: string; accountId?: string; userId?: string; activityType?: string; result?: string; contactId?: string; dealId?: string; parentActivityId?: string; startDate?: string; endDate?: string; completedAtFrom?: string; completedAtTo?: string; }): Promise<Activity[]> => {
+  getAll: async (params?: { search?: string; subject?: string; notes?: string; accountId?: string; userId?: string; activityType?: string; result?: string; contactId?: string; dealId?: string; parentActivityId?: string; startDate?: string; endDate?: string; completedAtFrom?: string; completedAtTo?: string; stage?: string; businessLineId?: string; }): Promise<Activity[]> => {
     const response = await api.get('/activities', { params: cleanParams(params) });
     return response.data;
   },

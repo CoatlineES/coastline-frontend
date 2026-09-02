@@ -16,6 +16,7 @@ export default function AlmacenView() {
   const [activeTab, setActiveTab] = useState<'inventario' | 'estante' | 'solicitudes'>('inventario');
   const [activeCategory, setActiveCategory] = useState('Todos');
   const [search, setSearch] = useState('');
+  const [showOutOfStock, setShowOutOfStock] = useState(false);
   
   const [shelfAction, setShelfAction] = useState<'retirar' | 'mover' | 'devolver'>('retirar');
   const [movingItem, setMovingItem] = useState<InventoryItem | null>(null);
@@ -170,6 +171,7 @@ export default function AlmacenView() {
   const filteredItems = items.filter(item => {
     if (activeCategory !== 'Todos' && item.category !== activeCategory) return false;
     if (search && !item.name.toLowerCase().includes(search.toLowerCase()) && !item.sku?.toLowerCase().includes(search.toLowerCase())) return false;
+    if (!showOutOfStock && item.stock <= 0) return false;
     return true;
   });
 
@@ -236,7 +238,7 @@ export default function AlmacenView() {
   };
 
   const ShelfBinMap = ({ id, label, className }: { id: string, label: string, className: string }) => {
-    const binItems = items.filter(i => i.location === id);
+    const binItems = items.filter(i => i.location === id && i.stock > 0);
     const isTarget = shelfAction === 'mover' && movingItem && movingItem.id;
     const isReturnTarget = shelfAction === 'devolver';
     
@@ -306,7 +308,7 @@ export default function AlmacenView() {
   };
 
   const ExternalZone = ({ id, label, icon }: { id: string, label: string, icon: any }) => {
-    const zoneItems = items.filter(i => i.location === id);
+    const zoneItems = items.filter(i => i.location === id && i.stock > 0);
     const isTarget = shelfAction === 'mover' && movingItem && movingItem.id;
     const isReturnTarget = shelfAction === 'devolver';
     
@@ -441,6 +443,15 @@ export default function AlmacenView() {
             <button onClick={() => setActiveTab('historial')} className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-all ${activeTab === 'historial' ? 'bg-white text-[#001c3a] shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>Historial</button>
           </div>
           <div className="flex items-center gap-3">
+            <label className="flex items-center gap-2 text-sm text-slate-600 cursor-pointer hover:text-slate-800 transition-colors mr-2">
+              <input 
+                type="checkbox" 
+                checked={showOutOfStock} 
+                onChange={(e) => setShowOutOfStock(e.target.checked)} 
+                className="rounded border-slate-300 text-[#001c3a] focus:ring-[#001c3a]" 
+              />
+              Mostrar sin stock
+            </label>
             <div className="relative w-64">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
               <input type="text" placeholder="Buscar SKU, producto..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#001c3a] transition-all shadow-sm" />
@@ -487,7 +498,7 @@ export default function AlmacenView() {
                   const status = getCalculatedStatus(item);
                   return (
                     <tr key={item.id} className="hover:bg-slate-50/80 transition-colors group">
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-4 whitespace-normal min-w-[250px] max-w-[400px]">
                         <div className="flex flex-col">
                           <div className="flex items-center gap-2">
                             <span className="font-semibold text-slate-800">{item.name}</span>
@@ -551,7 +562,7 @@ export default function AlmacenView() {
               <tbody className="divide-y divide-slate-100">
                 {assignments.map((assignment, i) => (
                   <tr key={i} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 whitespace-normal min-w-[250px] max-w-[400px]">
                       <span className="font-semibold text-slate-800">{assignment.item.name}</span>
                       <p className="text-xs text-slate-400 uppercase">{assignment.item.sku}</p>
                     </td>
